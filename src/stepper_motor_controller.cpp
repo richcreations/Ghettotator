@@ -44,6 +44,7 @@
 
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
+// syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
 AccelStepper stepper_az(1, aziStep, aziDir);
 AccelStepper stepper_el(1, eleStep, eleDir);
 endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop, DEFAULT_HOME_STATE);
@@ -67,6 +68,7 @@ void setup() {
 
     // Stepper Motor setup
     stepper_az.setEnablePin(aziEN);
+    // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
     eleMaxStepRate = deg2step(ELE_VMAX);
