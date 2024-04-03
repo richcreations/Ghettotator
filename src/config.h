@@ -4,8 +4,8 @@
 // Pick one board from the list... or add a pins file if needed.
 //#define UNO_CNC_SHIELD_V_3      
 //#define BRUSHES_N_POTS
-//#define ANET_A8_ATMEGA1280_PRINTER_BOARD
-#define RAMPS_V_1_4_MEGA2560
+#define ANET_A8_ATMEGA1280_PRINTER_BOARD
+//#define RAMPS_V_1_4_MEGA2560
 
 #define SAMPLE_TIME        0.1   // Control loop in sec
 #define AZI_RATIO          108L  // Azimuth gear ratio

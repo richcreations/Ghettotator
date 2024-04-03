@@ -57,6 +57,9 @@ int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
 int32_t aziMaxStepRate = 0;
 int32_t aziMaxStepAcc = 0;
+bool ledState = 0;
+uint32_t ledPeriod = 1000; // msec
+uint32_t ledTime = 0; //timer
 
 void setup() {
     // Homing switch
@@ -65,7 +68,7 @@ void setup() {
 
     // Serial Communication
     comm.easycomm_init();
-
+digitalWrite(ledPin,HIGH);
     // Stepper Motor setup
     stepper_az.setEnablePin(aziEN);
     // syntax: setPinsInverted(dir, step, enable), true/false
@@ -73,16 +76,16 @@ void setup() {
     stepper_az.enableOutputs();
     eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
     eleMaxStepAcc = deg2step(ELE_ACC_MAX, ELE_RATIO, ELE_MICROSTEP);
-    stepper_az.setMaxSpeed(eleMaxStepRate);
-    stepper_az.setAcceleration(eleMaxStepAcc);
+    stepper_az.setMaxSpeed(aziMaxStepRate);
+    stepper_az.setAcceleration(aziMaxStepAcc);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
-    stepper_az.setEnablePin(eleEN);
+    stepper_el.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
     stepper_el.enableOutputs();
     aziMaxStepRate = deg2step(AZI_VMAX, AZI_RATIO, AZI_MICROSTEP);
-    stepper_el.setMaxSpeed(aziMaxStepRate);
+    stepper_el.setMaxSpeed(eleMaxStepRate);
     aziMaxStepAcc = deg2step(AZI_ACC_MAX, AZI_RATIO, AZI_MICROSTEP);
-    stepper_el.setAcceleration(aziMaxStepAcc);
+    stepper_el.setAcceleration(eleMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
     // Initialize WDT
@@ -90,6 +93,20 @@ void setup() {
 }
 
 void loop() {
+    // LED heartbeat
+    if(ledExists && millis() - ledTime > ledPeriod)   {
+        if(ledState)    {
+            digitalWrite(ledPin,LOW);
+            ledState = 0;
+            ledTime = millis();
+        }
+        else{
+            digitalWrite(ledPin,HIGH);
+            ledState = 1;
+            ledTime = millis();
+        }
+    }
+
     // Update WDT
    // wdt.watchdog_reset();
 
