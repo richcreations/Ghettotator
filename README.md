@@ -1,5 +1,7 @@
 # SatNOGS Rotator Firmware for Arduino UNO/CNC Shield, for DIRECT CONNECTION TO PC via serial
 
+This fork of the satnogs firmware aims to make the original code cleaner and more modular, with the goal of making it easier to port to different hardware and add features like additional axis, sensor feedback, and PID control.
+
 Firmware [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller).
 
 Repository includes all source files for the SatNOGS rotator controller Firmware, based on the Arduino UNO. using the CNC v3 Shield, instead of the custom SatNOGS PCB.
