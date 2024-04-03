@@ -52,6 +52,10 @@ endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop,
 enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
 int32_t deg2step(float deg);
 float step2deg(int32_t step);
+int32_t eleMaxStepRate = 0;
+int32_t eleMaxStepAcc = 0;
+int32_t aziMaxStepRate = 0;
+int32_t aziMaxStepAcc = 0;
 
 void setup() {
     // Homing switch
@@ -65,14 +69,18 @@ void setup() {
     stepper_az.setEnablePin(aziEN);
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
-    stepper_az.setMaxSpeed(MAX_SPEED);
-    stepper_az.setAcceleration(MAX_ACCELERATION);
+    eleMaxStepRate = deg2step(ELE_VMAX);
+    eleMaxStepAcc = deg2step(ELE_ACC_MAX);
+    stepper_az.setMaxSpeed(eleMaxStepRate);
+    stepper_az.setAcceleration(eleMaxStepAcc);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
     stepper_az.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
     stepper_el.enableOutputs();
-    stepper_el.setMaxSpeed(MAX_SPEED);
-    stepper_el.setAcceleration(MAX_ACCELERATION);
+    aziMaxStepRate = deg2step(AZI_VMAX);
+    stepper_el.setMaxSpeed(aziMaxStepRate);
+    aziMaxStepAcc = deg2step(AZI_ACC_MAX);
+    stepper_el.setAcceleration(aziMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
     // Initialize WDT
