@@ -49,17 +49,17 @@ uint32_t t_run = 0; // run time of uC
 easycomm comm;
 AccelStepper stepper_az(1, aziStep, aziDir);
 AccelStepper stepper_el(1, eleStep, eleDir);
-endstop switch_el(eleMinStop, DEFAULT_HOME_STATE), switch_az(aziMinStop, DEFAULT_HOME_STATE);
+endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop, DEFAULT_HOME_STATE);
 //wdt_timer wdt;
 
-enum _rotator_error homing(int32_t seek_az, int32_t seek_el);
+enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
 int32_t deg2step(float deg);
 float step2deg(int32_t step);
 
 void setup() {
     // Homing switch
-    switch_el.init();
-    switch_az.init();
+    switch_eleMin.init();
+    switch_aziMin.init();
 
     // Serial Communication
     comm.easycomm_init();
@@ -71,6 +71,7 @@ void setup() {
     stepper_az.setMaxSpeed(MAX_SPEED);
     stepper_az.setAcceleration(MAX_ACCELERATION);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
+    stepper_az.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
     stepper_el.enableOutputs();
     stepper_el.setMaxSpeed(MAX_SPEED);
@@ -86,8 +87,8 @@ void loop() {
    // wdt.watchdog_reset();
 
     // Get end stop status
-    rotator.switch_el = switch_el.get_state();
-    rotator.switch_az = switch_az.get_state();
+    rotator.switch_eleMin = switch_eleMin.get_state();
+    rotator.switch_aziMin = switch_aziMin.get_state();
 
     // Run easycomm implementation
     comm.easycomm_proc();
@@ -144,31 +145,31 @@ void loop() {
 /*!
     @brief    Move both axis with one direction in order to find home position,
               end-stop switches
-    @param    seek_az
+    @param    seek_aziMin
               Steps to find home position for azimuth axis
-    @param    seek_el
+    @param    seek_eleMin
               Steps to find home position for elevation axis
     @return   _rotator_error
 */
 /**************************************************************************/
-enum _rotator_error homing(int32_t seek_az, int32_t seek_el) {
+enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
     bool isHome_az = false;
     bool isHome_el = false;
 
     // Move motors to "seek" position
-    stepper_az.moveTo(seek_az);
-    stepper_el.moveTo(seek_el);
+    stepper_az.moveTo(seek_aziMin);
+    stepper_el.moveTo(seek_eleMin);
 
     // Homing loop
     while (isHome_az == false || isHome_el == false) {
         // Update WDT
        // wdt.watchdog_reset();
-        if (switch_el.get_state() == true && !isHome_az) {
+        if (switch_eleMin.get_state() == true && !isHome_az) {
             // Find azimuth home
             stepper_az.moveTo(stepper_az.currentPosition());
             isHome_az = true;
         }
-        if (switch_az.get_state() == true && !isHome_el) {
+        if (switch_aziMin.get_state() == true && !isHome_el) {
             // Find elevation home
             stepper_el.moveTo(stepper_el.currentPosition());
             isHome_el = true;
@@ -209,7 +210,7 @@ enum _rotator_error homing(int32_t seek_az, int32_t seek_el) {
 */
 /**************************************************************************/
 int32_t deg2step(float deg) {
-    return (RATIO * SPR * deg / 360);
+    return (RATIO * SPR * MICROSTEP * deg / 360);
 }
 
 /**************************************************************************/
@@ -222,5 +223,5 @@ int32_t deg2step(float deg) {
 */
 /**************************************************************************/
 float step2deg(int32_t step) {
-    return (360.00 * step / (SPR * RATIO));
+    return (360.00 * step / (SPR * RATIO * MICROSTEP));
 }
