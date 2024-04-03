@@ -13,7 +13,6 @@
 #include <avr/wdt.h>
 #include "globals.h"
 #include "easycomm.h"
-#include "rotator_pins.h"
 
 /**************************************************************************/
 /*!

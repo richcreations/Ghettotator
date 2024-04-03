@@ -22,14 +22,12 @@
  *
  */
 
+#include <config.h>
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
-//#include <../lib/rs485.h>
 #include <../lib/endstop.h>
-//#include <../lib/watchdog.h>
-#include <config.h>
    
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../pins/unoCncV3.h>
@@ -43,7 +41,6 @@
 #ifdef RAMPS_V_1_4_MEGA2560
     #include <../pins/ramps_V_1_4.h>
 #endif
-
 
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
