@@ -11,8 +11,8 @@
 #define RATIO              108L  // Gear ratio of rotator gear box, default 54
 #define MICROSTEP          16L   // Set Microsteps
 #define MIN_PULSE_WIDTH    20    // In microsecond for AccelStepper
-#define AZI_VMAX           90   // In deg/s
-#define ELE_VMAX           90   // In deg/s
+#define AZI_VMAX           90    // In deg/s
+#define ELE_VMAX           90    // In deg/s
 #define AZI_ACC_MAX        120   // In deg/s^2
 #define ELE_ACC_MAX        120   // In deg/s^2
 #define SPR                200L  // Step Per Revolution
