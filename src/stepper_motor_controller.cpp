@@ -24,11 +24,11 @@
 
 #include <AccelStepper.h>
 #include <Wire.h>
-#include <globals.h>
-#include <easycomm.h>
-//#include <rs485.h>
-#include <endstop.h>
-//#include <watchdog.h>
+#include <../lib/globals.h>
+#include <../lib/easycomm.h>
+//#include <../lib/rs485.h>
+#include <../lib/endstop.h>
+//#include <../lib/watchdog.h>
 #include <config.h>
    
 #ifdef UNO_CNC_SHIELD_V_3
