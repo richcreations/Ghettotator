@@ -103,8 +103,8 @@ void loop() {
             // Check home flag
             rotator.control_mode = position;
             // Homing
-            rotator.rotator_error = homing(deg2step(-MAX_M1_ANGLE),
-                                           deg2step(-MAX_M2_ANGLE));
+            rotator.rotator_error = homing(deg2step(-MAX_AZI_ANGLE),
+                                           deg2step(-MAX_ELE_ANGLE));
             if (rotator.rotator_error == no_error) {
                 // No error
                 rotator.rotator_status = idle;
