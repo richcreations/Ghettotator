@@ -33,10 +33,10 @@
 #include <config.h>
    
 #ifdef UNO_CNC_SHIELD_V_3
-    #include <unoCncV3.pins>
+    #include <../pins/unoCncV3.pins>
 #endif
 #ifdef BRUSHES_N_POTS
-    #include <brushesNpots.pins>
+    #include <../pins/brushesNpots.pins>
 #endif
 
 uint32_t t_run = 0; // run time of uC
