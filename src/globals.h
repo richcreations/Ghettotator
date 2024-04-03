@@ -45,7 +45,7 @@ struct _rotator{
     int8_t inside_temperature;                    ///< Inside Temperature
     double park_az, park_el;                      ///< Park position for both axis
     uint8_t fault_az, fault_el;                   ///< Motor drivers fault flag
-    bool switch_az, switch_el;                    ///< End-stop vales
+    bool switch_el, switch_az;                    ///< End-stop vales
 };
 
 _control control_az = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
@@ -57,7 +57,7 @@ _control control_el = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
 _rotator rotator = { .rotator_status = idle, .rotator_error = no_error,
                      .control_mode = position, .homing_flag = false,
                      .inside_temperature = 0, .park_az = 0, .park_el = 0,
-                     .fault_az = LOW, .fault_el = LOW , .switch_az = false,
-                     .switch_el = false};
+                     .fault_az = LOW, .fault_el = LOW , .switch_el = false,
+                     .switch_az = false};
 
 #endif /* LIBRARIES_GLOBALS_H_ */

@@ -183,14 +183,14 @@ public:
                            buffer[2] == '1') {
                     // Get the status of end-stop, azimuth
                     str1 = String("IP1,");
-                    str2 = String(rotator.switch_az, DEC);
+                    str2 = String(rotator.switch_el, DEC);
                     str3 = String("\n");
                     Serial.print(str1 + str2 + str3);
                 } else if (buffer[0] == 'I' && buffer[1] == 'P' &&
                            buffer[2] == '2') {
                     // Get the status of end-stop, elevation
                     str1 = String("IP2,");
-                    str2 = String(rotator.switch_el, DEC);
+                    str2 = String(rotator.switch_az, DEC);
                     str3 = String("\n");
                     Serial.print(str1 + str2 + str3);
                 } else if (buffer[0] == 'I' && buffer[1] == 'P' &&

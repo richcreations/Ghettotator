@@ -22,7 +22,6 @@
  *
  */
 
-
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <globals.h>
@@ -33,17 +32,24 @@
 #include <config.h>
    
 #ifdef UNO_CNC_SHIELD_V_3
-    #include <../pins/unoCncV3.pins>
+    #include <../pins/unoCncV3.h>
 #endif
 #ifdef BRUSHES_N_POTS
-    #include <../pins/brushesNpots.pins>
+    #include <../pins/brushesNpots.h>
 #endif
+#ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
+    #include <../pins/anet_a8_atmega1280.h>
+#endif
+#ifdef RAMPS_V_1_4_MEGA2560
+    #include <../pins/ramps_V_1_4.h>
+#endif
+
 
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
-AccelStepper stepper_az(1, xStep, xDir);
-AccelStepper stepper_el(1, yStep, yDir);
-endstop switch_az(yEndstop, DEFAULT_HOME_STATE), switch_el(xEndstop, DEFAULT_HOME_STATE);
+AccelStepper stepper_az(1, aziStep, aziDir);
+AccelStepper stepper_el(1, eleStep, eleDir);
+endstop switch_el(eleMinStop, DEFAULT_HOME_STATE), switch_az(aziMinStop, DEFAULT_HOME_STATE);
 //wdt_timer wdt;
 
 enum _rotator_error homing(int32_t seek_az, int32_t seek_el);
@@ -52,14 +58,14 @@ float step2deg(int32_t step);
 
 void setup() {
     // Homing switch
-    switch_az.init();
     switch_el.init();
+    switch_az.init();
 
     // Serial Communication
     comm.easycomm_init();
 
     // Stepper Motor setup
-    stepper_az.setEnablePin(EN);
+    stepper_az.setEnablePin(aziEN);
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
     stepper_az.setMaxSpeed(MAX_SPEED);
@@ -80,8 +86,8 @@ void loop() {
    // wdt.watchdog_reset();
 
     // Get end stop status
-    rotator.switch_az = switch_az.get_state();
     rotator.switch_el = switch_el.get_state();
+    rotator.switch_az = switch_az.get_state();
 
     // Run easycomm implementation
     comm.easycomm_proc();
@@ -157,12 +163,12 @@ enum _rotator_error homing(int32_t seek_az, int32_t seek_el) {
     while (isHome_az == false || isHome_el == false) {
         // Update WDT
        // wdt.watchdog_reset();
-        if (switch_az.get_state() == true && !isHome_az) {
+        if (switch_el.get_state() == true && !isHome_az) {
             // Find azimuth home
             stepper_az.moveTo(stepper_az.currentPosition());
             isHome_az = true;
         }
-        if (switch_el.get_state() == true && !isHome_el) {
+        if (switch_az.get_state() == true && !isHome_el) {
             // Find elevation home
             stepper_el.moveTo(stepper_el.currentPosition());
             isHome_el = true;
