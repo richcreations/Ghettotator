@@ -51,8 +51,8 @@ endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop,
 //wdt_timer wdt;
 
 enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
-int32_t deg2step(float deg);
-float step2deg(int32_t step);
+int32_t deg2step(float deg, float ratio, float microsteps);
+float step2deg(int32_t step, float ratio, float microsteps);
 int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
 int32_t aziMaxStepRate = 0;
@@ -71,17 +71,17 @@ void setup() {
     // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
-    eleMaxStepRate = deg2step(ELE_VMAX);
-    eleMaxStepAcc = deg2step(ELE_ACC_MAX);
+    eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
+    eleMaxStepAcc = deg2step(ELE_ACC_MAX, ELE_RATIO, ELE_MICROSTEP);
     stepper_az.setMaxSpeed(eleMaxStepRate);
     stepper_az.setAcceleration(eleMaxStepAcc);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
     stepper_az.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
     stepper_el.enableOutputs();
-    aziMaxStepRate = deg2step(AZI_VMAX);
+    aziMaxStepRate = deg2step(AZI_VMAX, AZI_RATIO, AZI_MICROSTEP);
     stepper_el.setMaxSpeed(aziMaxStepRate);
-    aziMaxStepAcc = deg2step(AZI_ACC_MAX);
+    aziMaxStepAcc = deg2step(AZI_ACC_MAX, AZI_RATIO, AZI_MICROSTEP);
     stepper_el.setAcceleration(aziMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
@@ -101,8 +101,8 @@ void loop() {
     comm.easycomm_proc();
 
     // Get position of both axis
-    control_az.input = step2deg(stepper_az.currentPosition());
-    control_el.input = step2deg(stepper_el.currentPosition());
+    control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
+    control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
 
     // Check rotator status
     if (rotator.rotator_status != error) {
@@ -110,8 +110,8 @@ void loop() {
             // Check home flag
             rotator.control_mode = position;
             // Homing
-            rotator.rotator_error = homing(deg2step(-MAX_AZI_ANGLE),
-                                           deg2step(-MAX_ELE_ANGLE));
+            rotator.rotator_error = homing(deg2step(-MAX_AZI_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           deg2step(-MAX_ELE_ANGLE, ELE_RATIO, ELE_MICROSTEP));
             if (rotator.rotator_error == no_error) {
                 // No error
                 rotator.rotator_status = idle;
@@ -123,8 +123,8 @@ void loop() {
             }
         } else {
             // Control Loop
-            stepper_az.moveTo(deg2step(control_az.setpoint));
-            stepper_el.moveTo(deg2step(control_el.setpoint));
+            stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
+            stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
             rotator.rotator_status = pointing;
             // Move azimuth and elevation motors
             stepper_az.run();
@@ -210,25 +210,25 @@ enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
 /**************************************************************************/
 /*!
     @brief    Convert degrees to steps according to step/revolution, rotator
-              gear box ratio and microstep
+              gear box ratio and microsteps
     @param    deg
               Degrees in float format
     @return   Steps for stepper motor driver, int32_t
 */
 /**************************************************************************/
-int32_t deg2step(float deg) {
-    return (RATIO * SPR * MICROSTEP * deg / 360);
+int32_t deg2step(float deg, float ratio, float microsteps) {
+    return (ratio * SPR * microsteps * deg / 360);
 }
 
 /**************************************************************************/
 /*!
     @brief    Convert steps to degrees according to step/revolution, rotator
-              gear box ratio and microstep
+              gear box ratio and microsteps
     @param    step
               Steps in int32_t format
     @return   Degrees in float format
 */
 /**************************************************************************/
-float step2deg(int32_t step) {
-    return (360.00 * step / (SPR * RATIO * MICROSTEP));
+float step2deg(int32_t step, float ratio, float microsteps) {
+    return (360.00 * step / (SPR * ratio * microsteps));
 }
