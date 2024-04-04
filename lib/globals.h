@@ -1,7 +1,7 @@
 /*!
 * @file globals.h
 *
-* It is a file to define all global variables
+* It is a file to define all global variables (...or at least some of them)
 *
 * Licensed under the GPLv3
 *
