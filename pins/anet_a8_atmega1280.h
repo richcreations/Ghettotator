@@ -1,4 +1,4 @@
-// Truglodite: rename to match anet a8 mainboard https://github.com/ralf-e/ANET-3D-Board-V1.0/blob/master/ANET3D_Board_Schematic.png
+// https://github.com/ralf-e/ANET-3D-Board-V1.0/blob/master/ANET3D_Board_Schematic.png
 #define eleStep      15  // X step
 #define eleDir       21  // X dir
 #define eleEN        14  // XY enable
@@ -10,7 +10,7 @@
 #define polEN        A5  // Z enable
 #define tunStep      1   // E Step
 #define tunDir       0   // E Dir
-// Shield has no built in pullups
+// Again, no hardware pullups
 #define eleMinStop   18  // X endstop
 #define aziMinStop   19  // Y endstop
 #define polMinStop   20  // Z endstop

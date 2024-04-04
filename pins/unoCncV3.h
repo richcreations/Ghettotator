@@ -1,4 +1,4 @@
-// Truglodite: rename to match CNC v3 shield https://osoyoo.com/wp-content/uploads/2017/04/Arduino-CNC-Shield-Scematics-V3.XX_.jpg
+// https://osoyoo.com/wp-content/uploads/2017/04/Arduino-CNC-Shield-Scematics-V3.XX_.jpg
 #define eleStep      2   // X step
 #define eleDir       5   // X dir
 #define eleEN        8   // One pin used for all steppers
