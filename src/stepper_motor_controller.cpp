@@ -35,7 +35,6 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>
-
 #include <../lib/watchdog.h>
 
 uint32_t t_run = 0; // run time of uC
@@ -44,12 +43,20 @@ easycomm comm;
 AccelStepper stepper_el(1, eleStep, eleDir);
 AccelStepper stepper_az(1, aziStep, aziDir);
 endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop, DEFAULT_HOME_STATE);
+#ifdef POLARIZER
+    AccelStepper stepper_po(1, polStep, polDir);
+    endstop switch_polMin(polMinStop, DEFAULT_HOME_STATE);
+#endif
 
 #ifdef WATCHDOG
     wdt_timer wdt;
 #endif
 
-enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
+#ifndef POLARIZER
+    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
+#else
+    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin);
+#endif
 
 int32_t deg2step(float deg, float ratio, float microsteps);
 float step2deg(int32_t step, float ratio, float microsteps);
@@ -58,16 +65,24 @@ int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
 int32_t aziMaxStepRate = 0;
 int32_t aziMaxStepAcc = 0;
+#ifdef POLARIZER
+    int32_t polMaxStepRate = 0;
+    int32_t polMaxStepAcc = 0;
+    float polPot = 0;
+#endif
 
 bool ledState = 0;  //logic
 uint32_t ledPeriod = 1000; // msec
 uint32_t ledTime = 0; //timer
 
 void setup() {
-    // Homing switch
+    // Homing switches
     switch_eleMin.init();
     switch_aziMin.init();
-
+    #ifdef POLARIZER
+        switch_polMin.init();
+        pinMode(polPotPin, INPUT); // init poti pin, no pullup
+    #endif
     // Serial Communication
     comm.easycomm_init();
     
@@ -92,6 +107,17 @@ void setup() {
     stepper_el.setAcceleration(eleMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
+    #ifdef POLARIZER        
+        // Polarizer motor
+        stepper_po.setEnablePin(polEN);
+        stepper_po.setPinsInverted(false, false, true);
+        polMaxStepRate = deg2step(POL_VMAX, POL_RATIO, POL_MICROSTEP);
+        polMaxStepAcc = deg2step(POL_ACC_MAX, POL_RATIO, POL_MICROSTEP);
+        stepper_po.enableOutputs();
+        stepper_po.setMaxSpeed(polMaxStepRate);
+        stepper_po.setAcceleration(polMaxStepAcc);
+        stepper_po.setMinPulseWidth(MIN_PULSE_WIDTH);
+    #endif
     //  WDT
     #ifdef WATCHDOG
         wdt.watchdog_init();
@@ -130,20 +156,34 @@ void loop() {
     // Get end stop status
     rotator.switch_eleMin = switch_eleMin.get_state();
     rotator.switch_aziMin = switch_aziMin.get_state();
+    #ifdef POLARIZER
+        rotator.switch_polMin = switch_polMin.get_state();
+        polPot = float(analogRead(polPotPin));
+    #endif
 
     // Run easycomm implementation
     comm.easycomm_proc();
 
-    // Get position of both axis
+    // Get position of axis
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
+    #ifdef POLARIZER
+        control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
+    #endif
 
     if (rotator.rotator_status != error) {  // No errors
         if (rotator.homing_flag == false) { // Home if homing flag is down
             rotator.control_mode = position;
             // Homing
-            rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+            #ifndef POLARIZER
+                rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
                                            deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
+            #else
+                rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
+                                           deg2step(-POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
+            #endif
+
             if (rotator.rotator_error == no_error) {
                 // No error
                 rotator.rotator_status = idle;
@@ -156,16 +196,32 @@ void loop() {
             }
         } 
         else {  // Move if we're homed
-            stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
-            stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
-            rotator.rotator_status = pointing;
-            // Move azimuth and elevation motors
-            stepper_az.run();
-            stepper_el.run();
-            // Idle rotator
-            if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
-                rotator.rotator_status = idle;
-            }
+            #ifndef POLARIZER
+                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
+                rotator.rotator_status = pointing;
+                // Move azimuth and elevation motors
+                stepper_az.run();
+                stepper_el.run();
+                // Idle rotator
+                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
+                    rotator.rotator_status = idle;
+                }
+            #else
+                control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // setpoint is the pot proportion of step range
+                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
+                stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
+                rotator.rotator_status = pointing;
+                // Move azimuth and elevation motors
+                stepper_az.run();
+                stepper_el.run();
+                stepper_po.run();
+                // Idle rotator
+                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0 && stepper_po.distanceToGo() == 0) {
+                    rotator.rotator_status = idle;
+                }
+            #endif
         }
     } 
     else {  // Error handler, stop motors and disable the motor driver
@@ -173,6 +229,10 @@ void loop() {
         stepper_az.disableOutputs();
         stepper_el.stop();
         stepper_el.disableOutputs();
+        #ifdef POLARIZER
+            stepper_po.stop();
+            stepper_po.disableOutputs();           
+        #endif
         if (rotator.rotator_error != homing_error) {
             // Reset error according to error value
             rotator.rotator_error = no_error;
@@ -192,77 +252,161 @@ void loop() {
     @return   _rotator_error
 */
 /**************************************************************************/
-enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
-    bool isHome_az = false;
-    bool isHome_el = false;
+#ifndef POLARIZER
+    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
+        bool isHome_az = false;
+        bool isHome_el = false;
 
-    // Move motors to "seek" position
-    stepper_az.moveTo(seek_aziMin);
-    stepper_el.moveTo(seek_eleMin);
+        // Move motors to "seek" position
+        stepper_az.moveTo(seek_aziMin);
+        stepper_el.moveTo(seek_eleMin);
 
-    // Homing loop
-    while (isHome_az == false || isHome_el == false) {
-        // Update WDT
-       // wdt.watchdog_reset();
-        if (switch_aziMin.get_state() == true && !isHome_az) {
-            // Found azimuth home
-            stepper_az.moveTo(stepper_az.currentPosition());
-            isHome_az = true;
-        }
-        if (switch_eleMin.get_state() == true && !isHome_el) {
-            // Found elevation home
-            stepper_el.moveTo(stepper_el.currentPosition());
-            isHome_el = true;
-        }
-        // Check if the rotator goes out of limits or something goes wrong (in
-        // mechanical)
-        if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
-            (stepper_el.distanceToGo() == 0 && !isHome_el)){
-            return homing_error;
-        }
-        // Move motors
-        stepper_az.run();
-        stepper_el.run();
-            
-        // Update WDT
-        #ifdef WATCHDOG
-            wdt.watchdog_reset();
-        #endif
-        
-        #ifndef DEBUG
-            // LED heartbeat: fast blink while homing
-            if(ledExists && millis() - ledTime > ledPeriod/6)   {
-                if(ledState)    {
-                    digitalWrite(ledPin,LOW);
-                    ledState = 0;
-                    ledTime = millis();
-                }
-                else{
-                    digitalWrite(ledPin,HIGH);
-                    ledState = 1;
-                    ledTime = millis();
-                }
+        // Homing loop
+        while (isHome_az == false || isHome_el == false) {
+            // Update WDT
+        // wdt.watchdog_reset();
+            if (switch_aziMin.get_state() == true && !isHome_az) {
+                // Found azimuth home
+                stepper_az.moveTo(stepper_az.currentPosition());
+                isHome_az = true;
             }
-        #endif
+            if (switch_eleMin.get_state() == true && !isHome_el) {
+                // Found elevation home
+                stepper_el.moveTo(stepper_el.currentPosition());
+                isHome_el = true;
+            }
+            // Check if the rotator goes out of limits or something goes wrong (in
+            // mechanical)
+            if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
+                (stepper_el.distanceToGo() == 0 && !isHome_el)){
+                return homing_error;
+            }
+            // Move motors
+            stepper_az.run();
+            stepper_el.run();
+                
+            // Update WDT
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            
+            #ifndef DEBUG
+                // LED heartbeat: fast blink while homing
+                if(ledExists && millis() - ledTime > ledPeriod/6)   {
+                    if(ledState)    {
+                        digitalWrite(ledPin,LOW);
+                        ledState = 0;
+                        ledTime = millis();
+                    }
+                    else{
+                        digitalWrite(ledPin,HIGH);
+                        ledState = 1;
+                        ledTime = millis();
+                    }
+                }
+            #endif
+        }
+
+
+        // Delay to Deccelerate and homing, to complete the movements
+        uint32_t time = millis();
+        while (millis() - time < HOME_DELAY) {
+            wdt.watchdog_reset();
+            stepper_az.run();
+            stepper_el.run();
+        }
+        // Set the home position and reset all critical control variables
+        stepper_az.setCurrentPosition(0);
+        stepper_el.setCurrentPosition(0);
+        control_az.setpoint = 0;
+        control_el.setpoint = 0;
+
+        return no_error;
     }
+#else
+    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin) {
+        bool isHome_az = false;
+        bool isHome_el = false;
+        bool isHome_po = false;
+
+        // Move motors to "seek" position
+        stepper_az.moveTo(seek_aziMin);
+        stepper_el.moveTo(seek_eleMin);
+        stepper_po.moveTo(seek_polMin);
+
+        // Homing loop
+        while (isHome_az == false || isHome_el == false || isHome_po == false) {
+            // Update WDT
+        // wdt.watchdog_reset();
+            if (switch_aziMin.get_state() == true && !isHome_az) {
+                // Found azimuth home
+                stepper_az.moveTo(stepper_az.currentPosition());
+                isHome_az = true;
+            }
+            if (switch_eleMin.get_state() == true && !isHome_el) {
+                // Found elevation home
+                stepper_el.moveTo(stepper_el.currentPosition());
+                isHome_el = true;
+            }
+            if (switch_polMin.get_state() == true && !isHome_po) {
+                // Found elevation home
+                stepper_po.moveTo(stepper_po.currentPosition());
+                isHome_po = true;
+            }
+            // Check if the rotator goes out of limits or something goes wrong (in
+            // mechanical)
+            if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
+                (stepper_el.distanceToGo() == 0 && !isHome_el) ||
+                (stepper_po.distanceToGo() == 0 && !isHome_po)){
+                return homing_error;
+            }
+            // Move motors
+            stepper_az.run();
+            stepper_el.run();
+            stepper_po.run();
+                
+            // Update WDT
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            
+            #ifndef DEBUG
+                // LED heartbeat: fast blink while homing
+                if(ledExists && millis() - ledTime > ledPeriod/6)   {
+                    if(ledState)    {
+                        digitalWrite(ledPin,LOW);
+                        ledState = 0;
+                        ledTime = millis();
+                    }
+                    else{
+                        digitalWrite(ledPin,HIGH);
+                        ledState = 1;
+                        ledTime = millis();
+                    }
+                }
+            #endif
+        }
 
 
-    // Delay to Deccelerate and homing, to complete the movements
-    uint32_t time = millis();
-    while (millis() - time < HOME_DELAY) {
-       // wdt.watchdog_reset();
-        stepper_az.run();
-        stepper_el.run();
+        // Delay to Deccelerate and homing, to complete the movements
+        uint32_t time = millis();
+        while (millis() - time < HOME_DELAY) {
+            wdt.watchdog_reset();
+            stepper_az.run();
+            stepper_el.run();
+            stepper_el.run();
+        }
+        // Set the home position and reset all critical control variables
+        stepper_az.setCurrentPosition(0);
+        stepper_el.setCurrentPosition(0);
+        stepper_po.setCurrentPosition(0);
+        control_az.setpoint = 0;
+        control_el.setpoint = 0;
+        control_po.setpoint = 0;
+
+        return no_error;
     }
-    // Set the home position and reset all critical control variables
-    stepper_az.setCurrentPosition(0);
-    stepper_el.setCurrentPosition(0);
-    control_az.setpoint = 0;
-    control_el.setpoint = 0;
-
-    return no_error;
-}
-
+#endif
 /**************************************************************************/
 /*!
     @brief    Convert degrees to steps according to step/revolution, rotator

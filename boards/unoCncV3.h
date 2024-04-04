@@ -15,8 +15,10 @@
 // No boards with hardware pullups so far
 #define aziMinStop   9   // X endstop
 #define eleMinStop   10  // Y endstop
-#define eleMinStop   11  // Z endstop
+#define polMinStop   11  // Z endstop
 
-// sheild has no built in led... fake it
+// sheild has no built in led...
 #define ledExists    0  // onboard led
 #define ledPin       0  // onboard led
+
+#define polPotPin    A0 // Polarize potentiometer

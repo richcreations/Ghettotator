@@ -26,3 +26,5 @@
 
 #define ledExists    1  // onboard led
 #define ledPin       13  // onboard led
+
+#define polPotPin    A3  // Polarize potentiometer

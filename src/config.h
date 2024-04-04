@@ -21,6 +21,14 @@
 #define ELE_MIN_ANGLE      0     // Minimum angle of elevation
 #define ELE_MAX_ANGLE      180   // Maximum angle of elevation
 
+#define POLARIZER                // Uncomment to enable polarity rotation motor feature (pot wired between 0V and 5V)
+#define POL_RATIO          108.0 // Elevation mechanical gear ratio
+#define POL_MICROSTEP      16.0  // Elevation driver microsteps
+#define POL_VMAX           300   // Antenna deg/s
+#define POL_ACC_MAX        120   // Antenna deg/s^2
+#define POL_MIN_ANGLE      0     // Minimum angle of elevation
+#define POL_MAX_ANGLE      180.0 // Maximum angle of elevation
+
 #define SPR                200.0 // Motor steps per revolution (200.0 for standard 1.8degree motors)
 #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 #define DEFAULT_HOME_STATE LOW   // Change to LOW according to Home sensor

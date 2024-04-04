@@ -18,3 +18,5 @@
 
 #define ledExists    1   // onboard led
 #define ledPin       A4  // onboard led
+
+#define polPotPin    A3  // Polarize potentiometer (pin #3 on LCD connector)
