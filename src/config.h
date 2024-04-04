@@ -23,7 +23,7 @@
 #define MIN_ELE_ANGLE      0     // Minimum angle of elevation
 #define MAX_ELE_ANGLE      180   // Maximum angle of elevation
 #define DEFAULT_HOME_STATE LOW   // Change to LOW according to Home sensor
-#define HOME_DELAY         500   // Time for homing Deceleration in millisecond
+#define HOME_DELAY         500   // millis to keep moving after hitting endstop??! WTF lol
 
 #define WATCHDOG                 // Disable motors if WDT is triggered
 //#define DEBUG                  // Uncomment and move debug led to troubled spot 
