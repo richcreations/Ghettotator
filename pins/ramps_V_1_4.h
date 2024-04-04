@@ -1,3 +1,4 @@
+// Pins file for Ramps v1.4... who doesn't have a spare one laying around these days?
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-2.png
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-1.png
 #define eleStep      A0  // X step

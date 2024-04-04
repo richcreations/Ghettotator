@@ -1,3 +1,4 @@
+// Pins file for the Anet A8 classic 3d printer motherboard w/ mega1280p and built in a4988's
 // https://github.com/ralf-e/ANET-3D-Board-V1.0/blob/master/ANET3D_Board_Schematic.png
 #define eleStep      15  // X step
 #define eleDir       21  // X dir

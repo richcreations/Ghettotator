@@ -1,3 +1,4 @@
+// Pins file for the Uno CNC Shield V3
 // https://osoyoo.com/wp-content/uploads/2017/04/Arduino-CNC-Shield-Scematics-V3.XX_.jpg
 #define eleStep      2   // X step
 #define eleDir       5   // X dir
