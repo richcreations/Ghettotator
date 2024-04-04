@@ -28,4 +28,19 @@
 #define SAMPLE_TIME        0.1   // Control loop in sec
 
 #define WATCHDOG                 // Disable motors if WDT is triggered
-//#define DEBUG                  // Uncomment and move debug led to troubled spot 
+//#define DEBUG    // Uncomment and move debug led to troubled spot 
+
+
+
+#ifdef UNO_CNC_SHIELD_V_3
+    #include <../pins/unoCncV3.h>
+#endif
+#ifdef BRUSHES_N_POTS
+    #include <../pins/brushesNpots.h>
+#endif
+#ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
+    #include <../pins/anet_a8_atmega1280.h>
+#endif
+#ifdef RAMPS_V_1_4_MEGA2560
+    #include <../pins/ramps_V_1_4.h>
+#endif
