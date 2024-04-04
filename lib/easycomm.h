@@ -18,7 +18,6 @@
 
 #define RS485_TX_TIME 9     ///< Delay "t"ms to write in serial for RS485 implementation
 #define BUFFER_SIZE   256   ///< Set the size of serial buffer
-#define BAUDRATE      19200 ///< Set the Baudrate of easycomm 3 protocol for rs485
 
 //rs485 rs485(RS485_DIR, RS485_TX_TIME);
 
@@ -37,7 +36,7 @@ public:
     /**************************************************************************/
     void easycomm_init() {
        // rs485.begin(BAUDRATE);
-	    Serial.begin(9600);
+	    Serial.begin(BAUDRATE);
     }
 
     /**************************************************************************/

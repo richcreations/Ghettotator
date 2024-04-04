@@ -111,7 +111,7 @@ void setup() {
 
 void loop() {
     #ifndef DEBUG
-        // LED heartbeat: 1hz toggle if loop is alive
+        // LED heartbeat: slow blink when loop is running
         if(ledExists && millis() - ledTime > ledPeriod)   {
             if(ledState)    {
                 digitalWrite(ledPin,LOW);
@@ -149,14 +149,12 @@ void loop() {
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
 
-    // Check rotator status
-    if (rotator.rotator_status != error) {
-        if (rotator.homing_flag == false) {
-            // Check home flag
+    if (rotator.rotator_status != error) {  // No errors
+        if (rotator.homing_flag == false) { // Home if homing flag is down
             rotator.control_mode = position;
             // Homing
-            rotator.rotator_error = homing(deg2step(-MAX_AZI_ANGLE, AZI_RATIO, AZI_MICROSTEP),
-                                           deg2step(-MAX_ELE_ANGLE, ELE_RATIO, ELE_MICROSTEP));
+            rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
             if (rotator.rotator_error == no_error) {
                 // No error
                 rotator.rotator_status = idle;
@@ -168,9 +166,7 @@ void loop() {
                 rotator.rotator_error = homing_error;
             }
         } 
-
-        else {
-            // Control Loop
+        else {  // Move if we're homed
             stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
             stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
             rotator.rotator_status = pointing;
@@ -183,8 +179,7 @@ void loop() {
             }
         }
     } 
-    else {
-        // Error handler, stop motors and disable the motor driver
+    else {  // Error handler, stop motors and disable the motor driver
         stepper_az.stop();
         stepper_az.disableOutputs();
         stepper_el.stop();
@@ -229,7 +224,6 @@ enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
             // Found elevation home
             stepper_el.moveTo(stepper_el.currentPosition());
             isHome_el = true;
-
         }
         // Check if the rotator goes out of limits or something goes wrong (in
         // mechanical)
@@ -240,6 +234,27 @@ enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
         // Move motors
         stepper_az.run();
         stepper_el.run();
+            
+        // Update WDT
+        #ifdef WATCHDOG
+            wdt.watchdog_reset();
+        #endif
+        
+        #ifndef DEBUG
+            // LED heartbeat: fast blink while homing
+            if(ledExists && millis() - ledTime > ledPeriod/6)   {
+                if(ledState)    {
+                    digitalWrite(ledPin,LOW);
+                    ledState = 0;
+                    ledTime = millis();
+                }
+                else{
+                    digitalWrite(ledPin,HIGH);
+                    ledState = 1;
+                    ledTime = millis();
+                }
+            }
+        #endif
     }
 
 
