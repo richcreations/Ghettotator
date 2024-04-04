@@ -33,7 +33,7 @@ public:
     */
     /**************************************************************************/
     void init() {
-        pinMode(_pin, INPUT_PULLUP);  // OK for now, because v3 sheild has no pullups
+        pinMode(_pin, INPUT_PULLUP);  // no boards with hardware pullups so far...
     }
 
     /**************************************************************************/

@@ -8,19 +8,21 @@
 //#define RAMPS_V_1_4_MEGA2560
 
 #define SAMPLE_TIME        0.1   // Control loop in sec
-#define AZI_RATIO          108L  // Azimuth gear ratio
-#define ELE_RATIO          108L  // Elevation gear ratio
-#define AZI_MICROSTEP      16L   // Azimuth driver microsteps
-#define ELE_MICROSTEP      16L   // Elevation driver microsteps
+#define AZI_RATIO          108.0 // Azimuth gear ratio
+#define ELE_RATIO          108.0 // Elevation gear ratio
+#define AZI_MICROSTEP      16.0  // Azimuth driver microsteps
+#define ELE_MICROSTEP      16.0  // Elevation driver microsteps
 #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
-#define AZI_VMAX           90    // deg/s
-#define ELE_VMAX           90    // deg/s
-#define AZI_ACC_MAX        120   // deg/s^2
-#define ELE_ACC_MAX        120   // deg/s^2
-#define SPR                200L  // Step Per Revolution (200 for standard 1.8degree motors)
+#define AZI_VMAX           300   // motor deg/s
+#define ELE_VMAX           300   // motor deg/s
+#define AZI_ACC_MAX        120   // motor deg/s^2
+#define ELE_ACC_MAX        120   // motor deg/s^2
+#define SPR                200.0 // Step Per Revolution (200 for standard 1.8degree motors)
 #define MIN_AZI_ANGLE      0     // Minimum angle of azimuth
 #define MAX_AZI_ANGLE      360   // Maximum angle of azimuth
 #define MIN_ELE_ANGLE      0     // Minimum angle of elevation
 #define MAX_ELE_ANGLE      180   // Maximum angle of elevation
 #define DEFAULT_HOME_STATE LOW   // Change to LOW according to Home sensor
-#define HOME_DELAY         12000 // Time for homing Deceleration in millisecond
+#define HOME_DELAY         500   // Time for homing Deceleration in millisecond
+
+//#define DEBUG                  // Uncomment and move debug led to troubled spot 

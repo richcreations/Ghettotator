@@ -42,6 +42,11 @@
     #include <../pins/ramps_V_1_4.h>
 #endif
 
+#ifdef DEBUG
+    bool debug = 1;
+#endif
+
+
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
@@ -68,31 +73,34 @@ void setup() {
 
     // Serial Communication
     comm.easycomm_init();
-digitalWrite(ledPin,HIGH);
+    
     // Stepper Motor setup
     stepper_az.setEnablePin(aziEN);
     // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
-    eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
-    eleMaxStepAcc = deg2step(ELE_ACC_MAX, ELE_RATIO, ELE_MICROSTEP);
+    aziMaxStepRate = deg2step(AZI_VMAX, AZI_RATIO, AZI_MICROSTEP);
+    aziMaxStepAcc = deg2step(AZI_ACC_MAX, AZI_RATIO, AZI_MICROSTEP);
     stepper_az.setMaxSpeed(aziMaxStepRate);
     stepper_az.setAcceleration(aziMaxStepAcc);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
+
     stepper_el.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
+    eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
+    eleMaxStepAcc = deg2step(ELE_ACC_MAX, ELE_RATIO, ELE_MICROSTEP);
     stepper_el.enableOutputs();
-    aziMaxStepRate = deg2step(AZI_VMAX, AZI_RATIO, AZI_MICROSTEP);
     stepper_el.setMaxSpeed(eleMaxStepRate);
-    aziMaxStepAcc = deg2step(AZI_ACC_MAX, AZI_RATIO, AZI_MICROSTEP);
     stepper_el.setAcceleration(eleMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
     // Initialize WDT
    // wdt.watchdog_init();
+   
 }
 
 void loop() {
+    #ifndef DEBUG
     // LED heartbeat
     if(ledExists && millis() - ledTime > ledPeriod)   {
         if(ledState)    {
@@ -106,6 +114,15 @@ void loop() {
             ledTime = millis();
         }
     }
+    // debug led
+    #endif
+
+    // Debug LED on... put this where SHTF
+    #ifdef DEBUG
+        if(ledExists)   {
+            digitalWrite(ledPin,HIGH); //turn on led while waiting for motor init
+        }
+    #endif
 
     // Update WDT
    // wdt.watchdog_reset();
@@ -133,12 +150,15 @@ void loop() {
                 // No error
                 rotator.rotator_status = idle;
                 rotator.homing_flag = true;
-            } else {
+            } 
+            else {
                 // Error
                 rotator.rotator_status = error;
                 rotator.rotator_error = homing_error;
             }
-        } else {
+        } 
+
+        else {
             // Control Loop
             stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
             stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -151,7 +171,8 @@ void loop() {
                 rotator.rotator_status = idle;
             }
         }
-    } else {
+    } 
+    else {
         // Error handler, stop motors and disable the motor driver
         stepper_az.stop();
         stepper_az.disableOutputs();
@@ -188,15 +209,16 @@ enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
     while (isHome_az == false || isHome_el == false) {
         // Update WDT
        // wdt.watchdog_reset();
-        if (switch_eleMin.get_state() == true && !isHome_az) {
-            // Find azimuth home
+        if (switch_aziMin.get_state() == true && !isHome_az) {
+            // Found azimuth home
             stepper_az.moveTo(stepper_az.currentPosition());
             isHome_az = true;
         }
-        if (switch_aziMin.get_state() == true && !isHome_el) {
-            // Find elevation home
+        if (switch_eleMin.get_state() == true && !isHome_el) {
+            // Found elevation home
             stepper_el.moveTo(stepper_el.currentPosition());
             isHome_el = true;
+
         }
         // Check if the rotator goes out of limits or something goes wrong (in
         // mechanical)
@@ -204,10 +226,12 @@ enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
             (stepper_el.distanceToGo() == 0 && !isHome_el)){
             return homing_error;
         }
-        // Move motors to "seek" position
+        // Move motors
         stepper_az.run();
         stepper_el.run();
     }
+
+
     // Delay to Deccelerate and homing, to complete the movements
     uint32_t time = millis();
     while (millis() - time < HOME_DELAY) {

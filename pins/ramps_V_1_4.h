@@ -1,4 +1,5 @@
-// https://kingshobbiesbrasil.wixsite.com/p3dp/f-rum/projetos-dicas/esquema-eletronico-da-placa-anet-a8
+// https://osoyoo.com/wp-content/uploads/2016/07/Schematic-2.png
+// https://osoyoo.com/wp-content/uploads/2016/07/Schematic-1.png
 #define aziStep      A0  // X step
 #define aziDir       A1  // X direction
 #define aziEN        38  // X enable
