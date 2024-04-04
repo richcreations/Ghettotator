@@ -35,18 +35,7 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>
-#ifdef UNO_CNC_SHIELD_V_3
-    #include <../pins/unoCncV3.h>
-#endif
-#ifdef BRUSHES_N_POTS
-    #include <../pins/brushesNpots.h>
-#endif
-#ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
-    #include <../pins/anet_a8_atmega1280.h>
-#endif
-#ifdef RAMPS_V_1_4_MEGA2560
-    #include <../pins/ramps_V_1_4.h>
-#endif
+
 #include <../lib/watchdog.h>
 
 uint32_t t_run = 0; // run time of uC
