@@ -16,10 +16,7 @@
 //#include "rs485.h"
 #include "globals.h"
 
-#define RS485_TX_TIME 9     ///< Delay "t"ms to write in serial for RS485 implementation
 #define BUFFER_SIZE   256   ///< Set the size of serial buffer
-
-//rs485 rs485(RS485_DIR, RS485_TX_TIME);
 
 /**************************************************************************/
 /*!
@@ -31,11 +28,10 @@ public:
 
     /**************************************************************************/
     /*!
-        @brief    Initialize the RS485 bus
+        @brief    Initialize the serial bus
     */
     /**************************************************************************/
     void easycomm_init() {
-       // rs485.begin(BAUDRATE);
 	    Serial.begin(BAUDRATE);
     }
 
