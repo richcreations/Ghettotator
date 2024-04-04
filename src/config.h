@@ -25,4 +25,5 @@
 #define DEFAULT_HOME_STATE LOW   // Change to LOW according to Home sensor
 #define HOME_DELAY         500   // Time for homing Deceleration in millisecond
 
+#define WATCHDOG                 // Disable motors if WDT is triggered
 //#define DEBUG                  // Uncomment and move debug led to troubled spot 

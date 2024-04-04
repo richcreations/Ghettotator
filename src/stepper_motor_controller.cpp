@@ -1,5 +1,8 @@
 /*!
  * @file stepper_motor_controller.ino
+Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors. 
+
+ ...old doc reference below
  *
  * This is the documentation for satnogs rotator controller firmware
  * for stepper motors configuration. The board (PCB) is placed in
@@ -22,13 +25,16 @@
  *
  */
 
+#ifdef DEBUG
+    bool debug = 1;
+#endif
+
 #include <config.h>
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>
-   
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../pins/unoCncV3.h>
 #endif
@@ -41,28 +47,30 @@
 #ifdef RAMPS_V_1_4_MEGA2560
     #include <../pins/ramps_V_1_4.h>
 #endif
-
-#ifdef DEBUG
-    bool debug = 1;
-#endif
-
+#include <../lib/watchdog.h>
 
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
-AccelStepper stepper_az(1, aziStep, aziDir);
 AccelStepper stepper_el(1, eleStep, eleDir);
+AccelStepper stepper_az(1, aziStep, aziDir);
 endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop, DEFAULT_HOME_STATE);
-//wdt_timer wdt;
+
+#ifdef WATCHDOG
+    wdt_timer wdt;
+#endif
 
 enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
+
 int32_t deg2step(float deg, float ratio, float microsteps);
 float step2deg(int32_t step, float ratio, float microsteps);
+
 int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
 int32_t aziMaxStepRate = 0;
 int32_t aziMaxStepAcc = 0;
-bool ledState = 0;
+
+bool ledState = 0;  //logic
 uint32_t ledPeriod = 1000; // msec
 uint32_t ledTime = 0; //timer
 
@@ -74,7 +82,7 @@ void setup() {
     // Serial Communication
     comm.easycomm_init();
     
-    // Stepper Motor setup
+    // Azimuth motor
     stepper_az.setEnablePin(aziEN);
     // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.setPinsInverted(false, false, true);
@@ -85,6 +93,7 @@ void setup() {
     stepper_az.setAcceleration(aziMaxStepAcc);
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
 
+    // Elevation motor
     stepper_el.setEnablePin(eleEN);
     stepper_el.setPinsInverted(false, false, true);
     eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
@@ -94,27 +103,27 @@ void setup() {
     stepper_el.setAcceleration(eleMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
-    // Initialize WDT
-   // wdt.watchdog_init();
-   
+    //  WDT
+    #ifdef WATCHDOG
+        wdt.watchdog_init();
+    #endif
 }
 
 void loop() {
     #ifndef DEBUG
-    // LED heartbeat
-    if(ledExists && millis() - ledTime > ledPeriod)   {
-        if(ledState)    {
-            digitalWrite(ledPin,LOW);
-            ledState = 0;
-            ledTime = millis();
+        // LED heartbeat: 1hz toggle if loop is alive
+        if(ledExists && millis() - ledTime > ledPeriod)   {
+            if(ledState)    {
+                digitalWrite(ledPin,LOW);
+                ledState = 0;
+                ledTime = millis();
+            }
+            else{
+                digitalWrite(ledPin,HIGH);
+                ledState = 1;
+                ledTime = millis();
+            }
         }
-        else{
-            digitalWrite(ledPin,HIGH);
-            ledState = 1;
-            ledTime = millis();
-        }
-    }
-    // debug led
     #endif
 
     // Debug LED on... put this where SHTF
@@ -125,7 +134,9 @@ void loop() {
     #endif
 
     // Update WDT
-   // wdt.watchdog_reset();
+    #ifdef WATCHDOG
+        wdt.watchdog_reset();
+    #endif
 
     // Get end stop status
     rotator.switch_eleMin = switch_eleMin.get_state();
