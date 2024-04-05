@@ -1,6 +1,6 @@
-/* Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors. 
+/* Wire Wiggler: Firmware for an antenna rotator using nc controllers with stepper motors.
 
- ...old doc reference below
+ ...old reference below
  *
  * This is the documentation for satnogs rotator controller firmware
  * for stepper motors configuration. The board (PCB) is placed in
@@ -28,7 +28,8 @@
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
 
-// syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
+// syntax: AccelStepper stepper_x(interface, stepPin, dirPin);
+// interface 1=AccelStepper::DRIVER ...aka standard STEP/DIR drivers
 AccelStepper stepper_el(1, eleStepPin, eleDirPin);
 AccelStepper stepper_az(1, aziStepPin, aziDirPin);
 

@@ -18,37 +18,37 @@ enum _control_mode {
 };
 
 struct _control{
-    float input;          ///< Motor Position feedback in deg
-    float input_prv;      ///< T-1 Motor Position feedback in deg
-    float speed;          ///< Motor Rotation speed in deg/s
-    float setpoint;       ///< Position set point in deg
-    float setpoint_speed; ///< Speed set point in deg/s
-    uint16_t load;         ///< Motor Load in mA
-    double u;              ///< Control signal range 0-255
-    double p, i, d;        ///< Control gains
+    float input;           // Motor Position feedback in deg
+    float input_prv;       // T-1 Motor Position feedback in deg
+    float speed;           // Motor Rotation speed in deg/s
+    float setpoint;        // Position set point in deg
+    float setpoint_speed;  // Speed set point in deg/s
+    uint16_t load;         // Motor Load in mA
+    double u;              // Control signal range 0-255
+    double p, i, d;        // Control gains
 };
 
 #ifndef POLARIZER
     struct _rotator{
-        volatile enum _rotator_status rotator_status; ///< Rotator status
-        volatile enum _rotator_error rotator_error;   ///< Rotator error
-        enum _control_mode control_mode;              ///< Control mode
-        bool homing_flag;                             ///< Homing flag
-        int8_t inside_temperature;                    ///< Inside Temperature
-        double park_az, park_el;                      ///< Park position for both axis
-        uint8_t fault_az, fault_el;                   ///< Motor drivers fault flag
-        bool switch_eleMin, switch_aziMin;                    ///< End-stop vales
+        volatile enum _rotator_status rotator_status; // Rotator status
+        volatile enum _rotator_error rotator_error;   // Rotator error
+        enum _control_mode control_mode;              // Control mode
+        bool homing_flag;                             // Homing flag
+        int8_t inside_temperature;                    // Inside Temperature
+        double park_az, park_el;                      // Park position for both axis
+        uint8_t fault_az, fault_el;                   // Motor drivers fault flag
+        bool switch_eleMin, switch_aziMin;            // End-stop values
     };
 #else
     struct _rotator{
-        volatile enum _rotator_status rotator_status; ///< Rotator status
-        volatile enum _rotator_error rotator_error;   ///< Rotator error
-        enum _control_mode control_mode;              ///< Control mode
-        bool homing_flag;                             ///< Homing flag
-        int8_t inside_temperature;                    ///< Inside Temperature
-        float park_az, park_el, park_po;             ///< Park position for both axis
-        uint8_t fault_az, fault_el, fault_po;         ///< Motor drivers fault flag
-        bool switch_eleMin, switch_aziMin, switch_polMin;  ///< End-stop vales
+        volatile enum _rotator_status rotator_status;      // Rotator status
+        volatile enum _rotator_error rotator_error;        // Rotator error
+        enum _control_mode control_mode;                   // Control mode
+        bool homing_flag;                                  // Homing flag
+        int8_t inside_temperature;                         // Inside Temperature
+        float park_az, park_el, park_po;                   // Park position for both axis
+        uint8_t fault_az, fault_el, fault_po;              // Motor drivers fault flag
+        bool switch_eleMin, switch_aziMin, switch_polMin;  // End-stop values
     };
 #endif
 
