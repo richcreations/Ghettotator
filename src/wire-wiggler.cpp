@@ -394,10 +394,10 @@ void loop() {
 
 // Convert degrees to steps
 int32_t deg2step(float deg, float ratio, float microsteps) {
-    return (ratio * STEPS_PER_MTR_REV * microsteps * deg / 360.0);
+    return (ratio * SPR * microsteps * deg / 360.0);
 }
 
 // Convert steps to degrees
 float step2deg(int32_t step, float ratio, float microsteps) {
-    return (360.00 * step / (STEPS_PER_MTR_REV * ratio * microsteps));
+    return (360.00 * step / (SPR * ratio * microsteps));
 }
