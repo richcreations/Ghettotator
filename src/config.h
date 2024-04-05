@@ -1,4 +1,5 @@
-// USER CONFIGURATION: Edit this file to suit your specific build. Most times this is the only file that needs to be touch.
+// USER CONFIGURATION: Edit this file to suit your specific build. 
+// Most times this is the only file that needs to be touch.
 
 // Uncomment only one board from the list below... see boards file for more info
 // If using a custom board file, leave all these commented, and use the custom board 
@@ -10,17 +11,18 @@
 #define ANET_A8_ATMEGA1280_PRINTER_BOARD
 //#define RAMPS_V_1_4_MEGA2560
 
-//#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board.
+//#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
+// Uncomment to enable antenna polarity rotator feature (poti from 0V to 5V)
+#define POLARIZER                 
 
-#define POLARIZER              // Uncomment to enable antenna polarity rotator feature (poti from 0V to 5V)
+// Uncomment and move debug led to troubled spot 
+//#define DEBUG                   
 
-//#define DEBUG                  // Uncomment and move debug led to troubled spot 
+// Disable motors if WDT is triggered
+#define WATCHDOG                  
 
-#define WATCHDOG                 // Disable motors if WDT is triggered
-
-
-// The following lines can be uncommented and vales changed to overide default settings (default settings shown for reference)
+// The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)
 
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
