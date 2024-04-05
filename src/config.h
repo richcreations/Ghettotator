@@ -14,10 +14,13 @@
 
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
-// Uncomment to enable antenna polarity rotator feature (poti from 0V to 5V)
+// Uncomment to enable antenna polarity rotator feature (poti from 0V to Vcc)
 #define POLARIZER                 
 
-// Uncomment and move debug led to troubled spot 
+// Uncomment to enable parking feature
+//#define PARKING
+
+// Uncomment and move debug led to troubled spot
 //#define DEBUG                   
 
 // Disable motors if WDT is triggered
@@ -29,29 +32,32 @@
 
 // #define AZI_RATIO          57.0  // Azimuth mechanical gear ratio
 // #define AZI_MICROSTEP      16.0  // Azimuth stepper driver microstepping
-// #define AZI_VMAX           300   // Antenna deg/s
-// #define AZI_ACC_MAX        120   // Antenna deg/s^2
+// #define AZI_VMAX           300.0 // Antenna deg/s
+// #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0     // Minimum antenna azimuth angle
-// #define AZI_MAX_ANGLE      360   // Maximum antenna azimuth angle
+// #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
+// #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
 // #define ELE_RATIO          57.0  // Elevation mechanical gear ratio
 // #define ELE_MICROSTEP      16.0  // Elevation stepper driver microstepping
-// #define ELE_VMAX           300   // Antenna deg/s
-// #define ELE_ACC_MAX        120   // Antenna deg/s^2
-// #define ELE_MIN_ANGLE      0     // Minimum antenna elevation angle
-// #define ELE_MAX_ANGLE      180   // Maximum antenna elevation angle
+// #define ELE_VMAX           300.0 // Antenna deg/s
+// #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
+// #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
+// #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
+// #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
+// #define ELE_PARK_CLEARANCE 10.0  // Antenna elevation parking clearance, stay above this value until azi is in park position
 
 // #define POL_RATIO          57.0  // Polarization mechanical gear ratio
 // #define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping
-// #define POL_VMAX           300   // Antenna deg/s
-// #define POL_ACC_MAX        120   // Antenna deg/s^2
-// #define POL_MIN_ANGLE      0     // Minimum antenna polarization angle
+// #define POL_VMAX           300.0 // Antenna deg/s
+// #define POL_ACC_MAX        120.0 // Antenna deg/s^2
+// #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
+// #define POL_PARK_ANGLE     0.0   // Antenna polarizer parking position
 
 // #define SPR                200.0 // Motor steps per revolution (200.0 for standard 1.8degree motors)
 // #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 // #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches
 // #define HOME_DELAY         2000  // millis to keep moving after hitting endstop (time to settle before resetting zeros)
-// #define SAMPLE_TIME        0.1   // Control loop in sec
 
 

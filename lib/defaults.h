@@ -40,7 +40,11 @@
 #ifndef AZI_MAX_ANGLE
     #define AZI_MAX_ANGLE      360   // Maximum antenna azimuth angle
 #endif
-
+#ifdef PARKING
+    #ifndef AZI_PARK_ANGLE
+        #define AZI_PARK_ANGLE 90.0  // Antenna azimuth parking position
+    #endif
+#endif
 
 #ifndef ELE_RATIO
     #define ELE_RATIO          57.0  // Elevation mechanical gear ratio
@@ -60,6 +64,14 @@
 #ifndef ELE_MAX_ANGLE
     #define ELE_MAX_ANGLE      180   // Maximum antenna elevation angle
 #endif
+#ifdef PARKING
+    #ifndef ELE_PARK_ANGLE
+        #define ELE_PARK_ANGLE -5.0  // Antenna elevation parking position
+    #endif
+    #ifndef ELE_PARK_CLEARANCE
+        #define ELE_PARK_CLEARANCE 10.0 // Antenna elevation parking clearance, stay above this value until azi is in park position
+    #endif
+#endif
 
 #ifndef POL_RATIO
     #define POL_RATIO          57.0  // Polarization mechanical gear ratio
@@ -78,6 +90,11 @@
 #endif
 #ifndef POL_MAX_ANGLE
     #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
+#endif
+#ifdef PARKING
+    #ifndef POL_PARK_ANGLE
+        #define POL_PARK_ANGLE 0.0   // Antenna polarizer parking position
+    #endif
 #endif
 
 #ifndef SPR

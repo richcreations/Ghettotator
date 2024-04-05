@@ -25,7 +25,6 @@
 
 #include <../lib/watchdog.h>
 
-uint32_t t_run = 0; // run time of uC
 easycomm comm;
 
 // Create AccelStepper instances
