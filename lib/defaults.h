@@ -66,7 +66,7 @@
     #define POL_RATIO          57.0  // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
-#   define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping (built in MSx pull ups)
+#   define POL_MICROSTEP       16.0  // Polarization stepper driver microstepping (built in MSx pull ups)
 #endif
 #ifndef POL_VMAX
     #define POL_VMAX           300   // Antenna deg/s
@@ -87,7 +87,7 @@
 #ifndef MIN_PULSE_WIDTH
     #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 #endif
-#ifndef DEFAULT_HOME_STATE LOW
+#ifndef DEFAULT_HOME_STATE     LOW
     #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches and pullups
 #endif
 #ifndef HOME_DELAY
