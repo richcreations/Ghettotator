@@ -57,6 +57,9 @@ ISR(WDT_vect) {
 
     digitalWrite(eleENpin, LOW);
     digitalWrite(aziENpin, LOW);
+    #ifdef POLARIZER
+        digitalWrite(polENpin, LOW);
+    #endif
     //digitalWrite(polEN, LOW); //need to write compile time options for these features
     //digitalWrite(tunEN, LOW);
     //digitalWrite(auxEN, LOW);
