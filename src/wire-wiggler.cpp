@@ -61,7 +61,6 @@ int32_t aziMaxStepAcc = 0;
     int32_t polMaxStepAcc = 0;
     float polPot = 0;
 #endif
-
 #ifdef ledExists
     bool ledState = 0;  //logic
     uint32_t ledPeriod = 1000; // msec
@@ -143,7 +142,7 @@ void loop() {
     // Debug LED on... put this where SHTF
     #ifdef DEBUG
         #ifdef ledExists
-            digitalWrite(ledPin,HIGH); //turn on led while waiting for motor init
+            digitalWrite(ledPin,HIGH); //turn on led for debugging
         #endif
     #endif
 
@@ -255,20 +254,17 @@ void loop() {
 
         // Homing loop
         while (isHome_az == false || isHome_el == false) {
-            // Update WDT
-        // wdt.watchdog_reset();
             if (switch_aziMin.get_state() == true && !isHome_az) {
-                // Found azimuth home
+                // Found azimuth home, set flag and return to trigger position
                 stepper_az.moveTo(stepper_az.currentPosition());
                 isHome_az = true;
             }
             if (switch_eleMin.get_state() == true && !isHome_el) {
-                // Found elevation home
+                // Found elevation home, set flag and return to trigger position
                 stepper_el.moveTo(stepper_el.currentPosition());
                 isHome_el = true;
             }
-            // Check if the rotator goes out of limits or something goes wrong (in
-            // mechanical)
+            //  Travelled beyond step limit... mechanical failure
             if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
                 (stepper_el.distanceToGo() == 0 && !isHome_el)){
                 return homing_error;
@@ -302,14 +298,14 @@ void loop() {
         }
 
 
-        // Delay to Deccelerate and homing, to complete the movements
+        // Delay to allow homing movement to complete
         uint32_t time = millis();
         while (millis() - time < HOME_DELAY) {
             wdt.watchdog_reset();
             stepper_az.run();
             stepper_el.run();
         }
-        // Set the home position and reset all critical control variables
+        // Save home positions and rezero setpoints
         stepper_az.setCurrentPosition(0);
         stepper_el.setCurrentPosition(0);
         control_az.setpoint = 0;
@@ -382,7 +378,7 @@ void loop() {
         }
 
 
-        // Delay to Deccelerate and homing, to complete the movements
+        // Delay to allow homing movement to complete
         uint32_t time = millis();
         while (millis() - time < HOME_DELAY) {
             #ifdef WATCHDOG
