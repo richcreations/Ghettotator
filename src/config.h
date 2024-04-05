@@ -1,9 +1,15 @@
 // USER CONFIGURATION: Edit this file to suit your specific build. Most times this is the only file that needs to be touch.
 
 // Uncomment only one board from the list below... see boards file for more info
+//If using a custom board file, leave these commented, and use the custom board 
+// setting below, and change filename to match your board file (which should be in boards)
+
 //#define UNO_CNC_SHIELD_V_3
 #define ANET_A8_ATMEGA1280_PRINTER_BOARD
 //#define RAMPS_V_1_4_MEGA2560
+
+//#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board.
+
 
 #define POLARIZER              // Uncomment to enable antenna polarity rotator feature (poti from 0V to 5V)
 
