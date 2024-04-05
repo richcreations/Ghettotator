@@ -37,7 +37,7 @@
 // #define ELE_MAX_ANGLE      180   // Maximum antenna elevation angle
 
 // #define POL_RATIO          57.0  // Polarization mechanical gear ratio
-// #define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping (built in MSx pull ups)
+// #define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping
 // #define POL_VMAX           300   // Antenna deg/s
 // #define POL_ACC_MAX        120   // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0     // Minimum antenna polarization angle
@@ -45,8 +45,8 @@
 
 // #define SPR                200.0 // Motor steps per revolution (200.0 for standard 1.8degree motors)
 // #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
-// #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches and pullups
-// #define HOME_DELAY         0     // millis to keep moving after hitting endstop
+// #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches
+// #define HOME_DELAY         2000  // millis to keep moving after hitting endstop (time to settle before resetting zeros)
 // #define SAMPLE_TIME        0.1   // Control loop in sec
 
 

@@ -91,11 +91,11 @@
 #ifndef MIN_PULSE_WIDTH
     #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 #endif
-#ifndef DEFAULT_HOME_STATE     LOW
+#ifndef DEFAULT_HOME_STATE
     #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches and pullups
 #endif
 #ifndef HOME_DELAY
-    #define HOME_DELAY         0     // millis to keep moving after hitting endstop
+    #define HOME_DELAY         2000  // millis to keep moving after hitting endstop
 #endif
 #ifndef SAMPLE_TIME
     #define SAMPLE_TIME        0.1   // Control loop in sec
