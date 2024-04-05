@@ -1,12 +1,3 @@
-/*!
-* @file watchdog.h
-*
-* It is a driver for watchdog timer.
-*
-* Licensed under the GPLv3
-*
-*/
-
 #ifndef WATCHDOG_H_
 #define WATCHDOG_H_
 
@@ -14,20 +5,11 @@
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 
-/**************************************************************************/
-/*!
-    @brief    Class that functions for interacting with a watchdog timer
-*/
-/**************************************************************************/
+//Class that functions for interacting with a watchdog timer
 class wdt_timer{
 public:
 
-    /**************************************************************************/
-    /*!
-        @brief    Initialize watchdog timer to 2sec time out and to set up
-                  interrupt routine
-    */
-    /**************************************************************************/
+    // Initialize watchdog timer to 2sec time out and to set upinterrupt routine
     void watchdog_init() { 
         cli();
         wdt_reset();
@@ -36,22 +18,13 @@ public:
         sei();
     }
 
-    /**************************************************************************/
-    /*!
-        @brief    Reset the watchdog timer
-    */
-    /**************************************************************************/
+    //Reset the watchdog timer
     void watchdog_reset() {
         wdt_reset();
     }
 };
 
-/**************************************************************************/
-/*!
-    @brief    Watchdog timer interrupt routine that implements a minimal
-              easycomm protocol to get the errors and reset the uC
-*/
-/**************************************************************************/
+//Watchdog timer interrupt routine that implements a minimal easycomm protocol to get the errors and reset the uC
 ISR(WDT_vect) {
     // Disable motors
 

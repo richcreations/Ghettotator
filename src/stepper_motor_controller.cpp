@@ -1,6 +1,4 @@
-/*!
- * @file stepper_motor_controller.ino
-Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors. 
+/* Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors. 
 
  ...old doc reference below
  *
@@ -12,14 +10,6 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
  * v2.1
  * v2.2
  * <a href="https://wiki.satnogs.org/SatNOGS_Rotator_Controller"> wiki page </a>
- *
- * @section dependencies Dependencies
- *
- * This firmware depends on <a href="http://www.airspayce.com/mikem/arduino/AccelStepper/index.htmlhttp://www.airspayce.com/mikem/arduino/AccelStepper/index.html">
- * AccelStepper library</a> being present on your system. Please make sure you
- * have installed the latest version before using this firmware.
- *
- * @section license License
  *
  * Licensed under the GPLv3.
  *
@@ -89,8 +79,7 @@ void setup() {
     
     // Azimuth motor
     stepper_az.setEnablePin(aziENpin);
-    // syntax: setPinsInverted(dir, step, enable), true/false
-    stepper_az.setPinsInverted(false, false, true);
+    stepper_az.setPinsInverted(false, false, true);    // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.enableOutputs();
     aziMaxStepRate = deg2step(AZI_VMAX, AZI_RATIO, AZI_MICROSTEP);
     aziMaxStepAcc = deg2step(AZI_ACC_MAX, AZI_RATIO, AZI_MICROSTEP);
@@ -160,7 +149,6 @@ void loop() {
     rotator.switch_aziMin = switch_aziMin.get_state();
     #ifdef POLARIZER
         rotator.switch_polMin = switch_polMin.get_state();
-        polPot = float(analogRead(polPotPin));
     #endif
 
     // Run easycomm implementation
@@ -174,10 +162,10 @@ void loop() {
     #endif
     // No errors
     if (rotator.rotator_status != error) {
-        // Homing flag is false
+        // Not yet homed
         if (rotator.homing_flag == false) {
             rotator.control_mode = position;
-            // Run homing function
+            // Go home
             #ifndef POLARIZER
                 rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
                                            deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
@@ -192,12 +180,12 @@ void loop() {
                 rotator.homing_flag = true;
             } 
             else {
-                // Error
                 rotator.rotator_status = error;
                 rotator.rotator_error = homing_error;
             }
         } 
-        else {  // Homing flag is true
+        // Homing has been completed
+        else {
             #ifndef POLARIZER
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -210,7 +198,10 @@ void loop() {
                     rotator.rotator_status = idle;
                 }
             #else
-                control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // setpoint is the pot proportion of step range
+                #ifdef POLARIZER
+                    polPot = analogRead(polPotPin); // Read the polarizer poti
+                    control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // polarize setpoint angle from 10bit reading
+                #endif
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
                 stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
@@ -226,7 +217,8 @@ void loop() {
             #endif
         }
     } 
-    else {  // Error handler: stop motors and disable the motor drivers
+    // Error: stop motors and disable the motor drivers
+    else {  
         stepper_az.stop();
         stepper_az.disableOutputs();
         stepper_el.stop();
@@ -243,18 +235,7 @@ void loop() {
     }
 }
 
-/**************************************************************************/
-/*!
-    @brief    Move both axis with one direction in order to find home position,
-              end-stop switches
-    @param    seek_aziMin
-              Steps to find home position for azimuth axis
-    @param    seek_eleMin
-              Steps to find home position for elevation axis
-    @return   _rotator_error
-*/
-/**************************************************************************/
-// Function without polarizer feature enabled
+// Homing function without polarizer feature enabled
 #ifndef POLARIZER
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
         bool isHome_az = false;
@@ -326,9 +307,10 @@ void loop() {
 
         return no_error;
     }
-// Polarizer feature is enabled
+// Homing with Polarizer enabled
 #else
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin) {
+        // Declare and init axis home flags
         bool isHome_az = false;
         bool isHome_el = false;
         bool isHome_po = false;
@@ -340,25 +322,22 @@ void loop() {
 
         // Homing loop
         while (isHome_az == false || isHome_el == false || isHome_po == false) {
-            // Update WDT
-        // wdt.watchdog_reset();
             if (switch_aziMin.get_state() == true && !isHome_az) {
-                // Found azimuth home
+                // Found azimuth home, set flag and return to trigger position
                 stepper_az.moveTo(stepper_az.currentPosition());
                 isHome_az = true;
             }
             if (switch_eleMin.get_state() == true && !isHome_el) {
-                // Found elevation home
+                // Found elevation home, set flag and return to trigger position
                 stepper_el.moveTo(stepper_el.currentPosition());
                 isHome_el = true;
             }
             if (switch_polMin.get_state() == true && !isHome_po) {
-                // Found elevation home
+                // Found elevation home, set flag and return to trigger position
                 stepper_po.moveTo(stepper_po.currentPosition());
                 isHome_po = true;
             }
-            // Check if the rotator goes out of limits or something goes wrong (in
-            // mechanical)
+            // Travelled beyond step limit... mechanical failure
             if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
                 (stepper_el.distanceToGo() == 0 && !isHome_el) ||
                 (stepper_po.distanceToGo() == 0 && !isHome_po)){
@@ -369,7 +348,6 @@ void loop() {
             stepper_el.run();
             stepper_po.run();
                 
-            // Update WDT
             #ifdef WATCHDOG
                 wdt.watchdog_reset();
             #endif
@@ -395,15 +373,17 @@ void loop() {
         // Delay to Deccelerate and homing, to complete the movements
         uint32_t time = millis();
         while (millis() - time < HOME_DELAY) {
-            wdt.watchdog_reset();
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
             stepper_az.run();
             stepper_el.run();
             stepper_el.run();
         }
-        // Set the home position and reset all critical control variables
-        stepper_az.setCurrentPosition(0);
-        stepper_el.setCurrentPosition(0);
-        stepper_po.setCurrentPosition(0);
+        // Save home positions and rezero setpoints
+        stepper_az.setCurrentPosition(0.0);
+        stepper_el.setCurrentPosition(0.0);
+        stepper_po.setCurrentPosition(0.0);
         control_az.setpoint = 0;
         control_el.setpoint = 0;
         control_po.setpoint = 0;
@@ -411,28 +391,13 @@ void loop() {
         return no_error;
     }
 #endif
-/**************************************************************************/
-/*!
-    @brief    Convert degrees to steps according to step/revolution, rotator
-              gear box ratio and microsteps
-    @param    deg
-              Degrees in float format
-    @return   Steps for stepper motor driver, int32_t
-*/
-/**************************************************************************/
+
+// Convert degrees to steps
 int32_t deg2step(float deg, float ratio, float microsteps) {
-    return (ratio * SPR * microsteps * deg / 360.0);
+    return (ratio * STEPS_PER_MTR_REV * microsteps * deg / 360.0);
 }
 
-/**************************************************************************/
-/*!
-    @brief    Convert steps to degrees according to step/revolution, rotator
-              gear box ratio and microsteps
-    @param    step
-              Steps in int32_t format
-    @return   Degrees in float format
-*/
-/**************************************************************************/
+// Convert steps to degrees
 float step2deg(int32_t step, float ratio, float microsteps) {
-    return (360.00 * step / (SPR * ratio * microsteps));
+    return (360.00 * step / (STEPS_PER_MTR_REV * ratio * microsteps));
 }

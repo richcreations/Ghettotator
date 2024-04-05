@@ -1,12 +1,3 @@
-/*!
-* @file globals.h
-*
-* It is a file to define all global variables (...or at least some of them)
-*
-* Licensed under the GPLv3
-*
-*/
-
 #ifndef LIBRARIES_GLOBALS_H_
 #define LIBRARIES_GLOBALS_H_
 
@@ -27,11 +18,11 @@ enum _control_mode {
 };
 
 struct _control{
-    double input;          ///< Motor Position feedback in deg
-    double input_prv;      ///< T-1 Motor Position feedback in deg
-    double speed;          ///< Motor Rotation speed in deg/s
-    double setpoint;       ///< Position set point in deg
-    double setpoint_speed; ///< Speed set point in deg/s
+    float input;          ///< Motor Position feedback in deg
+    float input_prv;      ///< T-1 Motor Position feedback in deg
+    float speed;          ///< Motor Rotation speed in deg/s
+    float setpoint;       ///< Position set point in deg
+    float setpoint_speed; ///< Speed set point in deg/s
     uint16_t load;         ///< Motor Load in mA
     double u;              ///< Control signal range 0-255
     double p, i, d;        ///< Control gains
@@ -55,7 +46,7 @@ struct _control{
         enum _control_mode control_mode;              ///< Control mode
         bool homing_flag;                             ///< Homing flag
         int8_t inside_temperature;                    ///< Inside Temperature
-        double park_az, park_el, park_po;             ///< Park position for both axis
+        float park_az, park_el, park_po;             ///< Park position for both axis
         uint8_t fault_az, fault_el, fault_po;         ///< Motor drivers fault flag
         bool switch_eleMin, switch_aziMin, switch_polMin;  ///< End-stop vales
     };
