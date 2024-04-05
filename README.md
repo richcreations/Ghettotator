@@ -16,6 +16,8 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Arduino UNO with CNC Shield v3
 * Arduino Mega2560 with Ramps v1.4
 * Anet A8 3d printer motherboard w/ m1280p and built-in a4988's
+* N.O. endstop switches
+* Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode)
 
 ## Instructions
 ### Configure, compile, and upload firmware:
@@ -45,13 +47,13 @@ First use the terminal or startup script to launch rotctld. Now open Gpredict, g
 ## Easycomm Commands
 The easycomm lib is used to interface with the computer rotator control software via UART. It allows software like Gpredict to control the rotator. It can also be used to test and troubleshoot rotator hardware by sending commands from a terminal. Here is the list of valid terminal commands that easycomm can respond to (* currently not all commands are implemented):
 
-* AZ, Azimuth, number - 1 decimal place [deg]
-* EL, Elevation, number - 1 decimal place [deg]
-* SA, Stop azimuth moving
-* SE, Stop elevation moving
-* RESET, Move to home position
+* AZ, Move azimuth to (degrees 1 decimal place)
+* EL, Move elevation to (degrees 1 decimal place)
+* SA, Stop azimuth movement
+* SE, Stop elevation movement
+* RESET, Initiate homing subroutine
 * PARK, Move to park position
-* IP, Read an input, number
+* IP, Read an input
     * Temperature = 0
     * SW1 = 1
     * SW2 = 2
@@ -62,12 +64,12 @@ The easycomm lib is used to interface with the computer rotator control software
     * Speed of M1/AZ (DPS) = 7
     * Speed of M2/EL (DPS) = 8
 * VE, Request Version
-* GS, Get status register, number
+* GS, Get status register
     * idle = 1
     * moving = 2
     * pointing = 4
     * error = 8
-* GE, Get error register, number
+* GE, Get error register
     * no_error = 1
     * sensor_error = 2
     * homing_error = 4
@@ -78,34 +80,33 @@ The easycomm lib is used to interface with the computer rotator control software
 * VR, Velocity Right, number [mdeg/s]
 * VU, Velocity Up, number [mdeg/s]
 * VD, Velocity Down, number [mdeg/s]
-* CR, Read config, register [0-x]
-    * Gain P for M1/AZ = 1
-    * Gain I for M1/AZ = 2
-    * Gain D for M1/AZ = 3
-    * Gain P for M2/EL = 4
-    * Gain I for M2/EL = 5
-    * Gain D for M2/EL = 6
+* CR, Read config... `CR 2 1.0` sets azimuth I gain to 1.0
+    * Gain P for AZ = 1
+    * Gain I for AZ = 2
+    * Gain D for AZ = 3
+    * Gain P for EL = 4
+    * Gain I for EL = 5
+    * Gain D for EL = 6
     * Azimuth park position = 7
     * Elevation park position = 8
     * Control mode (position = 0, speed = 1) = 9
-* CW, Write config, register [0-x]
-    * Gain P for M1/AZ = 1
-    * Gain I for M1/AZ = 2
-    * Gain D for M1/AZ = 3
-    * Gain P for M2/EL = 4
-    * Gain I for M2/EL = 5
-    * Gain D for M2/EL = 6
+* CW, Write config... `CW 7 0.0` sets azimuth park position to 0.0degrees
+    * Gain P for AZ = 1
+    * Gain I for AZ = 2
+    * Gain D for AZ = 3
+    * Gain P for EL = 4
+    * Gain I for EL = 5
+    * Gain D for EL = 6
     * Azimuth park position = 7
     * Elevation park position = 8
-    * This reg is set from Vx commands control mode (position = 0, speed = 1) = 9
+
 * RB, custom command to reboot controller
 
 ## Troubleshooting
 Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, it is worthy of note that the mechanics should be as well balanced and friction free as possible.
-## Contribute
 
+## Contribute
 The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware).
 
 ## License
-
 Licensed under the [GPLv3](LICENSE)

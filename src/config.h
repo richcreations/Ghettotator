@@ -1,11 +1,12 @@
 // USER CONFIGURATION: Edit this file to suit your specific build. 
 // Most times this is the only file that needs to be touch.
 
-// Uncomment only one board from the list below... see boards file for more info
+// Uncomment only one board from the list below... see boards file and /images for more info.
 // If using a custom board file, leave all these commented, and use the custom board 
 // setting below, and change filename to match your board file (which should be in boards).
 // Note some microprocessors may not yet be defined in platform.ini. If there is no build option
 // for your board, a section may be added to platform.ini to accomodate.
+// When adding a new board, consider adding a schematic to /images for user reference.
 
 //#define UNO_CNC_SHIELD_V_3
 #define ANET_A8_ATMEGA1280_PRINTER_BOARD
