@@ -40,12 +40,12 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
-AccelStepper stepper_el(1, eleStep, eleDir);
-AccelStepper stepper_az(1, aziStep, aziDir);
-endstop switch_eleMin(eleMinStop, DEFAULT_HOME_STATE), switch_aziMin(aziMinStop, DEFAULT_HOME_STATE);
+AccelStepper stepper_el(1, eleStepPin, eleDirPin);
+AccelStepper stepper_az(1, aziStepPin, aziDirPin);
+endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinStopPin, DEFAULT_HOME_STATE);
 #ifdef POLARIZER
-    AccelStepper stepper_po(1, polStep, polDir);
-    endstop switch_polMin(polMinStop, DEFAULT_HOME_STATE);
+    AccelStepper stepper_po(1, polStepPin, polDirPin);
+    endstop switch_polMin(polMinStopPin, DEFAULT_HOME_STATE);
 #endif
 
 #ifdef WATCHDOG
@@ -88,7 +88,7 @@ void setup() {
     comm.easycomm_init();
     
     // Azimuth motor
-    stepper_az.setEnablePin(aziEN);
+    stepper_az.setEnablePin(aziENpin);
     // syntax: setPinsInverted(dir, step, enable), true/false
     stepper_az.setPinsInverted(false, false, true);
     stepper_az.enableOutputs();
@@ -99,7 +99,7 @@ void setup() {
     stepper_az.setMinPulseWidth(MIN_PULSE_WIDTH);
 
     // Elevation motor
-    stepper_el.setEnablePin(eleEN);
+    stepper_el.setEnablePin(eleENpin);
     stepper_el.setPinsInverted(false, false, true);
     eleMaxStepRate = deg2step(ELE_VMAX, ELE_RATIO, ELE_MICROSTEP);
     eleMaxStepAcc = deg2step(ELE_ACC_MAX, ELE_RATIO, ELE_MICROSTEP);
@@ -110,7 +110,7 @@ void setup() {
 
     #ifdef POLARIZER        
         // Polarizer motor
-        stepper_po.setEnablePin(polEN);
+        stepper_po.setEnablePin(polENpin);
         stepper_po.setPinsInverted(false, false, true);
         polMaxStepRate = deg2step(POL_VMAX, POL_RATIO, POL_MICROSTEP);
         polMaxStepAcc = deg2step(POL_ACC_MAX, POL_RATIO, POL_MICROSTEP);
