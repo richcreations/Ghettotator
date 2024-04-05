@@ -55,8 +55,8 @@ public:
 ISR(WDT_vect) {
     // Disable motors
 
-    digitalWrite(eleEN, LOW);
-    digitalWrite(aziEN, LOW);
+    digitalWrite(eleENpin, LOW);
+    digitalWrite(aziENpin, LOW);
     //digitalWrite(polEN, LOW); //need to write compile time options for these features
     //digitalWrite(tunEN, LOW);
     //digitalWrite(auxEN, LOW);
