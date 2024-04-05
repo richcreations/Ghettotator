@@ -1,7 +1,7 @@
 // USER CONFIGURATION: Edit this file to suit your specific build. Most times this is the only file that needs to be touch.
 
 // Uncomment only one board from the list below... see boards file for more info
-//If using a custom board file, leave these commented, and use the custom board 
+//If using a custom board file, leave all these commented, and use the custom board 
 // setting below, and change filename to match your board file (which should be in boards)
 
 //#define UNO_CNC_SHIELD_V_3
