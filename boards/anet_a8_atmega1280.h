@@ -1,5 +1,6 @@
-// Pins file for the Anet A8 classic 3d printer motherboard w/ mega1280p and built in a4988's
+// Pins file for the Anet A8 classic 3d printer motherboard (mega1280p w/ 4xA4988's built in)
 // https://github.com/ralf-e/ANET-3D-Board-V1.0/blob/master/ANET3D_Board_Schematic.png
+// Note: The a8 motherboard has built in driver MSx pullups installed; use "XXX_MICROSTEP = 16" in config.h.
 #define eleStep      15  // X step
 #define eleDir       21  // X dir
 #define eleEN        14  // XY enable
@@ -19,4 +20,4 @@
 #define ledExists    1   // onboard led
 #define ledPin       A4  // onboard led
 
-#define polPotPin    A3  // Polarize potentiometer (pin #3 on LCD connector)
+#define polPotPin    A3  // Polarize manual control potentiometer wiper (pin #3 on LCD connector)

@@ -76,13 +76,14 @@ uint32_t ledPeriod = 1000; // msec
 uint32_t ledTime = 0; //timer
 
 void setup() {
-    // Homing switches
+    // Initialize homing switches
     switch_eleMin.init();
     switch_aziMin.init();
     #ifdef POLARIZER
         switch_polMin.init();
         pinMode(polPotPin, INPUT); // init poti pin, no pullup
     #endif
+
     // Serial Communication
     comm.easycomm_init();
     
@@ -118,6 +119,7 @@ void setup() {
         stepper_po.setAcceleration(polMaxStepAcc);
         stepper_po.setMinPulseWidth(MIN_PULSE_WIDTH);
     #endif
+
     //  WDT
     #ifdef WATCHDOG
         wdt.watchdog_init();
@@ -170,11 +172,12 @@ void loop() {
     #ifdef POLARIZER
         control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
     #endif
-
-    if (rotator.rotator_status != error) {  // No errors
-        if (rotator.homing_flag == false) { // Home if homing flag is down
+    // No errors
+    if (rotator.rotator_status != error) {
+        // Homing flag is false
+        if (rotator.homing_flag == false) {
             rotator.control_mode = position;
-            // Homing
+            // Run homing function
             #ifndef POLARIZER
                 rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
                                            deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
@@ -183,9 +186,8 @@ void loop() {
                                            deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
                                            deg2step(-POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
             #endif
-
+            // Respond to homing error
             if (rotator.rotator_error == no_error) {
-                // No error
                 rotator.rotator_status = idle;
                 rotator.homing_flag = true;
             } 
@@ -195,7 +197,7 @@ void loop() {
                 rotator.rotator_error = homing_error;
             }
         } 
-        else {  // Move if we're homed
+        else {  // Homing flag is true
             #ifndef POLARIZER
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -224,7 +226,7 @@ void loop() {
             #endif
         }
     } 
-    else {  // Error handler, stop motors and disable the motor driver
+    else {  // Error handler: stop motors and disable the motor drivers
         stepper_az.stop();
         stepper_az.disableOutputs();
         stepper_el.stop();
@@ -252,6 +254,7 @@ void loop() {
     @return   _rotator_error
 */
 /**************************************************************************/
+// Function without polarizer feature enabled
 #ifndef POLARIZER
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
         bool isHome_az = false;
@@ -323,6 +326,7 @@ void loop() {
 
         return no_error;
     }
+// Polarizer feature is enabled
 #else
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin) {
         bool isHome_az = false;
@@ -417,7 +421,7 @@ void loop() {
 */
 /**************************************************************************/
 int32_t deg2step(float deg, float ratio, float microsteps) {
-    return (ratio * SPR * microsteps * deg / 360);
+    return (ratio * SPR * microsteps * deg / 360.0);
 }
 
 /**************************************************************************/

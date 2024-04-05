@@ -1,4 +1,4 @@
-// Pins file for Ramps v1.4... who doesn't have a spare one laying around these days?
+// Pins file for Arduino Mega2560 with Ramps v1.4 3d printer shield
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-2.png
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-1.png
 #define eleStep      A0  // X step
@@ -27,4 +27,4 @@
 #define ledExists    1  // onboard led
 #define ledPin       13  // onboard led
 
-#define polPotPin    A3  // Polarize potentiometer
+#define polPotPin    A3  // Polarize manual control potentiometer wiper
