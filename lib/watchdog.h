@@ -31,7 +31,7 @@ public:
     void watchdog_init() { 
         cli();
         wdt_reset();
-        WDTCSR |= _BV(WDCE) | _BV(WDE); // I'm guessing this is only for m328p
+        WDTCSR |= _BV(WDCE) | _BV(WDE); // I'm guessing this is for m328p. test on 1280p appears to work
         WDTCSR = _BV(WDIE) | _BV(WDE) | _BV(WDP3) | _BV(WDP2) | _BV(WDP1);
         sei();
     }
