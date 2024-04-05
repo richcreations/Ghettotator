@@ -26,7 +26,7 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
  */
 
 
-#include <config.h>
+#include <defaults.h>
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <../lib/globals.h>
