@@ -16,7 +16,7 @@
  */
 
 
-#include <defaults.h>
+#include <../lib/defaults.h>
 #include <AccelStepper.h>
 #include <Wire.h>
 #include <../lib/globals.h>
