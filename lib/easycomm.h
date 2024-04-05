@@ -1,45 +1,20 @@
-/*!
-* @file easycomm.h
-*
-* It is a driver for easycomm 3 protocol as referred, in Hamlib.
-*
-* Licensed under the GPLv3
-*
-*/
-
 #ifndef LIBRARIES_EASYCOMM_H_
 #define LIBRARIES_EASYCOMM_H_
 
 #include <Arduino.h>
 #include <WString.h>
 #include <avr/wdt.h>
-//#include "rs485.h"
 #include "globals.h"
 
 #define BUFFER_SIZE   256   ///< Set the size of serial buffer
 
-/**************************************************************************/
-/*!
-    @brief    Class that functions for easycomm 3 implementation
-*/
-/**************************************************************************/
 class easycomm {
 public:
 
-    /**************************************************************************/
-    /*!
-        @brief    Initialize the serial bus
-    */
-    /**************************************************************************/
     void easycomm_init() {
 	    Serial.begin(BAUDRATE);
     }
 
-    /**************************************************************************/
-    /*!
-        @brief    Get the commands from RS485 and response to the client
-    */
-    /**************************************************************************/
     void easycomm_proc() {
         char buffer[BUFFER_SIZE];
         char incomingByte;
