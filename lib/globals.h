@@ -69,7 +69,7 @@ _control control_el = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
                      .fault_az = LOW, .fault_el = LOW , .fault_po = LOW , .switch_eleMin = false,
                      .switch_aziMin = false , .switch_polMin = false};
 #else
-_rotator rotator = { .rotator_status = idle, .rotator_error = no_error,
+    _rotator rotator = { .rotator_status = idle, .rotator_error = no_error,
                      .control_mode = position, .homing_flag = false,
                      .inside_temperature = 0, .park_az = 0, .park_el = 0,
                      .fault_az = LOW, .fault_el = LOW , .switch_eleMin = false,

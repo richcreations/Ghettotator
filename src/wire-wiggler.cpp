@@ -28,6 +28,7 @@
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
 
+// Create AccelStepper instances
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin);
 // interface 1=AccelStepper::DRIVER ...aka standard STEP/DIR drivers
 AccelStepper stepper_el(1, eleStepPin, eleDirPin);

@@ -5,11 +5,6 @@
 
 #include <../src/config.h>
 
-
-#ifdef DEBUG
-    bool debug = 1;
-#endif
-
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../boards/unoCncV3.h>
 #endif
