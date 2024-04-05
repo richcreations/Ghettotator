@@ -62,9 +62,11 @@ int32_t aziMaxStepAcc = 0;
     float polPot = 0;
 #endif
 
-bool ledState = 0;  //logic
-uint32_t ledPeriod = 1000; // msec
-uint32_t ledTime = 0; //timer
+#ifdef ledExists
+    bool ledState = 0;  //logic
+    uint32_t ledPeriod = 1000; // msec
+    uint32_t ledTime = 0; //timer
+#endif
 
 void setup() {
     // Initialize homing switches
@@ -73,6 +75,9 @@ void setup() {
     #ifdef POLARIZER
         switch_polMin.init();
         pinMode(polPotPin, INPUT); // init poti pin, no pullup
+    #endif
+    #ifdef ledExists
+        pinMode(ledPin, OUTPUT); // init led pin
     #endif
 
     // Serial Communication
@@ -118,26 +123,28 @@ void setup() {
 
 void loop() {
     #ifndef DEBUG
-        // LED heartbeat: slow blink when loop is running
-        if(ledExists && millis() - ledTime > ledPeriod)   {
-            if(ledState)    {
-                digitalWrite(ledPin,LOW);
-                ledState = 0;
-                ledTime = millis();
+        #ifdef ledExists
+            // LED heartbeat: slow blink when loop is running
+            if(millis() - ledTime > ledPeriod)   {
+                if(ledState)    {
+                    digitalWrite(ledPin,LOW);
+                    ledState = 0;
+                    ledTime = millis();
+                }
+                else{
+                    digitalWrite(ledPin,HIGH);
+                    ledState = 1;
+                    ledTime = millis();
+                }
             }
-            else{
-                digitalWrite(ledPin,HIGH);
-                ledState = 1;
-                ledTime = millis();
-            }
-        }
+        #endif
     #endif
 
     // Debug LED on... put this where SHTF
     #ifdef DEBUG
-        if(ledExists)   {
+        #ifdef ledExists
             digitalWrite(ledPin,HIGH); //turn on led while waiting for motor init
-        }
+        #endif
     #endif
 
     // Update WDT
@@ -276,19 +283,21 @@ void loop() {
             #endif
             
             #ifndef DEBUG
+                #ifdef ledExists
                 // LED heartbeat: fast blink while homing
-                if(ledExists && millis() - ledTime > ledPeriod/6)   {
-                    if(ledState)    {
-                        digitalWrite(ledPin,LOW);
-                        ledState = 0;
-                        ledTime = millis();
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
                     }
-                    else{
-                        digitalWrite(ledPin,HIGH);
-                        ledState = 1;
-                        ledTime = millis();
-                    }
-                }
+                #endif
             #endif
         }
 
@@ -354,19 +363,21 @@ void loop() {
             #endif
             
             #ifndef DEBUG
-                // LED heartbeat: fast blink while homing
-                if(ledExists && millis() - ledTime > ledPeriod/6)   {
-                    if(ledState)    {
-                        digitalWrite(ledPin,LOW);
-                        ledState = 0;
-                        ledTime = millis();
+                #ifdef ledExists
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
                     }
-                    else{
-                        digitalWrite(ledPin,HIGH);
-                        ledState = 1;
-                        ledTime = millis();
-                    }
-                }
+                #endif
             #endif
         }
 

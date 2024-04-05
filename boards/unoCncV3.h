@@ -18,7 +18,7 @@
 #define polMinStopPin   11  // Z endstop
 
 // sheild has no built in led...
-#define ledExists       0   // Onboard led
-#define ledPin          0   // Onboard led
+//#define ledExists         // Onboard led, uncomment to enable
+#define ledPin          0   // Onboard led pin
 
 #define polPotPin       A0  // Polarize manual control potentiometer  wiper (GRBL interface pin3)

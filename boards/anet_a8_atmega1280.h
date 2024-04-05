@@ -17,7 +17,7 @@
 #define aziMinStopPin   19  // Y endstop
 #define polMinStopPin   20  // Z endstop
 
-#define ledExists       1   // Onboard led
+#define ledExists           // Onboard led, uncomment to enable
 #define ledPin          A4  // Onboard led
 
 #define polPotPin       A3  // Polarize manual control potentiometer wiper (pin #3 on LCD connector)
