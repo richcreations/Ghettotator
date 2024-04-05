@@ -8,7 +8,7 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Homes all axis at boot up
 * Watchdog timer shuts down all drivers when triggered
 * Optional 3rd axis for polarization control
-* ...currently being developed
+* ...currently under development
 
     * IMU feedback for moving vehicles
 
@@ -18,6 +18,11 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Anet A8 3d printer motherboard w/ m1280p and built-in a4988's
 
 ## Instructions
+### Configure, compile, and upload firmware:
+*A basic level of understanding on how to comment/edit config files, install and use VSCode, and install and use PlatformIO is assumed in this text.*
+
+Download and decompress the Wire Wiggler repository in your project folder, and open the project in VScode. Edit the "config.h" file to suit your hardware (uncomment and edit any relevant lines). When done editing, select the pio build option that matches your board, and compile+upload to your board. If completed succesfully, your board is now ready for use.
+
 ### Install Hamlib and Gpredict Software:
 Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
 
@@ -38,7 +43,7 @@ Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost,
 First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
 ## Easycomm Commands
-The easycomm lib is used to interface with the computer rotator control software via UART. Here is the list of valid serial commands that easycomm can respond to (* currently not all commands are implemented):
+The easycomm lib is used to interface with the computer rotator control software via UART. It allows software like Gpredict to control the rotator. It can also be used to test and troubleshoot rotator hardware by sending commands from a terminal. Here is the list of valid terminal commands that easycomm can respond to (* currently not all commands are implemented):
 
 * AZ, Azimuth, number - 1 decimal place [deg]
 * EL, Elevation, number - 1 decimal place [deg]
@@ -95,6 +100,8 @@ The easycomm lib is used to interface with the computer rotator control software
     * This reg is set from Vx commands control mode (position = 0, speed = 1) = 9
 * RB, custom command to reboot controller
 
+## Troubleshooting
+Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, it is worthy of note that the mechanics should be as well balanced and friction free as possible.
 ## Contribute
 
 The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware).
