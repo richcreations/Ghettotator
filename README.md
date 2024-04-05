@@ -1,5 +1,5 @@
 # Wire Wiggler Firmware: Yet another satellite antenna rotator project
-This is a fork of the satnogs stepper rotator firmware that aims clean up the code, port it for use with a broad assortment of hardware, and develop new features like polarization control.
+Wire Wiggler is a satellite antenna rotator control firmware based off of satnogs original stepper rotator code.
 
 Read about the original satnogs rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller).
 
@@ -8,6 +8,9 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Homes all axis at boot up
 * Watchdog timer shuts down all drivers when triggered
 * Optional 3rd axis for polarization control
+* ...currently being developed
+
+    * IMU feedback for moving vehicles
 
 ## Currently Compatible Hardware
 * Arduino UNO with CNC Shield v3
@@ -34,7 +37,7 @@ Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost,
 ### Operating
 First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
-## Easycomm implemantation
+## Easycomm Commands
 The easycomm lib is used to interface with the computer rotator control software via UART. Here is the list of valid serial commands that easycomm can respond to (* currently not all commands are implemented):
 
 * AZ, Azimuth, number - 1 decimal place [deg]
@@ -94,10 +97,8 @@ The easycomm lib is used to interface with the computer rotator control software
 
 ## Contribute
 
-The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware) and all Merge Request should happen there.
+The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware).
 
 ## License
-
-[![Libre Space Foundation](https://img.shields.io/badge/%C2%A9%202014--2018-Libre%20Space%20Foundation-6672D8.svg)](https://librespacefoundation.org/)
 
 Licensed under the [GPLv3](LICENSE)

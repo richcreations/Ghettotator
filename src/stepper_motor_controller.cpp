@@ -39,9 +39,11 @@ Satnogs firmware cleaned up and simplified, with a focus on steppers and sensors
 
 uint32_t t_run = 0; // run time of uC
 easycomm comm;
+
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin); 1=AccelStepper::DRIVER aka standard STEP/DIR drivers
 AccelStepper stepper_el(1, eleStepPin, eleDirPin);
 AccelStepper stepper_az(1, aziStepPin, aziDirPin);
+
 endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinStopPin, DEFAULT_HOME_STATE);
 #ifdef POLARIZER
     AccelStepper stepper_po(1, polStepPin, polDirPin);
