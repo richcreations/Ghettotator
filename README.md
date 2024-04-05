@@ -1,24 +1,41 @@
-# SatNOGS Rotator Firmware for Arduino UNO/CNC Shield, for DIRECT CONNECTION TO PC via serial
+# Wire Wiggler Firmware: Yet another satellite antenna rotator project
+This is a fork of the satnogs stepper rotator firmware that aims clean up the code, port it for use with a broad assortment of hardware, and develop new features like polarization control.
 
-This fork of the satnogs firmware aims to make the original code easier to port to different hardware and add features like additional axis, sensor feedback, and PID control, with a focus on stepper motors.
+Read about the original satnogs rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller).
 
-Firmware [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller).
+## Features
+* Interfaces with Hamlib rotctld for easy control with rotator apps like Gpredict
+* Homes all axis at boot up
+* Watchdog timer shuts down all drivers when triggered
+* Optional 3rd axis for polarization control
 
-Repository includes all source files for the SatNOGS rotator controller Firmware, based on the Arduino UNO. using the CNC v3 Shield, instead of the custom SatNOGS PCB.
-
-Electronics can be found on [satnogs-rotator-controller](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller)
+## Currently Compatible Hardware
+* Arduino UNO with CNC Shield v3
+* Arduino Mega2560 with Ramps v1.4
+* Anet A8 3d printer motherboard w/ m1280p and built-in a4988's
 
 ## Instructions
+### Install Hamlib and Gpredict Software:
+Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
 
-In order to use this code, you need to install
- * Arduino IDE
- * [AccelStepper library](http://www.airspayce.com/mikem/arduino/AccelStepper/index.html)
- * [PID_v1 library](https://github.com/br3ttb/Arduino-PID-Library)
- * Wire library
- * Gpredict
+### Create a launch script for rotctld:
+Plug your hardware into your computer, and find the port used by your board using device manager in Windows, or `dmesg | grep tty` in a Linux terminal. This port might be for example `COM3` in windows, or `/dev/ttyUSB3` in Linux. Use this info to make a shell script to launch rotctld using appropriate port (`/dev/ttyUSB0` in this example) in your favorite text editor (ie Notepad++):
 
+```
+rotctld -m 202 -r /dev/ttyUSB0 -s 9600 -T 127.0.0.1 -t 4533 -C timeout=500 -C retry=0 -vvvvvvvv
+```
+Make the script executable so you can use convenient shortcuts to start rotctld before using your rotator software. You can also just use that line in a terminal to start rotctld manually.
+
+### Configure GPredict
+In Gpredict, go to Edit > Preferences > Interfaces > Rotators > Add New
+
+Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost, port 4533). 
+
+### Operating
+First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
 ## Easycomm implemantation
+The easycomm lib is used to interface with the computer rotator control software via UART. Here is the list of valid serial commands that easycomm can respond to (* currently not all commands are implemented):
 
 * AZ, Azimuth, number - 1 decimal place [deg]
 * EL, Elevation, number - 1 decimal place [deg]
@@ -75,88 +92,9 @@ In order to use this code, you need to install
     * This reg is set from Vx commands control mode (position = 0, speed = 1) = 9
 * RB, custom command to reboot controller
 
-## Controller Configurations
-
-* Stepper Motor
-    * Endstops
-    * Encoders, optional
-    * UART or R485 (For both options the firmware is the same)
-
-
-## Pins Configuration
-
-```
-   #ifndef ROTATOR_PINS_H_
-   #define ROTATOR_PINS_H_
-   //#define M1IN1 10 ///< Motor 1 PWM pin
-   #define M1IN1 2 ///< Motor 1 PWM pin
-   #define M1IN2 5  ///< Motor 1 PWM pin
-   #define M1SF  7  ///< Motor 1 digital input, status flag for DC Motor Drivers
-   #define M1FB  A1 ///< Motor 1 analog input, current/load feedback for DC Motor Drivers
-   #define M2IN1 3 ///< Motor 2 PWM pin
-   #define M2IN2 6  ///< Motor 2 PWM pin
-   #define M2SF  7 ///< Motor 2 digital input, status flag for DC Motor Drivers
-   #define M2FB  A0 ///< Motor 2 analog input, current/load feedback for DC Motor Drivers
-   #define MOTOR_EN 8 ///< Digital output, to enable the motors
-   #define SW1 11 ///< Digital input, to read the status of end-stop for motor 1
-   #define SW2 9 ///< Digital input, to read the status of end-stop for motor 2
-   #define RS485_DIR 2 ///< Digital output, to set the direction of RS485 communication
-   #define SDA_PIN 3 ///< I2C data pin
-   #define SCL_PIN 4 ///< I2C clock pin
-   #define PIN12 12 ///< General purpose I/O pin
-   #define PIN13 13 ///< General purpose I/O pin
-   #define A2    A2 ///< General purpose I/O & analog pin
-   #define A3    A3 ///< General purpose I/O & analog pin
-   #endif /* ROTATOR_PINS_H_ */
-```
-
-## Testing with hamlib - rotctl or with Serial Monitor
-
-Software to install
-Final pieces to the preparation work are to install a couple of pieces of software. firstly Hamlib. This will be used to communicate between GPredict and the Arduino. Secondly we will install the main prediction software, GPredict. We will not be going into detail about setup of GPredict but assume that you have followed the installation guide and had a play around with it so you can understand what it is and how it works.
-
-Install hamlib
-
-Download the Hamblib software and follow the installation process. this may require you installing it with Administrator rights. using device manager find the port for the Arduino, for the purposes of this we will assume it is COM7
-
-Using a text editor, like Notepad++, to create a file with the code below in it. Note where COM7 is and amend with your own COM port. Save as a batch file (i.e. with th extension .bat file in the same folder as rotctld (Usually found in C:\Program Files (x86)\hamlib-w64-3.2\bin )
-
-rotctld -m 202 -r COM7 -s 9600 -T 127.0.0.1 -t 4533 -C timeout=500 -C retry=0 -vvvvvvvv > pause
-Install GPredict
-
-Download and install GPredict. Next we will need to add a rotator. Go to Edit > Preferences > Interfaces > Rotators > Add New
-
-Give it a name. For example Arduino. The port is localhost 4533
-
-That's it for setup. next we will test the system
-
-Testing
-We will need to do a few things to get the system running.
-
-Start the .bat file
-In GPredict open up the Antenna module and click Engage
-You should see that in the batch file output a series of commands being sent to the Arduino
-Check that both the Az and Ele work correctly by manually driving the rotator
-Occasionally this might not work first time. A restart of both hamlib and Gpredict worked
-
-Tweaks
-There is a huge variety in parts that can get bought, here are a few tweaks that may be necessary.
-
-Motors are turning the wrong way - This may need the pins checking
-
-It is only moving half the distance - Change the gear ratio in the main sketch
-
-The limit switches are not working - Change the following code in the main sketch
-
-define DEFAULT_HOME_STATE LOW ///< Change to LOW according to Home sensor
-Operation
-Operating is as simple as selecting a satellite from GPredict and then selecting track. The rotator will then follow that satellite or object.f
-
-
-
 ## Contribute
 
-The main repository lives on [Gitlab](https://gitlab.com/librespacefoundation/satnogs/satnogs-rotator-firmware) and all Merge Request should happen there.
+The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware) and all Merge Request should happen there.
 
 ## License
 
