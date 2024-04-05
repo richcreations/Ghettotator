@@ -1,5 +1,5 @@
 # Wire Wiggler Firmware: Yet another satellite antenna rotator project
-Wire Wiggler is a satellite antenna rotator control firmware based off of satnogs original stepper rotator code.
+Wire Wiggler is a satellite antenna rotator control firmware intended to be used with common nc controller hardware. The code is based off of satnogs original stepper rotator code.
 
 Read about the original satnogs rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://wiki.satnogs.org/SatNOGS_Arduino_Uno/CNC_Shield_Based_Rotator_Controller).
 
