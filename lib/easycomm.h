@@ -134,8 +134,7 @@ public:
                     str4 = String(control_el.input, 1);
                     str5 = String("\n");
                     Serial.print(str1 + str2 + str3 + str4 + str5);
-                    control_az.setpoint = rotator.park_az;
-                    control_el.setpoint = rotator.park_el;
+                    rotator.parking_flag = false;
                 } else if (buffer[0] == 'V' && buffer[1] == 'E') {
                     // Get the version if rotator controller
                     str1 = String("VE");

@@ -45,7 +45,6 @@
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
-// #define ELE_PARK_CLEARANCE 10.0  // Antenna elevation parking clearance, stay above this value until azi is in park position
 
 // #define POL_RATIO          57.0  // Polarization mechanical gear ratio
 // #define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping

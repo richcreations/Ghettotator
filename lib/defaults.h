@@ -68,9 +68,6 @@
     #ifndef ELE_PARK_ANGLE
         #define ELE_PARK_ANGLE -5.0  // Antenna elevation parking position
     #endif
-    #ifndef ELE_PARK_CLEARANCE
-        #define ELE_PARK_CLEARANCE 10.0 // Antenna elevation parking clearance, stay above this value until azi is in park position
-    #endif
 #endif
 
 #ifndef POL_RATIO
