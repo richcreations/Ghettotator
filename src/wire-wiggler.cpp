@@ -460,5 +460,5 @@ void readPolPot() {
     rawpolpot2 = rawpolpot1;
     rawpolpot1 = analogRead(polPotPin); // Read the polarizer poti
     
-    polPot     = (rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4)/4; // if i put the addition in () can i safly add the division to the end... yes?
+    polPot     = (rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4)/4; // result
 }
