@@ -8,9 +8,9 @@
 // for your board, a section may be added to platform.ini to accomodate.
 // When adding a new board, consider adding a schematic to /images for user reference.
 
-#define ANET_A8_ATMEGA1280_PRINTER_BOARD
+//#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 //#define UNO_CNC_SHIELD_V_3
-//#define RAMPS_V_1_4_MEGA2560
+#define RAMPS_V_1_4_MEGA2560
 
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
@@ -33,7 +33,7 @@
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
 // #define AZI_RATIO          57    // Azimuth mechanical gear ratio (19:1 planetary * 3:1 belt drive = 57:1)
- #define AZI_MICROSTEP      16     // Azimuth stepper driver microstepping
+// #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 // #define AZI_VMAX           45.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
@@ -41,7 +41,7 @@
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
 // #define ELE_RATIO          57    // Elevation mechanical gear ratio
- #define ELE_MICROSTEP      16     // Elevation stepper driver microsteppinh
+// #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
 // #define ELE_VMAX           45.0 // Antenna deg/s
 // #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
@@ -49,7 +49,7 @@
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
 // #define POL_RATIO          3     // Polarization mechanical gear ratio
- #define POL_MICROSTEP      16     // Polarization stepper driver microstepping
+// #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           180.0 // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
