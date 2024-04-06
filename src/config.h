@@ -31,8 +31,8 @@
 
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
-// #define AZI_RATIO          57    // Azimuth mechanical gear ratio
-// #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping (<=4)
+// #define AZI_RATIO          57    // Azimuth mechanical gear ratio (19:1 planetary * 3:1 belt drive = 57:1)
+// #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 // #define AZI_VMAX           45.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
@@ -40,7 +40,7 @@
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
 // #define ELE_RATIO          57    // Elevation mechanical gear ratio
-// #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping (<=4)
+// #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
 // #define ELE_VMAX           45.0 // Antenna deg/s
 // #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
@@ -48,14 +48,14 @@
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
 // #define POL_RATIO          3     // Polarization mechanical gear ratio
-// #define POL_MICROSTEP      1     // Polarization stepper driver microstepping (<=4)
+// #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           180.0 // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
 // #define POL_PARK_ANGLE     0.0   // Antenna polarizer parking position
 
-// #define SPR                200.0 // Motor steps per revolution (200.0 for standard 1.8degree motors)
+// #define SPR                200   // Motor steps per revolution (200.0 for standard 1.8degree motors)
 // #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 // #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches
 // #define HOME_DELAY         2000  // millis to keep moving after hitting endstop (time to settle before resetting zeros)

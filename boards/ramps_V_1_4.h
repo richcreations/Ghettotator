@@ -1,12 +1,12 @@
 // Pins file for Arduino Mega2560 with Ramps v1.4 3d printer shield
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-2.png
 // https://osoyoo.com/wp-content/uploads/2016/07/Schematic-1.png
-#define eleStepPin      A0  // X step
-#define eleDirPin       A1  // X direction
-#define eleENpin        38  // X enable
-#define aziStepPin      A6  // Y step
-#define aziDirPin       A7  // Y direction
-#define aziENpin        A2  // Y enable
+#define aziStepPin      A0  // X step
+#define aziDirPin       A1  // X direction
+#define aziENpin        38  // X enable
+#define eleStepPin      A6  // Y step
+#define eleDirPin       A7  // Y direction
+#define eleENpin        A2  // Y enable
 #define polStepPin      46  // Z step
 #define polDirPin       48  // Z direction
 #define polENpin        A8  // Z enable

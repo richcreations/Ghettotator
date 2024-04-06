@@ -1,11 +1,11 @@
 // Pins file for the Uno CNC Shield V3
 // https://europe1.discourse-cdn.com/arduino/original/4X/3/5/f/35f56e460a19e6a426e59053e5a4753201b918a8.png
-#define eleStepPin      2   // X step
-#define eleDirPin       5   // X dir
-#define eleENpin        8   // Same pin for all drivers
-#define aziStepPin      3   // Y Step
-#define aziDirPin       6   // Y Dir
-#define aziENpin        8   // ...
+#define aziStepPin      2   // X step
+#define aziDirPin       5   // X dir
+#define aziENpin        8   // Same pin for all drivers
+#define eleStepPin      3   // Y Step
+#define eleDirPin       6   // Y Dir
+#define eleENpin        8   // ...
 #define polStepPin      4   // Z Step
 #define polDirPin       7   // Z Dir
 #define polENpin        8   // ...

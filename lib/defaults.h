@@ -18,11 +18,6 @@
     #include <../boards/ramps_V_1_4.h>
 #endif
 
-#if (AZI_MICROSTEP > 4 | ELE_MICROSTEP > 4 | POL_MICROSTEP > 4) 
-    #error Only 4 or lower microstepping allowed!!!
-#endif
-
-
 #ifdef POLARIZER
     #ifndef POL_POT_HYSTERESIS
         #define POL_POT_HYSTERESIS  1   // Increase to eliminate polarize axis shaking while poti is not moved
@@ -39,7 +34,7 @@
     #define AZI_RATIO          57    // Azimuth mechanical gear ratio
 #endif
 #ifndef AZI_MICROSTEP
-    #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping (<=4)
+    #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 #endif
 #ifndef AZI_VMAX
     #define AZI_VMAX           45.0  // Antenna deg/s
@@ -63,7 +58,7 @@
     #define ELE_RATIO          57    // Elevation mechanical gear ratio
 #endif
 #ifndef ELE_MICROSTEP
-    #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping (<=4)
+    #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping
 #endif
 #ifndef ELE_VMAX
     #define ELE_VMAX           45.0  // Antenna deg/s
@@ -87,7 +82,7 @@
     #define POL_RATIO          3     // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
-#   define POL_MICROSTEP       1     // Polarization stepper driver microstepping (<=4)
+#   define POL_MICROSTEP       1     // Polarization stepper driver microstepping
 #endif
 #ifndef POL_VMAX
     #define POL_VMAX           180.0 // Antenna deg/s
@@ -108,7 +103,7 @@
 #endif
 
 #ifndef SPR
-    #define SPR                200.0 // Motor steps per revolution (200.0 for standard 1.8degree motors)
+    #define SPR                200   // Motor steps per revolution (200.0 for standard 1.8degree motors)
 #endif
 #ifndef MIN_PULSE_WIDTH
     #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)

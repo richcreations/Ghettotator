@@ -34,22 +34,22 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
 #endif
 
 #ifndef POLARIZER
-    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin);
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin);
 #else
-    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin);
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin);
 #endif
 
-int32_t deg2step(float deg, uint8_t ratio, uint8_t microsteps);
-float step2deg(int32_t step, uint8_t ratio, uint8_t microsteps);
+long deg2step(float deg, uint8_t ratio, uint8_t microsteps);
+float step2deg(long step, uint8_t ratio, uint8_t microsteps);
 int readPolPot();
 
-int32_t eleMaxStepRate = 0;
-int32_t eleMaxStepAcc = 0;
-int32_t aziMaxStepRate = 0;
-int32_t aziMaxStepAcc = 0;
+long eleMaxStepRate = 0;
+long eleMaxStepAcc = 0;
+long aziMaxStepRate = 0;
+long aziMaxStepAcc = 0;
 #ifdef POLARIZER
-    int32_t polMaxStepRate = 0;
-    int32_t polMaxStepAcc = 0;
+    long polMaxStepRate = 0;
+    long polMaxStepAcc = 0;
     int rawpolpot[POL_POT_SAMPLES - 1]; // save N values to average N+1 (N + current reading)
     int polPot = 0;
     int lastPolPot = 0;
@@ -152,9 +152,9 @@ void loop() {
                 rotator.rotator_error = homing(deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
                                            deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
             #else
-                rotator.rotator_error = homing(deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
-                                           deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
-                                           deg2step(POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
+                rotator.rotator_error = homing(-deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           -deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
+                                           -deg2step(POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
             #endif
             // Respond to homing error
             if (rotator.rotator_error == no_error) {
@@ -270,7 +270,7 @@ void loop() {
 
 // Homing function without polarizer feature enabled
 #ifndef POLARIZER
-    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin) {
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin) {
         bool isHome_az = false;
         bool isHome_el = false;
 
@@ -341,16 +341,16 @@ void loop() {
     }
 // Homing with Polarizer enabled
 #else
-    enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin) {
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin) {
         // Declare and init axis home flags
         bool isHome_az = false;
         bool isHome_el = false;
         bool isHome_po = false;
 
         // Move motors to "seek" position
-        stepper_az.moveTo(-seek_aziMin);
-        stepper_el.moveTo(-seek_eleMin);
-        stepper_po.moveTo(-seek_polMin);
+        stepper_az.moveTo(seek_aziMin);
+        stepper_el.moveTo(seek_eleMin);
+        stepper_po.moveTo(seek_polMin);
 
         // Homing loop
         while (isHome_az == false || isHome_el == false || isHome_po == false) {
@@ -369,7 +369,7 @@ void loop() {
                 stepper_po.moveTo(stepper_po.currentPosition());
                 isHome_po = true;
             }
-            // Travelled beyond step limit... mechanical failure
+            // Travelled beyond step limit... mechanical failure. Exit loop with error
             if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
                 (stepper_el.distanceToGo() == 0 && !isHome_el) ||
                 (stepper_po.distanceToGo() == 0 && !isHome_po)) {
@@ -405,7 +405,7 @@ void loop() {
 
 
         // Delay to allow homing movement to complete
-        uint32_t time = millis();
+        unsigned long time = millis();
         while (millis() - time < HOME_DELAY) {
             #ifdef WATCHDOG
                 wdt.watchdog_reset();
@@ -428,18 +428,16 @@ void loop() {
 
 // Convert degrees to steps
 // steps = ratio * spr * microsteps * deg / 360
-int32_t deg2step(float deg, uint8_t ratio, uint8_t microsteps) {
-    float foo = ratio * SPR * microsteps / 360.0; // prevent overflows
-    foo = foo * deg;
-    return foo;
+long deg2step(float deg, uint8_t ratio, uint8_t microsteps) {
+    long steps = (float(ratio) * SPR * microsteps * deg) / float(360.0);
+    return steps;
 }
 
 // Convert steps to degrees
 // degrees = 360.00 * step / (spr * ratio * microsteps)
-float step2deg(int32_t step, uint8_t ratio, uint8_t microsteps) {
-    float bar = 360.0 / SPR * ratio * microsteps; // prevent overflows
-    bar = step * bar;
-    return bar;
+float step2deg(long step, uint8_t ratio, uint8_t microsteps) {
+    float deg = (360.0 * float(step)) / (float(SPR) * ratio * microsteps);
+    return deg;
 }
 
 // Read Polarizer Poti and average the last 4 readings
