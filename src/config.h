@@ -16,6 +16,7 @@
 // Uncomment to enable antenna polarity rotator feature (poti from 0V to Vcc)
 #define POLARIZER
 //#define POL_POT_HYSTERESIS  1     // Increase to eliminate polarize axis shaking while poti is not moved
+//#define POL_POT_SAMPLES   4       // Number of averaged polpot samples used for smoothing
 
 // Uncomment to enable parking feature
 //#define PARKING

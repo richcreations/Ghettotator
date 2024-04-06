@@ -50,7 +50,7 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
-    int rawpolpot[3] = {0,0,0}; // save 3 values to average 4 (3 + current reading)
+    int rawpolpot[POL_POT_SAMPLES - 1]; // save N values to average N+1 (N + current reading)
     int polPot = 0;
     int lastPolPot = 0;
 #endif
@@ -445,11 +445,11 @@ float step2deg(int32_t step, uint8_t ratio, uint8_t microsteps) {
 // Read Polarizer Poti and average the last 4 readings
 int readPolPot() {
     int polpotavg = 0;
-    for(byte i = 2; i >= 1; i--) {      // this runs 3 loops, including i=0
-        polpotavg += rawpolpot[i];      // add to average
-        rawpolpot[i] = rawpolpot[i - 1]; // increment indexes over for next run (rolling array)
+    for(byte i = 0; i < POL_POT_SAMPLES - 2; i++) {         // this runs POL_POT_SAMPLES-1 loops
+        polpotavg += rawpolpot[i];                          // add to average
+        rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
     }
-    rawpolpot[0] = analogRead(polPotPin); // last reading stored
-    polpotavg += rawpolpot[0];          // ...and added
-    return (polpotavg / 4);             // return average
+    rawpolpot[POL_POT_SAMPLES - 1] = analogRead(polPotPin); // last reading stored
+    polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
+    return (polpotavg / POL_POT_SAMPLES);                   // return average
 }
