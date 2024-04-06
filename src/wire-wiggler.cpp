@@ -59,6 +59,10 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
+    uint16_t rawpolpot1 = 0;
+    uint16_t rawpolpot2 = 0;
+    uint16_t rawpolpot3 = 0;
+    uint16_t rawpolpot4 = 0;
     float polPot = 0.0;
     float lastPolPot = 0.0;
 #endif
@@ -207,7 +211,7 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    polPot = analogRead(polPotPin); // Read the polarizer poti
+                    readPolPot(); //Read Pot and average results
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
@@ -443,4 +447,19 @@ int32_t deg2step(float deg, float ratio, float microsteps) {
 float step2deg(int32_t step, float ratio, float microsteps) {
     float degrees = 360.00 * step / (SPR * ratio * microsteps);
     return degrees;
+}
+
+
+// Read Polerize Pot, and average output
+void readPolPot() {
+    // this really should be an array, and a for each loop, 
+    // but when all you have is a hammer, everything looks like a nail!
+
+    rawpolpot4 = rawpolpot3; //shift previous results down
+    rawpolpot3 = rawpolpot2;
+    rawpolpot2 = rawpolpot1;
+    rawpolpot1 = analogRead(polPotPin); // Read the polarizer poti
+    
+    polPot     = rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4; // if i put the addition in () can i safly add the division to the end?
+    polPot     = polPot / 4;
 }
