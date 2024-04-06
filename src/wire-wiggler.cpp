@@ -59,7 +59,7 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
-    uint16_t rawpolpot[2]; // save 3 values to average 4 after readings
+    uint16_t rawpolpot[2]; // save 3 values to average 4 (3 + current reading)
     uint16_t polPot = 0.0;
     uint16_t lastPolPot = 0.0;
 #endif
