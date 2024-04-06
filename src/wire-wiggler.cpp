@@ -59,12 +59,13 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
-    float polPot = 0;
+    float polPot = 0.0;
+    float lastPolPot = 0.0;
 #endif
 #ifdef ledExists
     bool ledState = 0;  //logic
-    uint32_t ledPeriod = 1000; // msec
-    uint32_t ledTime = 0; //timer
+    uint32_t ledPeriod = 1000; // msec period for default heartbeat flashing
+    uint32_t ledTime = 0; // time holder
 #endif
 
 void setup() {
@@ -121,24 +122,6 @@ void setup() {
 }
 
 void loop() {
-    #ifndef DEBUG
-        #ifdef ledExists
-            // LED heartbeat: slow blink when loop is running
-            if(millis() - ledTime > ledPeriod)   {
-                if(ledState)    {
-                    digitalWrite(ledPin,LOW);
-                    ledState = 0;
-                    ledTime = millis();
-                }
-                else{
-                    digitalWrite(ledPin,HIGH);
-                    ledState = 1;
-                    ledTime = millis();
-                }
-            }
-        #endif
-    #endif
-
     // Debug LED on... put this where SHTF
     #ifdef DEBUG
         #ifdef ledExists
@@ -174,12 +157,12 @@ void loop() {
             rotator.control_mode = position;
             // Go home
             #ifndef POLARIZER
-                rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
-                                           deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
+                rotator.rotator_error = homing(deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
             #else
-                rotator.rotator_error = homing(deg2step(-AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
-                                           deg2step(-ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
-                                           deg2step(-POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
+                rotator.rotator_error = homing(deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
+                                           deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
+                                           deg2step(POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
             #endif
             // Respond to homing error
             if (rotator.rotator_error == no_error) {
@@ -204,10 +187,32 @@ void loop() {
                 if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
                     rotator.rotator_status = idle;
                 }
+                
+                #ifndef DEBUG
+                    #ifdef ledExists
+                        // LED heartbeat: slow blink when loop is running
+                        if(millis() - ledTime > ledPeriod)   {
+                            if(ledState)    {
+                                digitalWrite(ledPin,LOW);
+                                ledState = 0;
+                                ledTime = millis();
+                            }
+                            else{
+                                digitalWrite(ledPin,HIGH);
+                                ledState = 1;
+                                ledTime = millis();
+                            }
+                        }
+                    #endif
+                #endif
             #else
                 #ifdef POLARIZER
                     polPot = analogRead(polPotPin); // Read the polarizer poti
-                    control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // polarize setpoint angle from 10bit reading
+                    // Poti has moved enough to respond to
+                    if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
+                        lastPolPot = polPot;
+                        control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // use 10bit reading to change polarize setpoint angle
+                    }
                 #endif
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -221,6 +226,24 @@ void loop() {
                 if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0 && stepper_po.distanceToGo() == 0) {
                     rotator.rotator_status = idle;
                 }
+            #endif
+            
+            #ifndef DEBUG
+                #ifdef ledExists
+                    // LED heartbeat: slow blink when loop is running
+                    if(millis() - ledTime > ledPeriod)   {
+                        if(ledState)    {
+                            digitalWrite(ledPin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
+                #endif
             #endif
         }
     } 
@@ -239,6 +262,16 @@ void loop() {
             rotator.rotator_error = no_error;
             rotator.rotator_status = idle;
         }
+                    
+        #ifndef DEBUG
+            #ifdef ledExists
+                // LED heartbeat: remain on if an error occured
+                if(!ledState)    {
+                    digitalWrite(ledPin,HIGH);
+                    ledState = 1;
+                }
+            #endif
+        #endif
     }
 }
 
@@ -322,9 +355,9 @@ void loop() {
         bool isHome_po = false;
 
         // Move motors to "seek" position
-        stepper_az.moveTo(seek_aziMin);
-        stepper_el.moveTo(seek_eleMin);
-        stepper_po.moveTo(seek_polMin);
+        stepper_az.moveTo(-seek_aziMin);
+        stepper_el.moveTo(-seek_eleMin);
+        stepper_po.moveTo(-seek_polMin);
 
         // Homing loop
         while (isHome_az == false || isHome_el == false || isHome_po == false) {
@@ -346,7 +379,7 @@ void loop() {
             // Travelled beyond step limit... mechanical failure
             if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
                 (stepper_el.distanceToGo() == 0 && !isHome_el) ||
-                (stepper_po.distanceToGo() == 0 && !isHome_po)){
+                (stepper_po.distanceToGo() == 0 && !isHome_po)) {
                 return homing_error;
             }
             // Move motors
@@ -402,10 +435,12 @@ void loop() {
 
 // Convert degrees to steps
 int32_t deg2step(float deg, float ratio, float microsteps) {
-    return (ratio * SPR * microsteps * deg / 360.0);
+    int32_t steps = ratio * SPR * microsteps * deg / 360.0;
+    return steps;
 }
 
 // Convert steps to degrees
 float step2deg(int32_t step, float ratio, float microsteps) {
-    return (360.00 * step / (SPR * ratio * microsteps));
+    float degrees = 360.00 * step / (SPR * ratio * microsteps);
+    return degrees;
 }

@@ -15,7 +15,8 @@
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
 // Uncomment to enable antenna polarity rotator feature (poti from 0V to Vcc)
-#define POLARIZER                 
+#define POLARIZER
+//#define POL_POT_HYSTERESIS  5     // Increase to eliminate polarize axis shaking while poti is not moved
 
 // Uncomment to enable parking feature
 //#define PARKING
@@ -24,7 +25,7 @@
 //#define DEBUG                   
 
 // Disable motors if WDT is triggered
-#define WATCHDOG                  
+//#define WATCHDOG                  
 
 // The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)
 
@@ -34,7 +35,7 @@
 // #define AZI_MICROSTEP      16.0  // Azimuth stepper driver microstepping
 // #define AZI_VMAX           300.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
-// #define AZI_MIN_ANGLE      0     // Minimum antenna azimuth angle
+// #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
@@ -46,7 +47,7 @@
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
-// #define POL_RATIO          57.0  // Polarization mechanical gear ratio
+// #define POL_RATIO          3.0   // Polarization mechanical gear ratio
 // #define POL_MICROSTEP      16.0  // Polarization stepper driver microstepping
 // #define POL_VMAX           300.0 // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2

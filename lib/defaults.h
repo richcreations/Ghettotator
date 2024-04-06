@@ -18,6 +18,11 @@
     #include <../boards/ramps_V_1_4.h>
 #endif
 
+#ifdef POLARIZER
+    #ifndef POL_POT_HYSTERESIS
+        #define POL_POT_HYSTERESIS  5   // Increase to eliminate polarize axis shaking while poti is not moved
+    #endif
+#endif
 
 #ifndef BAUDRATE
     #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
@@ -29,16 +34,16 @@
     #define AZI_MICROSTEP      16.0  // Azimuth stepper driver microstepping
 #endif
 #ifndef AZI_VMAX
-    #define AZI_VMAX           300   // Antenna deg/s
+    #define AZI_VMAX           300.0 // Antenna deg/s
 #endif
 #ifndef AZI_ACC_MAX
-    #define AZI_ACC_MAX        120   // Antenna deg/s^2
+    #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 #endif
 #ifndef AZI_MIN_ANGLE
-    #define AZI_MIN_ANGLE      0     // Minimum antenna azimuth angle
+    #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 #endif
 #ifndef AZI_MAX_ANGLE
-    #define AZI_MAX_ANGLE      360   // Maximum antenna azimuth angle
+    #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
 #endif
 #ifdef PARKING
     #ifndef AZI_PARK_ANGLE
@@ -53,16 +58,16 @@
     #define ELE_MICROSTEP      16.0  // Elevation stepper driver microstepping
 #endif
 #ifndef ELE_VMAX
-    #define ELE_VMAX           300   // Antenna deg/s
+    #define ELE_VMAX           300.0 // Antenna deg/s
 #endif
 #ifndef ELE_ACC_MAX
-    #define ELE_ACC_MAX        120   // Antenna deg/s^2
+    #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
 #endif
 #ifndef ELE_MIN_ANGLE
-    #define ELE_MIN_ANGLE      0     // Minimum antenna elevation angle
+    #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 #endif
 #ifndef ELE_MAX_ANGLE
-    #define ELE_MAX_ANGLE      180   // Maximum antenna elevation angle
+    #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 #endif
 #ifdef PARKING
     #ifndef ELE_PARK_ANGLE
@@ -71,19 +76,19 @@
 #endif
 
 #ifndef POL_RATIO
-    #define POL_RATIO          57.0  // Polarization mechanical gear ratio
+    #define POL_RATIO          3.0   // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
 #   define POL_MICROSTEP       16.0  // Polarization stepper driver microstepping (built in MSx pull ups)
 #endif
 #ifndef POL_VMAX
-    #define POL_VMAX           300   // Antenna deg/s
+    #define POL_VMAX           300.0 // Antenna deg/s
 #endif
 #ifndef POL_ACC_MAX
-    #define POL_ACC_MAX        120   // Antenna deg/s^2
+    #define POL_ACC_MAX        120.0 // Antenna deg/s^2
 #endif
 #ifndef POL_MIN_ANGLE
-    #define POL_MIN_ANGLE      0     // Minimum antenna polarization angle
+    #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 #endif
 #ifndef POL_MAX_ANGLE
     #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
@@ -104,7 +109,7 @@
     #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches and pullups
 #endif
 #ifndef HOME_DELAY
-    #define HOME_DELAY         2000  // millis to keep moving after hitting endstop
+    #define HOME_DELAY         2000  // millis to keep moving after hitting all endstops while homing
 #endif
 #ifndef SAMPLE_TIME
     #define SAMPLE_TIME        0.1   // Control loop in sec
