@@ -8,6 +8,7 @@
 // for your board, a section may be added to platform.ini to accomodate.
 // When adding a new board, consider adding a schematic to /images for user reference.
 
+//#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 //#define UNO_CNC_SHIELD_V_3
 #define RAMPS_V_1_4_MEGA2560
 

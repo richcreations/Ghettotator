@@ -8,9 +8,6 @@
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../boards/unoCncV3.h>
 #endif
-#ifdef BRUSHES_N_POTS
-    #include <../boards/brushesNpots.h>
-#endif
 #ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
     #include <../boards/anet_a8_atmega1280.h>
 #endif
