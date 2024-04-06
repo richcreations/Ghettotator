@@ -108,7 +108,7 @@ Understanding how to stepper motors work in general can help users fix many prob
 Wire Wiggler by default uses the onboard LED (if the board has one) to indicate status. A solid on LED means the loop has exited with an error. A slow 1hz flashing LED means the code is running in normal mode (ie ready to be controlled by Gpredict). A fast 5hz flashing LED indicates the code is currently running the homing routine.
 
 ## Contribute
-The main repository lives on [Github](https://github.com/truglodite/satnogs-rotator-firmware).
+The main repository lives on [Github](https://github.com/truglodite/Wire-Wiggler-Firmware).
 
 ## License
 Licensed under the [GPLv3](LICENSE)
