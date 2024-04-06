@@ -39,8 +39,8 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin);
 #endif
 
-int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps);
-float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps);
+int32_t deg2step(float deg, uint8_t ratio, uint8_t microsteps);
+float step2deg(int32_t step, uint8_t ratio, uint8_t microsteps);
 int readPolPot();
 
 int32_t eleMaxStepRate = 0;
@@ -428,7 +428,7 @@ void loop() {
 
 // Convert degrees to steps
 // steps = ratio * spr * microsteps * deg / 360
-int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps) {
+int32_t deg2step(float deg, uint8_t ratio, uint8_t microsteps) {
     float foo = ratio * SPR * microsteps / 360.0; // prevent overflows
     foo = foo * deg;
     return foo;
@@ -436,7 +436,7 @@ int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps) {
 
 // Convert steps to degrees
 // degrees = 360.00 * step / (spr * ratio * microsteps)
-float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps) {
+float step2deg(int32_t step, uint8_t ratio, uint8_t microsteps) {
     float bar = 360.0 / SPR * ratio * microsteps; // prevent overflows
     bar = step * bar;
     return bar;

@@ -16,13 +16,14 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Arduino UNO with CNC Shield v3
 * Arduino Mega2560 with Ramps v1.4
 * N.O. endstop switches
+* Linear potentiometers (use 10nF between wiper and gnd)
 * Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode...  microstepping <= 4 only!)
 
 ## Instructions
 ### Configure, compile, and upload firmware:
 *A basic level of understanding on how to comment/edit config files, install and use VSCode, and install and use PlatformIO is assumed in this text.*
 
-Download and decompress the Wire Wiggler repository in your project folder, and open the project in VScode. Edit the "config.h" file to suit your hardware (comment/uncomment and edit any relevant lines). When done editing, select the pio build option that matches your board, and compile+upload to your board. If completed succesfully, your board is now ready for use.
+Download and decompress the Wire Wiggler repository in your project folder, and open the project in VScode. Edit the "config.h" file to suit your hardware (comment/uncomment and edit any relevant lines). Be sure to at least choose the correct board definition, and enable POLARIZER if you are using the feature. When done editing, select the pio build option that matches your board, and compile+upload to your board. If completed succesfully, your board is now ready for use.
 
 ### Install Hamlib and Gpredict Software:
 Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
