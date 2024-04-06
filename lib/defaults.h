@@ -31,7 +31,7 @@
     #define AZI_RATIO          57.0  // Azimuth mechanical gear ratio
 #endif
 #ifndef AZI_MICROSTEP
-    #define AZI_MICROSTEP      16.0  // Azimuth stepper driver microstepping
+    #define AZI_MICROSTEP      1.0   // Azimuth stepper driver microstepping (<=4)
 #endif
 #ifndef AZI_VMAX
     #define AZI_VMAX           300.0 // Antenna deg/s
@@ -55,7 +55,7 @@
     #define ELE_RATIO          57.0  // Elevation mechanical gear ratio
 #endif
 #ifndef ELE_MICROSTEP
-    #define ELE_MICROSTEP      16.0  // Elevation stepper driver microstepping
+    #define ELE_MICROSTEP      1.0   // Elevation stepper driver microstepping (<=4)
 #endif
 #ifndef ELE_VMAX
     #define ELE_VMAX           300.0 // Antenna deg/s
@@ -79,7 +79,7 @@
     #define POL_RATIO          3.0   // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
-#   define POL_MICROSTEP       16.0  // Polarization stepper driver microstepping (built in MSx pull ups)
+#   define POL_MICROSTEP       1.0   // Polarization stepper driver microstepping (<=4)
 #endif
 #ifndef POL_VMAX
     #define POL_VMAX           300.0 // Antenna deg/s

@@ -15,7 +15,6 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 ## Currently Compatible Hardware
 * Arduino UNO with CNC Shield v3
 * Arduino Mega2560 with Ramps v1.4
-* Anet A8 3d printer motherboard w/ m1280p and built-in a4988's
 * N.O. endstop switches
 * Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode)
 
