@@ -51,6 +51,7 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
 
 int32_t deg2step(float deg, float ratio, float microsteps);
 float step2deg(int32_t step, float ratio, float microsteps);
+void readPolPot();
 
 int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
@@ -460,6 +461,5 @@ void readPolPot() {
     rawpolpot2 = rawpolpot1;
     rawpolpot1 = analogRead(polPotPin); // Read the polarizer poti
     
-    polPot     = rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4; // if i put the addition in () can i safly add the division to the end?
-    polPot     = polPot / 4;
+    polPot     = (rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4)/4; // if i put the addition in () can i safly add the division to the end... yes?
 }
