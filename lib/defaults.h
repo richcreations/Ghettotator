@@ -10,6 +10,10 @@
 #endif
 #ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
     #include <../boards/anet_a8_atmega1280.h>
+    // A8 motherboard has all MSx pins hardwired to Vcc, so 16 microsteps only!
+    #if (AZI_MICROSTEP != 16 || ELE_MICROSTEP != 16 || POL_MICROSTEP != 16)
+        #error XXX_MICROSTEP != 16... A8 board is hardwired with 16 microsteps!!!
+    #endif
 #endif
 #ifdef RAMPS_V_1_4_MEGA2560
     #include <../boards/ramps_V_1_4.h>
