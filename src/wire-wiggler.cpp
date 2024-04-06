@@ -48,9 +48,9 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(int32_t seek_aziMin, int32_t seek_eleMin, int32_t seek_polMin);
 #endif
 
-int32_t deg2step(float deg, float ratio, float microsteps);
-float step2deg(int32_t step, float ratio, float microsteps);
-void readPolPot();
+int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps);
+float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps);
+uint16_t readPolPot();
 
 int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
@@ -59,12 +59,9 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
-    uint16_t rawpolpot1 = 0;
-    uint16_t rawpolpot2 = 0;
-    uint16_t rawpolpot3 = 0;
-    uint16_t rawpolpot4 = 0;
-    float polPot = 0.0;
-    float lastPolPot = 0.0;
+    uint16_t rawpolpot[2]; // save 3 values to average 4 after readings
+    uint16_t polPot = 0.0;
+    uint16_t lastPolPot = 0.0;
 #endif
 #ifdef ledExists
     bool ledState = 0;  //logic
@@ -78,7 +75,7 @@ void setup() {
     switch_aziMin.init();
     #ifdef POLARIZER
         switch_polMin.init();
-        pinMode(polPotPin, INPUT); // init poti pin, no pullup
+        //pinMode(polPotPin, INPUT); // init poti pin, no pullup
     #endif
     #ifdef ledExists
         pinMode(ledPin, OUTPUT); // init led pin
@@ -211,7 +208,8 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    readPolPot(); //Read Pot and average results
+                    // polPot = analogRead(polPotPin);
+                    polPot = readPolPot(); //Read Pot and average results
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
@@ -438,27 +436,27 @@ void loop() {
 #endif
 
 // Convert degrees to steps
-int32_t deg2step(float deg, float ratio, float microsteps) {
+int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps) {
     int32_t steps = ratio * SPR * microsteps * deg / 360.0;
     return steps;
 }
 
 // Convert steps to degrees
-float step2deg(int32_t step, float ratio, float microsteps) {
+float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps) {
     float degrees = 360.00 * step / (SPR * ratio * microsteps);
     return degrees;
 }
 
-
-// Read Polerize Pot, and average output
-void readPolPot() {
-    // this really should be an array, and a for each loop, 
-    // but when all you have is a hammer, everything looks like a nail!
-
-    rawpolpot4 = rawpolpot3; //shift previous results down
-    rawpolpot3 = rawpolpot2;
-    rawpolpot2 = rawpolpot1;
-    rawpolpot1 = analogRead(polPotPin); // Read the polarizer poti
-    
-    polPot     = (rawpolpot1 + rawpolpot2 + rawpolpot3 + rawpolpot4)/4; // if i put the addition in () can i safly add the division to the end... yes?
+// Read Polarizer Poti and average the last 4 readings
+uint16_t readPolPot() {
+    uint16_t polpotavg = 0;
+    for(byte i = 2; i >= 0; i--) {      // this runs 3 loops, including i=0
+        polpotavg += rawpolpot[i];      // add to average
+        if(i > 0) {                     // no negative index, and [0] will be the latest reading (below)
+            rawpolpot[i] = rawpolpot[i - 1]; // increment indexes over for next run (rolling array)
+        }
+    }
+    rawpolpot[0] = analogRead(polPotPin); // last reading stored
+    polpotavg += rawpolpot[0];          // ...and added
+    return (polpotavg / 4);             // return average
 }

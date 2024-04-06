@@ -33,13 +33,13 @@
     #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 #endif
 #ifndef AZI_RATIO
-    #define AZI_RATIO          57.0  // Azimuth mechanical gear ratio
+    #define AZI_RATIO          57    // Azimuth mechanical gear ratio
 #endif
 #ifndef AZI_MICROSTEP
-    #define AZI_MICROSTEP      1.0   // Azimuth stepper driver microstepping (<=4)
+    #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping (<=4)
 #endif
 #ifndef AZI_VMAX
-    #define AZI_VMAX           300.0 // Antenna deg/s
+    #define AZI_VMAX           45.0  // Antenna deg/s
 #endif
 #ifndef AZI_ACC_MAX
     #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
@@ -57,13 +57,13 @@
 #endif
 
 #ifndef ELE_RATIO
-    #define ELE_RATIO          57.0  // Elevation mechanical gear ratio
+    #define ELE_RATIO          57    // Elevation mechanical gear ratio
 #endif
 #ifndef ELE_MICROSTEP
-    #define ELE_MICROSTEP      1.0   // Elevation stepper driver microstepping (<=4)
+    #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping (<=4)
 #endif
 #ifndef ELE_VMAX
-    #define ELE_VMAX           300.0 // Antenna deg/s
+    #define ELE_VMAX           45.0  // Antenna deg/s
 #endif
 #ifndef ELE_ACC_MAX
     #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
@@ -81,13 +81,13 @@
 #endif
 
 #ifndef POL_RATIO
-    #define POL_RATIO          3.0   // Polarization mechanical gear ratio
+    #define POL_RATIO          3     // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
-#   define POL_MICROSTEP       1.0   // Polarization stepper driver microstepping (<=4)
+#   define POL_MICROSTEP       1     // Polarization stepper driver microstepping (<=4)
 #endif
 #ifndef POL_VMAX
-    #define POL_VMAX           300.0 // Antenna deg/s
+    #define POL_VMAX           180.0 // Antenna deg/s
 #endif
 #ifndef POL_ACC_MAX
     #define POL_ACC_MAX        120.0 // Antenna deg/s^2

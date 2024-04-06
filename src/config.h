@@ -30,25 +30,25 @@
 
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
-// #define AZI_RATIO          57.0  // Azimuth mechanical gear ratio
-// #define AZI_MICROSTEP      8     // Azimuth stepper driver microstepping (<=4)
-// #define AZI_VMAX           300.0 // Antenna deg/s
+// #define AZI_RATIO          57    // Azimuth mechanical gear ratio
+// #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping (<=4)
+// #define AZI_VMAX           45.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
-// #define ELE_RATIO          57.0  // Elevation mechanical gear ratio
-// #define ELE_MICROSTEP      1    // Elevation stepper driver microstepping (<=4)
-// #define ELE_VMAX           300.0 // Antenna deg/s
+// #define ELE_RATIO          57    // Elevation mechanical gear ratio
+// #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping (<=4)
+// #define ELE_VMAX           45.0 // Antenna deg/s
 // #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
-// #define POL_RATIO          3.0   // Polarization mechanical gear ratio
-// #define POL_MICROSTEP      1    // Polarization stepper driver microstepping (<=4)
-// #define POL_VMAX           300.0 // Antenna deg/s
+// #define POL_RATIO          3     // Polarization mechanical gear ratio
+// #define POL_MICROSTEP      1     // Polarization stepper driver microstepping (<=4)
+// #define POL_VMAX           180.0 // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
