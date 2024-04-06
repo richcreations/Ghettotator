@@ -31,7 +31,7 @@
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
 // #define AZI_RATIO          57.0  // Azimuth mechanical gear ratio
-// #define AZI_MICROSTEP      1.0  // Azimuth stepper driver microstepping (<=4)
+#define AZI_MICROSTEP      8  // Azimuth stepper driver microstepping (<=4)
 // #define AZI_VMAX           300.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle

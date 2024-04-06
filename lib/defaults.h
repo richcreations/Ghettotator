@@ -18,6 +18,11 @@
     #include <../boards/ramps_V_1_4.h>
 #endif
 
+#if (AZI_MICROSTEP > 4 | ELE_MICROSTEP > 4 | POL_MICROSTEP > 4) 
+    #error Only 4 or lower microstepping allowed!!!
+#endif
+
+
 #ifdef POLARIZER
     #ifndef POL_POT_HYSTERESIS
         #define POL_POT_HYSTERESIS  5   // Increase to eliminate polarize axis shaking while poti is not moved

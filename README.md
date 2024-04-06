@@ -16,7 +16,7 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * Arduino UNO with CNC Shield v3
 * Arduino Mega2560 with Ramps v1.4
 * N.O. endstop switches
-* Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode)
+* Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode... microstepping <= 4 only!)
 
 ## Instructions
 ### Configure, compile, and upload firmware:

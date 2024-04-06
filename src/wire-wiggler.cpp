@@ -15,7 +15,6 @@
  *
  */
 
-
 #include <../lib/defaults.h>
 #include <AccelStepper.h>
 #include <Wire.h>
