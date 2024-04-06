@@ -25,7 +25,7 @@
 
 #ifdef POLARIZER
     #ifndef POL_POT_HYSTERESIS
-        #define POL_POT_HYSTERESIS  5   // Increase to eliminate polarize axis shaking while poti is not moved
+        #define POL_POT_HYSTERESIS  10   // Increase to eliminate polarize axis shaking while poti is not moved
     #endif
 #endif
 

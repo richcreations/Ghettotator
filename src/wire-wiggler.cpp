@@ -1,15 +1,6 @@
 /* Wire Wiggler: Firmware for an antenna rotator using nc controllers with stepper motors.
-
- ...old reference below
- *
- * This is the documentation for satnogs rotator controller firmware
- * for stepper motors configuration. The board (PCB) is placed in
- * <a href="https://gitlab.com/librespacefoundation/satnogs/satnogs-rotator-controller">
- * satnogs-rotator-controller </a> and is for releases:
- * v2.0
- * v2.1
- * v2.2
- * <a href="https://wiki.satnogs.org/SatNOGS_Rotator_Controller"> wiki page </a>
+This code is based on the modified satnogs-rotator-firmware by Quartapound:
+https://gitlab.com/Quartapound/satnogs-rotator-firmware
  *
  * Licensed under the GPLv3.
  *
@@ -50,7 +41,7 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
 
 int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps);
 float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps);
-uint16_t readPolPot();
+int readPolPot();
 
 int32_t eleMaxStepRate = 0;
 int32_t eleMaxStepAcc = 0;
@@ -59,9 +50,9 @@ int32_t aziMaxStepAcc = 0;
 #ifdef POLARIZER
     int32_t polMaxStepRate = 0;
     int32_t polMaxStepAcc = 0;
-    uint16_t rawpolpot[2]; // save 3 values to average 4 (3 + current reading)
-    uint16_t polPot = 0.0;
-    uint16_t lastPolPot = 0.0;
+    int rawpolpot[3] = {0,0,0}; // save 3 values to average 4 (3 + current reading)
+    int polPot = 0;
+    int lastPolPot = 0;
 #endif
 #ifdef ledExists
     bool ledState = 0;  //logic
@@ -208,12 +199,12 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    // polPot = analogRead(polPotPin);
-                    polPot = readPolPot(); //Read Pot and average results
+                    polPot = analogRead(polPotPin);
+                    //polPot = readPolPot(); //Read Pot and average results
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
-                        control_po.setpoint = (polPot / 1023.0) * POL_MAX_ANGLE;   // use 10bit reading to change polarize setpoint angle
+                        control_po.setpoint = ((float)polPot / 1023.0) * POL_MAX_ANGLE;   // use 10bit reading to change polarize setpoint angle
                     }
                 #endif
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
@@ -436,25 +427,27 @@ void loop() {
 #endif
 
 // Convert degrees to steps
+// steps = ratio * spr * microsteps * deg / 360
 int32_t deg2step(float deg, uint16_t ratio, uint16_t microsteps) {
-    int32_t steps = ratio * SPR * microsteps * deg / 360.0;
-    return steps;
+    float foo = ratio * SPR * microsteps / 360.0; // prevent overflows
+    foo = foo * deg;
+    return foo;
 }
 
 // Convert steps to degrees
+// degrees = 360.00 * step / (spr * ratio * microsteps)
 float step2deg(int32_t step, uint16_t ratio, uint16_t microsteps) {
-    float degrees = 360.00 * step / (SPR * ratio * microsteps);
-    return degrees;
+    float bar = 360.0 / SPR * ratio * microsteps; // prevent overflows
+    bar = step * bar;
+    return bar;
 }
 
 // Read Polarizer Poti and average the last 4 readings
-uint16_t readPolPot() {
-    uint16_t polpotavg = 0;
-    for(byte i = 2; i >= 0; i--) {      // this runs 3 loops, including i=0
+int readPolPot() {
+    int polpotavg = 0;
+    for(byte i = 2; i >= 1; i--) {      // this runs 3 loops, including i=0
         polpotavg += rawpolpot[i];      // add to average
-        if(i > 0) {                     // no negative index, and [0] will be the latest reading (below)
-            rawpolpot[i] = rawpolpot[i - 1]; // increment indexes over for next run (rolling array)
-        }
+        rawpolpot[i] = rawpolpot[i - 1]; // increment indexes over for next run (rolling array)
     }
     rawpolpot[0] = analogRead(polPotPin); // last reading stored
     polpotavg += rawpolpot[0];          // ...and added

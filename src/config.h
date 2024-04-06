@@ -15,7 +15,7 @@
 
 // Uncomment to enable antenna polarity rotator feature (poti from 0V to Vcc)
 #define POLARIZER
-//#define POL_POT_HYSTERESIS  5     // Increase to eliminate polarize axis shaking while poti is not moved
+//#define POL_POT_HYSTERESIS  10     // Increase to eliminate polarize axis shaking while poti is not moved
 
 // Uncomment to enable parking feature
 //#define PARKING
@@ -24,7 +24,7 @@
 //#define DEBUG                   
 
 // Disable motors if WDT is triggered
-#define WATCHDOG                  
+#define WATCHDOG
 
 // The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)
 
