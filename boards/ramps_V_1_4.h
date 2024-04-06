@@ -17,10 +17,10 @@
 #define auxDirPin       34  // E1 direction
 #define auxENpin        30  // E1 enable
 // Code uses internal pullups
-#define eleMinStopPin   3   // X- endstop
-#define eleMaxStopPin   2   // X+ endstop
-#define aziMinStopPin   14  // Y- endstop
-#define aziMaxStopPin   15  // Y+ endstop
+#define aziMinStopPin   3   // X- endstop
+#define aziMaxStopPin   2   // X+ endstop
+#define eleMinStopPin   14  // Y- endstop
+#define eleMaxStopPin   15  // Y+ endstop
 #define polMinStopPin   18  // Z- endstop
 #define polMaxStopPin   19  // Z+ endstop
 
