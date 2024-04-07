@@ -1,10 +1,13 @@
-/* Wire Wiggler: Firmware for an antenna rotator using nc controllers with stepper motors.
-This code is based on the modified satnogs-rotator-firmware by Quartapound:
+/* Wire Wiggler:
+Firmware for an antenna rotator using nc controllers with stepper motors.
+
+This code is based on a modified version of satnogs-rotator-firmware by Quartapound:
 https://gitlab.com/Quartapound/satnogs-rotator-firmware
- *
- * Licensed under the GPLv3.
- *
- */
+
+******************************
+*  Licensed under the GPLv3  *
+******************************
+*/
 
 #include <../lib/defaults.h>
 #include <AccelStepper.h>
@@ -12,12 +15,12 @@ https://gitlab.com/Quartapound/satnogs-rotator-firmware
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>
-
 #include <../lib/watchdog.h>
 
+// INITIALIZE /////////////////////////////////////////////////// INITIALIZE //
 easycomm comm;
 
-// Create AccelStepper instances
+// Create AccelSteppers and endstops
 // syntax: AccelStepper stepper_x(interface, stepPin, dirPin);
 // interface 1=AccelStepper::DRIVER ...aka standard STEP/DIR drivers
 AccelStepper stepper_el(1, eleStepPin, eleDirPin);
@@ -59,6 +62,7 @@ long aziMaxStepAcc = 0;
     uint32_t ledTime = 0; // time holder
 #endif
 
+// SETUP //////////////////////////////////////////////////////////// SETUP //
 void setup() {
     // Initialize homing switches
     switch_eleMin.init();
@@ -111,6 +115,7 @@ void setup() {
     #endif
 }
 
+// LOOP //////////////////////////////////////////////////////////// LOOP //
 void loop() {
     // Debug LED on... move this where ever to help with debugging
     #ifdef DEBUG
@@ -257,6 +262,8 @@ void loop() {
         #endif
     }
 }
+
+// FUNCTIONS //////////////////////////////////////////////////////////// FUNCTIONS //
 
 // Homing function without polarizer feature enabled
 #ifndef POLARIZER
@@ -408,20 +415,18 @@ void loop() {
 #endif
 
 // Convert degrees to steps
-// steps = ratio * spr * microsteps * deg / 360
 long deg2step(float deg, uint8_t ratio, uint8_t microsteps) {
     long steps = (float(ratio) * SPR * microsteps * deg) / float(360.0);
     return steps;
 }
 
 // Convert steps to degrees
-// degrees = 360.00 * step / (spr * ratio * microsteps)
 float step2deg(long step, uint8_t ratio, uint8_t microsteps) {
     float deg = (360.0 * float(step)) / (float(SPR) * ratio * microsteps);
     return deg;
 }
 
-
+// SAVED //////////////////////////////////////////////////////////// SAVED //
 
 // int rawpolpot[POL_POT_SAMPLES - 1]; // holder for rolling average... not needed with 10nF capacitor.
 /* Polarizer poti rolling average... not needed with 10nF capacitor.
