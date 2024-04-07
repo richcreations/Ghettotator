@@ -50,7 +50,6 @@ long aziMaxStepAcc = 0;
 #ifdef POLARIZER
     long polMaxStepRate = 0;
     long polMaxStepAcc = 0;
-    int rawpolpot[POL_POT_SAMPLES - 1]; // save N values to average N+1 (N + current reading)
     int polPot = 0;
     int lastPolPot = 0;
 #endif
@@ -95,8 +94,8 @@ void setup() {
     stepper_el.setAcceleration(eleMaxStepAcc);
     stepper_el.setMinPulseWidth(MIN_PULSE_WIDTH);
 
+    // Polarizer motor
     #ifdef POLARIZER        
-        // Polarizer motor
         stepper_po.setEnablePin(polENpin);
         stepper_po.setPinsInverted(false, false, true);
         polMaxStepRate = deg2step(POL_VMAX, POL_RATIO, POL_MICROSTEP);
@@ -106,7 +105,6 @@ void setup() {
         stepper_po.setAcceleration(polMaxStepAcc);
         stepper_po.setMinPulseWidth(MIN_PULSE_WIDTH);
     #endif
-
     //  WDT
     #ifdef WATCHDOG
         wdt.watchdog_init();
@@ -114,40 +112,36 @@ void setup() {
 }
 
 void loop() {
-    // Debug LED on... put this where SHTF
+    // Debug LED on... move this where ever to help with debugging
     #ifdef DEBUG
         #ifdef ledExists
             digitalWrite(ledPin,HIGH); //turn on led for debugging
         #endif
     #endif
-
     // Update WDT
     #ifdef WATCHDOG
         wdt.watchdog_reset();
     #endif
-
     // Get end stop status
     rotator.switch_eleMin = switch_eleMin.get_state();
     rotator.switch_aziMin = switch_aziMin.get_state();
     #ifdef POLARIZER
         rotator.switch_polMin = switch_polMin.get_state();
     #endif
-
-    // Run easycomm implementation
+    // Run easycomm subroutine
     comm.easycomm_proc();
-
     // Get position of axis
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
     #ifdef POLARIZER
         control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
     #endif
-    // No errors
+    // No error flags
     if (rotator.rotator_status != error) {
         // Not yet homed
         if (rotator.homing_flag == false) {
             rotator.control_mode = position;
-            // Go home
+            // Run homing subroutine
             #ifndef POLARIZER
                 rotator.rotator_error = homing(deg2step(AZI_MAX_ANGLE, AZI_RATIO, AZI_MICROSTEP),
                                            deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP));
@@ -156,7 +150,7 @@ void loop() {
                                            -deg2step(ELE_MAX_ANGLE, ELE_RATIO, ELE_MICROSTEP),
                                            -deg2step(POL_MAX_ANGLE, POL_RATIO, POL_MICROSTEP));
             #endif
-            // Respond to homing error
+            // Homing subroutine done, set flag and idle mode, or set error flags
             if (rotator.rotator_error == no_error) {
                 rotator.rotator_status = idle;
                 rotator.homing_flag = true;
@@ -166,7 +160,7 @@ void loop() {
                 rotator.rotator_error = homing_error;
             }
         } 
-        // Homing has been completed
+        // Homing completed... start rotator routine
         else {
             #ifndef POLARIZER
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
@@ -175,11 +169,10 @@ void loop() {
                 // Move azimuth and elevation motors
                 stepper_az.run();
                 stepper_el.run();
-                // Idle rotator
+                // Done moving, change to idle mode
                 if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
                     rotator.rotator_status = idle;
                 }
-                
                 #ifndef DEBUG
                     #ifdef ledExists
                         // LED heartbeat: slow blink when loop is running
@@ -199,19 +192,18 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    polPot = analogRead(polPotPin);
-                    //polPot = readPolPot(); //Read Pot and average results
+                    polPot = analogRead(polPotPin); // read poti
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
                         control_po.setpoint = ((float)polPot / 1023.0) * POL_MAX_ANGLE;   // use 10bit reading to change polarize setpoint angle
                     }
                 #endif
+                // Move azimuth and elevation motors
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
                 stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
                 rotator.rotator_status = pointing;
-                // Move azimuth and elevation motors
                 stepper_az.run();
                 stepper_el.run();
                 stepper_po.run();
@@ -220,10 +212,9 @@ void loop() {
                     rotator.rotator_status = idle;
                 }
             #endif
-            
+            // LED heartbeat: slow blink when loop is running
             #ifndef DEBUG
                 #ifdef ledExists
-                    // LED heartbeat: slow blink when loop is running
                     if(millis() - ledTime > ledPeriod)   {
                         if(ledState)    {
                             digitalWrite(ledPin,LOW);
@@ -255,7 +246,6 @@ void loop() {
             rotator.rotator_error = no_error;
             rotator.rotator_status = idle;
         }
-                    
         #ifndef DEBUG
             #ifdef ledExists
                 // LED heartbeat: remain on if an error occured
@@ -273,11 +263,9 @@ void loop() {
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin) {
         bool isHome_az = false;
         bool isHome_el = false;
-
         // Move motors to "seek" position
         stepper_az.moveTo(seek_aziMin);
         stepper_el.moveTo(seek_eleMin);
-
         // Homing loop
         while (isHome_az == false || isHome_el == false) {
             if (switch_aziMin.get_state() == true && !isHome_az) {
@@ -322,8 +310,6 @@ void loop() {
                 #endif
             #endif
         }
-
-
         // Delay to allow homing movement to complete
         uint32_t time = millis();
         while (millis() - time < HOME_DELAY) {
@@ -346,12 +332,10 @@ void loop() {
         bool isHome_az = false;
         bool isHome_el = false;
         bool isHome_po = false;
-
         // Move motors to "seek" position
         stepper_az.moveTo(seek_aziMin);
         stepper_el.moveTo(seek_eleMin);
         stepper_po.moveTo(seek_polMin);
-
         // Homing loop
         while (isHome_az == false || isHome_el == false || isHome_po == false) {
             if (switch_aziMin.get_state() == true && !isHome_az) {
@@ -402,8 +386,6 @@ void loop() {
                 #endif
             #endif
         }
-
-
         // Delay to allow homing movement to complete
         unsigned long time = millis();
         while (millis() - time < HOME_DELAY) {
@@ -421,7 +403,6 @@ void loop() {
         control_az.setpoint = 0;
         control_el.setpoint = 0;
         control_po.setpoint = 0;
-
         return no_error;
     }
 #endif
@@ -440,16 +421,20 @@ float step2deg(long step, uint8_t ratio, uint8_t microsteps) {
     return deg;
 }
 
-// Read Polarizer Poti and average the last 4 readings
+
+
+// int rawpolpot[POL_POT_SAMPLES - 1]; // holder for rolling average... not needed with 10nF capacitor.
+/* Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
     for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
         polpotavg += rawpolpot[i];                          // add to average
         if(i < POL_POT_SAMPLES - 2) {
-            rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
+            rawpolpot[i] = rawpolpot[i + 1];                // increment indexes over for next run (rolling array)
         }
     }
     rawpolpot[POL_POT_SAMPLES - 1] = analogRead(polPotPin); // last reading stored
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / POL_POT_SAMPLES);                   // return average
 }
+*/
