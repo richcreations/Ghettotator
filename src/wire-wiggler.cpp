@@ -443,9 +443,11 @@ float step2deg(long step, uint8_t ratio, uint8_t microsteps) {
 // Read Polarizer Poti and average the last 4 readings
 int readPolPot() {
     int polpotavg = 0;
-    for(byte i = 0; i < POL_POT_SAMPLES - 2; i++) {         // this runs POL_POT_SAMPLES-1 loops
+    for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
         polpotavg += rawpolpot[i];                          // add to average
-        rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
+        if(i < POL_POT_SAMPLES - 2) {
+            rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
+        }
     }
     rawpolpot[POL_POT_SAMPLES - 1] = analogRead(polPotPin); // last reading stored
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
