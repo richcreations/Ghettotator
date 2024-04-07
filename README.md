@@ -12,10 +12,12 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 
     * IMU feedback for moving vehicles
     * Parking feature
+    * Softserial debugging
 
 ## Currently Compatible Hardware
 * Arduino UNO with CNC Shield v3
 * Arduino Mega2560 with Ramps v1.4
+* Teensy 3.2 and 4.0 w/ UNO CNC Shield
 * Anet A8 3d Printer Motherboard (1280p w/ built-in a4988's)
 * N.O. endstop switches
 * Linear potentiometers (use 10nF between wiper and gnd)
@@ -47,7 +49,7 @@ Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost,
 First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
 ## Easycomm Commands
-The easycomm lib is used by the rotator control to interface with computer software, via a UART connection (com port). Here is the list of valid terminal commands that easycomm responds to (* currently not all commands are implemented):
+The easycomm lib is used by the rotator control to interface with computer software, via a UART connection (com port). The default baud rate for Wire Wiggler is 9600. Here is the list of valid terminal commands that easycomm responds to (* currently not all commands are implemented):
 
 * AZ, Move azimuth to (degrees 1 decimal place)
 * EL, Move elevation to (degrees 1 decimal place)
@@ -105,9 +107,9 @@ The easycomm lib is used by the rotator control to interface with computer softw
 * RB, custom command to reboot controller
 
 ## Troubleshooting
-Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, it is worthy of note that the mechanics should be as well balanced and friction free as possible.
+Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, there are some very common issues that may result from inadequate motor torque,aka "skipped steps". First and foremost the mechanics should be as well balanced and friction free as possible in order to minimize required torque to move and hold the antenna position. Increasing motor voltage, motor current, and/or gear ratio, together with reducing acceleration, microstepping, and max speed can all help to reduce skipped steps.
 
-Wire Wiggler by default uses the onboard LED to indicate status (note some compatible boards do not have an LED). A solid on LED indicates an error has occured (typically from mechanism not closing endstops within specified travel limits). A slow 1hz flashing LED means the controller is in position mode (ie ready to be controlled by Gpredict). A faster 6hz flashing LED indicates the controller is homing.
+Wire Wiggler by default uses the onboard LED to indicate status (note some compatible boards do not have an LED). A solid on LED indicates an error has occured (typically from mechanism not closing endstops within specified travel limits). A slow 1hz flashing LED means the controller is in position mode (ie ready to be controlled by Gpredict). A faster 6hz flashing LED indicates the controller is homing. Thus LED status can help troubleshoot where problems may occur. In addition the code includes a DEBUG definition that can be used to disable normal LED behavior, which allows for LED code snippets to be added where troubleshooting is needed.
 
 ## Contribute
 The main repository lives on [Github](https://github.com/truglodite/Wire-Wiggler-Firmware).

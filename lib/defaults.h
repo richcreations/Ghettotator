@@ -5,6 +5,18 @@
 
 #include <../src/config.h>
 
+#ifdef TEENSY_UNO_CNC_SHIELD_V_3    // remove watchdog for Teensy boards
+    #ifdef WATCHDOG
+        #undef WATCHDOG
+    #endif
+#endif
+#ifndef TEENSY_UNO_CNC_SHIELD_V_3
+    #ifdef WATCHDOG
+        #include <../lib/watchdog.h>
+    #endif
+#endif
+
+
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../boards/unoCncV3.h>
 #endif
@@ -17,6 +29,9 @@
 #endif
 #ifdef RAMPS_V_1_4_MEGA2560
     #include <../boards/ramps_V_1_4.h>
+#endif
+#ifdef TEENSY_UNO_CNC_SHIELD_V_3
+    #include <../boards/unoCncV3.h>
 #endif
 
 #ifdef POLARIZER

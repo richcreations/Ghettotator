@@ -8,9 +8,10 @@
 // for your board, a section may be added to platform.ini to accomodate.
 // When adding a new board, consider adding a schematic to /images for user reference.
 
-//#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 //#define UNO_CNC_SHIELD_V_3
-#define RAMPS_V_1_4_MEGA2560
+//#define RAMPS_V_1_4_MEGA2560
+#define TEENSY_UNO_CNC_SHIELD_V_3
+//#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
@@ -25,7 +26,7 @@
 // Uncomment and move debug led to troubled spot
 //#define DEBUG                   
 
-// Disable motors if WDT is triggered
+// Disable motors if WDT is triggered (not used for Teensy MCU's)
 #define WATCHDOG
 
 // The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)

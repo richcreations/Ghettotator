@@ -15,7 +15,6 @@ https://gitlab.com/Quartapound/satnogs-rotator-firmware
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>
-#include <../lib/watchdog.h>
 
 // INITIALIZE /////////////////////////////////////////////////// INITIALIZE //
 easycomm comm;
