@@ -14,12 +14,12 @@
 
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
-// Uncomment to enable antenna polarity rotator feature (poti from 0V to Vcc)
+// Uncomment to enable antenna polarity rotator feature (manual control with poti from 0V to Vcc)
 #define POLARIZER
 //#define POL_POT_HYSTERESIS  1     // Increase to eliminate polarize axis shaking while poti is not moved
 //#define POL_POT_SAMPLES   4       // Number of averaged polpot samples used for smoothing
 
-// Uncomment to enable parking feature
+// Uncomment to enable parking feature... not yet implemented!
 //#define PARKING
 
 // Uncomment and move debug led to troubled spot

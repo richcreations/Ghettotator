@@ -11,6 +11,7 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 * ...currently under development
 
     * IMU feedback for moving vehicles
+    * Parking feature
 
 ## Currently Compatible Hardware
 * Arduino UNO with CNC Shield v3

@@ -1,6 +1,6 @@
 // Pins file for the Anet A8 classic 3d printer motherboard (mega1280p w/ 4xA4988's built in)
 // https://github.com/ralf-e/ANET-3D-Board-V1.0/blob/master/ANET3D_Board_Schematic.png
-// Note: The a8 motherboard has built in driver MSx pullups installed; use "XXX_MICROSTEP = 16" in config.h.
+// This board has built in driver MSx pullups; you must use "XXX_MICROSTEP = 16" in config.h.
 #define aziStepPin      15  // X step
 #define aziDirPin       21  // X dir
 #define aziENpin        14  // XY enable
