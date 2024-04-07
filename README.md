@@ -47,7 +47,7 @@ Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost,
 First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
 ## Easycomm Commands
-The easycomm lib is used to interface with the computer rotator control software via UART. It allows software like Gpredict to control the rotator. It can also be used to test and troubleshoot rotator hardware by sending commands from a terminal. Here is the list of valid terminal commands that easycomm can respond to (* currently not all commands are implemented):
+The easycomm lib is used by the rotator control to interface with computer software, via a UART connection (com port). Here is the list of valid terminal commands that easycomm responds to (* currently not all commands are implemented):
 
 * AZ, Move azimuth to (degrees 1 decimal place)
 * EL, Move elevation to (degrees 1 decimal place)
@@ -107,10 +107,12 @@ The easycomm lib is used to interface with the computer rotator control software
 ## Troubleshooting
 Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, it is worthy of note that the mechanics should be as well balanced and friction free as possible.
 
-Wire Wiggler by default uses the onboard LED (if the board has one) to indicate status. A solid on LED means the loop has exited with an error. A slow 1hz flashing LED means the code is running in normal mode (ie ready to be controlled by Gpredict). A fast 5hz flashing LED indicates the code is currently running the homing routine.
+Wire Wiggler by default uses the onboard LED to indicate status (note some compatible boards do not have an LED). A solid on LED indicates an error has occured (typically from mechanism not closing endstops within specified travel limits). A slow 1hz flashing LED means the controller is in position mode (ie ready to be controlled by Gpredict). A faster 6hz flashing LED indicates the controller is homing.
 
 ## Contribute
 The main repository lives on [Github](https://github.com/truglodite/Wire-Wiggler-Firmware).
+
+Anyone is welcome to use/edit/share this code as they please as long as it is within the terms of the GPLv3 license. We welcome everyone to join in on the fun with pull requests, bug reports, suggestions, etc. Stay on the air and have fun!
 
 ## License
 Licensed under the [GPLv3](LICENSE)
