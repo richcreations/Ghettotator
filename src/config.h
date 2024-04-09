@@ -9,8 +9,8 @@
 // When adding a new board, consider adding a schematic to /images for user reference.
 
 //#define UNO_CNC_SHIELD_V_3
-//#define RAMPS_V_1_4_MEGA2560
-#define TEENSY_UNO_CNC_SHIELD_V_3
+#define RAMPS_V_1_4_MEGA2560
+//#define TEENSY_UNO_CNC_SHIELD_V_3
 //#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
@@ -35,7 +35,7 @@
 
 // #define AZI_RATIO          57    // Azimuth mechanical gear ratio (19:1 planetary * 3:1 belt drive = 57:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
-// #define AZI_VMAX           45.0 // Antenna deg/s
+// #define AZI_VMAX           29.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
@@ -43,7 +43,7 @@
 
 // #define ELE_RATIO          57    // Elevation mechanical gear ratio
 // #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
-// #define ELE_VMAX           45.0 // Antenna deg/s
+// #define ELE_VMAX           20.0 // Antenna deg/s
 // #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
@@ -51,7 +51,7 @@
 
 // #define POL_RATIO          3     // Polarization mechanical gear ratio
 // #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
-// #define POL_VMAX           180.0 // Antenna deg/s
+// #define POL_VMAX           90.0 // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle

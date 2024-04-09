@@ -5,18 +5,6 @@
 
 #include <../src/config.h>
 
-#ifdef TEENSY_UNO_CNC_SHIELD_V_3    // remove watchdog for Teensy boards
-    #ifdef WATCHDOG
-        #undef WATCHDOG
-    #endif
-#endif
-#ifndef TEENSY_UNO_CNC_SHIELD_V_3
-    #ifdef WATCHDOG
-        #include <../lib/watchdog.h>
-    #endif
-#endif
-
-
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../boards/unoCncV3.h>
 #endif
@@ -132,4 +120,15 @@
 #endif
 #ifndef SAMPLE_TIME
     #define SAMPLE_TIME        0.1   // Control loop in sec
+#endif
+
+#ifdef TEENSY_UNO_CNC_SHIELD_V_3    // remove watchdog for Teensy boards
+    #ifdef WATCHDOG
+        #undef WATCHDOG
+    #endif
+#endif
+#ifndef TEENSY_UNO_CNC_SHIELD_V_3
+    #ifdef WATCHDOG
+        #include <../lib/watchdog.h>
+    #endif
 #endif
