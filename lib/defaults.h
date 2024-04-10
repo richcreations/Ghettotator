@@ -31,6 +31,19 @@
     #endif
 #endif
 
+#if defined(COMPASS) || defined(IMU_FEEDBACK)
+    #include <Wire.h>
+#endif
+
+#ifdef COMPASS
+    #include <Adafruit_HMC5883_U.h>
+#endif
+
+#ifdef IMU_FEEDBACK
+    #include <Adafruit_MPU6050.h>
+    #include <Adafruit_Sensor.h>
+#endif
+
 #ifndef BAUDRATE
     #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 #endif

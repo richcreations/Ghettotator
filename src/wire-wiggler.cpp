@@ -11,7 +11,6 @@ https://gitlab.com/Quartapound/satnogs-rotator-firmware
 
 #include <../lib/defaults.h>
 #include <AccelStepper.h>
-#include <Wire.h>
 #include <../lib/globals.h>
 #include <../lib/easycomm.h>
 #include <../lib/endstop.h>

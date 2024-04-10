@@ -8,8 +8,8 @@
 // for your board, a section may be added to platform.ini to accomodate.
 // When adding a new board, consider adding a schematic to /images for user reference.
 
-//#define UNO_CNC_SHIELD_V_3
-#define RAMPS_V_1_4_MEGA2560
+#define UNO_CNC_SHIELD_V_3
+//#define RAMPS_V_1_4_MEGA2560
 //#define TEENSY_UNO_CNC_SHIELD_V_3
 //#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 
@@ -19,6 +19,12 @@
 #define POLARIZER
 //#define POL_POT_HYSTERESIS  1     // Increase to eliminate polarize axis shaking while poti is not moved
 //#define POL_POT_SAMPLES   4       // Number of averaged polpot samples used for smoothing
+
+// Uncomment to enable 5883 compass feedback feature
+//#define COMPASS
+
+// Uncomment to enable mpu6050 IMU feedback feature
+//#define IMU_FEEDBACK
 
 // Uncomment to enable parking feature... not yet implemented!
 //#define PARKING
