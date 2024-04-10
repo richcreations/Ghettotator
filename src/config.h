@@ -35,7 +35,7 @@
 
 // #define AZI_RATIO          57    // Azimuth mechanical gear ratio (19:1 planetary * 3:1 belt drive = 57:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
-// #define AZI_VMAX           29.0 // Antenna deg/s
+// #define AZI_VMAX           20.0 // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
