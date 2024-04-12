@@ -8,6 +8,12 @@
 #ifdef UNO_CNC_SHIELD_V_3
     #include <../boards/unoCncV3.h>
 #endif
+#ifdef NANO_CNC_V_4
+    #include <../boards/nanoCNCv4.h>
+    #if defined(NANO_CNC_V_4) && (AZI_MICROSTEP > 1)
+        #warning Nano CNC V4 hardware requires hacks for microsteps > 1 to work!!!
+    #endif
+#endif
 #ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD
     #include <../boards/anet_a8_atmega1280.h>
     // A8 motherboard has all MSx pins hardwired to Vcc, so 16 microsteps only!
@@ -31,7 +37,7 @@
     #endif
 #endif
 
-#if defined(COMPASS) || defined(IMU_FEEDBACK)
+#if defined(COMPASS) || defined(IMU_FEEDBACK) // compass and imu require i2c
     #include <Wire.h>
 #endif
 
