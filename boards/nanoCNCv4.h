@@ -20,6 +20,6 @@
 
 // "L" LED on the nano board (shield has no LED's)
 #define ledExists           // Onboard led, uncomment to enable
-#define ledPin          13  // Onboard led pin
+#define ledPin          13  // Onboard led pin (on the nano itself, also on D13 shield pin)
 
 #define polPotPin       A6  // Polarize manual control potentiometer  wiper (A6 connector)
