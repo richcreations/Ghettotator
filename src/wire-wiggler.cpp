@@ -53,7 +53,7 @@ long aziMaxStepAcc = 0;
     long polMaxStepAcc = 0;
     int polPot = 0;
     int lastPolPot = 0;
-    int rawpolpot[POL_POT_SAMPLES - 1] = {0}; // holder for rolling average... not needed with 10nF capacitor.
+    // int rawpolpot[POL_POT_SAMPLES - 1] = {0}; // holder for rolling average... not needed with 10nF capacitor.
 #endif
 #ifdef ledExists
     bool ledState = 0;  //logic
@@ -427,7 +427,7 @@ float step2deg(long step, float ratio, uint8_t microsteps) {
 }
 
 // SAVED //////////////////////////////////////////////////////////// SAVED //
-// Polarizer poti rolling average... not needed with 10nF capacitor.
+/* Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
     for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
@@ -438,3 +438,4 @@ int readPolPot() {
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / POL_POT_SAMPLES);                   // return average
 }
+*/
