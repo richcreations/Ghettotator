@@ -31,7 +31,10 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
 Download and decompress the Wire Wiggler repository in your project folder, and open the project in PlatformIO. Edit the `config.h` file to suit your hardware (comment/uncomment and edit any relevant lines). Uncomment the section that matches your microcontroller in `platformio.ini`. Finally, compile and upload Wire Wiggler firmware to your board by selecting the upload option that matches your board in the PIO "Project Tasks" tree. If completed succesfully, your board is now ready for use.
 
 ### Install Hamlib and Gpredict Software:
-Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
+Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Download and install the latest hamlib installer that matches your OS from here:
+[https://github.com/Hamlib/Hamlib/releases](https://github.com/Hamlib/Hamlib/releases)
+
+Details on downloading, installing, and generally operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
 
 ### Create a launch script for rotctld:
 Plug your hardware into your computer, and find the port used by your board using device manager in Windows, or `dmesg | grep tty` in a Linux terminal. This port may be for example `COM3` in windows, or `/dev/ttyUSB3` in Linux. Use your favorite text editor to make a shell script with the following line to launch rotctld, replacing the port name with the one your found earlier:
