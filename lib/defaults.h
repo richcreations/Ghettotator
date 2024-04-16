@@ -102,7 +102,7 @@
 #endif
 
 #ifndef POL_RATIO
-    #define POL_RATIO          3.6   // Polarization mechanical gear ratio
+    #define POL_RATIO          4.5   // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
 #   define POL_MICROSTEP       1     // Polarization stepper driver microstepping
