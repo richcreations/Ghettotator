@@ -406,9 +406,9 @@ void loop() {
         stepper_az.setCurrentPosition(0.0);
         stepper_el.setCurrentPosition(0.0);
         stepper_po.setCurrentPosition(0.0);
-        control_az.setpoint = 0;
-        control_el.setpoint = 0;
-        control_po.setpoint = 0;
+        control_az.setpoint = 0.0;
+        control_el.setpoint = 0.0;
+        control_po.setpoint = 0.0;
         return no_error;
     }
 #endif

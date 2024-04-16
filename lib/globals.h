@@ -54,26 +54,26 @@ struct _control{
     };
 #endif
 
-_control control_az = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
-                        .setpoint_speed = 0, .load = 0, .u = 0, .p = 8.0,
+_control control_az = { .input = 0.0, .input_prv = 0.0, .speed=0.0, .setpoint = 0.0,
+                        .setpoint_speed = 0.0, .load = 0, .u = 0.0, .p = 8.0,
                         .i = 0.0, .d = 0.5 };
-_control control_el = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
-                        .setpoint_speed = 0, .load = 0, .u = 0, .p = 10.0,
+_control control_el = { .input = 0.0, .input_prv = 0.0, .speed=0.0, .setpoint = 0.0,
+                        .setpoint_speed = 0.0, .load = 0, .u = 0.0, .p = 10.0,
                         .i = 0.0, .d = 0.3 };
 #ifdef POLARIZER
-    _control control_po = { .input = 0, .input_prv = 0, .speed=0, .setpoint = 0,
-                        .setpoint_speed = 0, .load = 0, .u = 0, .p = 10.0,
+    _control control_po = { .input = 0.0, .input_prv = 0.0, .speed=0.0, .setpoint = 0.0,
+                        .setpoint_speed = 0.0, .load = 0, .u = 0.0, .p = 10.0,
                         .i = 0.0, .d = 0.3 };
 
     _rotator rotator = { .rotator_status = idle, .rotator_error = no_error,
                      .control_mode = position, .homing_flag = false, .parking_flag = false,
-                     .inside_temperature = 0, .park_az = 0, .park_el = 0, .park_po = 0,
+                     .inside_temperature = 0, .park_az = 0.0, .park_el = 0.0, .park_po = 0.0,
                      .fault_az = LOW, .fault_el = LOW , .fault_po = LOW , .switch_eleMin = false,
                      .switch_aziMin = false , .switch_polMin = false};
 #else
     _rotator rotator = { .rotator_status = idle, .rotator_error = no_error,
                      .control_mode = position, .homing_flag = false, .parking_flag = false,
-                     .inside_temperature = 0, .park_az = 0, .park_el = 0,
+                     .inside_temperature = 0, .park_az = 0.0, .park_el = 0.0,
                      .fault_az = LOW, .fault_el = LOW , .switch_eleMin = false,
                      .switch_aziMin = false};
 #endif
