@@ -40,8 +40,8 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin);
 #endif
 
-long deg2step(float deg, uint8_t ratio, uint8_t microsteps);
-float step2deg(long step, uint8_t ratio, uint8_t microsteps);
+long deg2step(float deg, float ratio, uint8_t microsteps);
+float step2deg(long step, float ratio, uint8_t microsteps);
 int readPolPot();
 
 long eleMaxStepRate = 0;
@@ -195,7 +195,8 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    polPot = analogRead(polPotPin); // read poti
+                    // polPot = analogRead(polPotPin); // read poti
+                    polPot = readPolPot();
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
@@ -413,21 +414,21 @@ void loop() {
 #endif
 
 // Convert degrees to steps
-long deg2step(float deg, uint8_t ratio, uint8_t microsteps) {
+long deg2step(float deg, float ratio, uint8_t microsteps) {
     long steps = (float(ratio) * SPR * microsteps * deg) / float(360.0);
     return steps;
 }
 
 // Convert steps to degrees
-float step2deg(long step, uint8_t ratio, uint8_t microsteps) {
+float step2deg(long step, float ratio, uint8_t microsteps) {
     float deg = (360.0 * float(step)) / (float(SPR) * ratio * microsteps);
     return deg;
 }
 
 // SAVED //////////////////////////////////////////////////////////// SAVED //
 
-// int rawpolpot[POL_POT_SAMPLES - 1]; // holder for rolling average... not needed with 10nF capacitor.
-/* Polarizer poti rolling average... not needed with 10nF capacitor.
+ int rawpolpot[POL_POT_SAMPLES - 1]; // holder for rolling average... not needed with 10nF capacitor.
+// Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
     for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
@@ -440,4 +441,4 @@ int readPolPot() {
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / POL_POT_SAMPLES);                   // return average
 }
-*/
+

@@ -1,13 +1,13 @@
 # Wire Wiggler Firmware: Yet another satellite antenna rotator project
-Wire Wiggler is a satellite antenna rotator control firmware intended to be used with common nc controller hardware. The code is based off of satnogs original stepper rotator code.
+Wire Wiggler is a satellite antenna rotator control firmware intended for use with wide range of commonly available nc controller hardware. The code is based off of satnogs original stepper rotator code. So Wire Wiggler can be used with many popular rotator apps just like a "satnogs" rotator.
 
-Read about the original satnogs rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://gitlab.com/Quartapound/satnogs-rotator-firmware/).
+Read about the original satnogs stepper rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://gitlab.com/Quartapound/satnogs-rotator-firmware/).
 
 ## Features
 * Interfaces with Hamlib rotctld for easy control with rotator apps like Gpredict
 * Homes all axis at boot up
-* Watchdog timer shuts down all drivers when triggered
-* Optional 3rd axis for polarization control
+* Optional 3rd axis for antenna polarization control
+* Watchdog timer shuts down all drivers when triggered (not supported by all hardware)
 * ...currently under development
 
     * IMU feedback for moving vehicles
@@ -26,15 +26,15 @@ Read about the original satnogs rotator project here: [SatNOGS Rotator Controlle
 
 ## Instructions
 ### Configure, compile, and upload firmware:
-*A basic level of understanding on how to comment/edit config files, install and use VSCode, and install and use PlatformIO is assumed in this text.*
+*A basic understanding of how to install and use VSCode with PlatformIO is assumed in this text.*
 
-Download and decompress the Wire Wiggler repository in your project folder, and open the project in VScode. Edit the `config.h` file to suit your hardware (comment/uncomment and edit any relevant lines). Also edit uncomment the section that matches your microcontroller in `platformio.ini`. Finally select the pio build option that matches your board, and compile+upload to your board. If completed succesfully, your board is now ready for use.
+Download and decompress the Wire Wiggler repository in your project folder, and open the project in PlatformIO. Edit the `config.h` file to suit your hardware (comment/uncomment and edit any relevant lines). Uncomment the section that matches your microcontroller in `platformio.ini`. Finally, in the PIO tree select the upload option that matches your board to compile and upload Wire Wiggler firmware to your board. If completed succesfully, your board is now ready for use.
 
 ### Install Hamlib and Gpredict Software:
 Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
 
 ### Create a launch script for rotctld:
-Plug your hardware into your computer, and find the port used by your board using device manager in Windows, or `dmesg | grep tty` in a Linux terminal. This port might be for example `COM3` in windows, or `/dev/ttyUSB3` in Linux. Use this info to make a shell script to launch rotctld using appropriate port (`/dev/ttyUSB0` in this example) in your favorite text editor (ie Notepad++):
+Plug your hardware into your computer, and find the port used by your board using device manager in Windows, or `dmesg | grep tty` in a Linux terminal. This port may be for example `COM3` in windows, or `/dev/ttyUSB3` in Linux. Use your favorite text editor to make a shell script with the following line to launch rotctld, replacing the port name with the one your found earlier:
 
 ```
 rotctld -m 202 -r /dev/ttyUSB0 -s 9600 -T 127.0.0.1 -t 4533 -C timeout=500 -C retry=0 -vvvvvvvv

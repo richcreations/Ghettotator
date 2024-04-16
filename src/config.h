@@ -40,7 +40,7 @@
 
 // #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
 
-// #define AZI_RATIO          57    // Azimuth mechanical gear ratio (19:1 planetary * 3:1 belt drive = 57:1)
+// #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio (19:1 planetary * 72:20 belt drive = 57:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 // #define AZI_VMAX           20.0  // Antenna deg/s
 // #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
@@ -48,7 +48,7 @@
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
 
-// #define ELE_RATIO          57    // Elevation mechanical gear ratio
+// #define ELE_RATIO          68.4  // Elevation mechanical gear ratio
 // #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
 // #define ELE_VMAX           20.0  // Antenna deg/s
 // #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
@@ -56,7 +56,7 @@
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
-// #define POL_RATIO          3     // Polarization mechanical gear ratio
+// #define POL_RATIO          3.6   // Polarization mechanical gear ratio
 // #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           90.0  // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
