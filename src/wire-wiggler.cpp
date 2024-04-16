@@ -53,6 +53,7 @@ long aziMaxStepAcc = 0;
     long polMaxStepAcc = 0;
     int polPot = 0;
     int lastPolPot = 0;
+    int rawpolpot[POL_POT_SAMPLES - 1] = {0}; // holder for rolling average... not needed with 10nF capacitor.
 #endif
 #ifdef ledExists
     bool ledState = 0;  //logic
@@ -195,15 +196,15 @@ void loop() {
                 #endif
             #else
                 #ifdef POLARIZER
-                    // polPot = analogRead(polPotPin); // read poti
-                    polPot = readPolPot();
+                     polPot = analogRead(polPotPin); // read poti
+                    // polPot = readPolPot();
                     // Poti has moved enough to respond to
                     if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                         lastPolPot = polPot;
-                        control_po.setpoint = ((float)polPot / 1023.0) * POL_MAX_ANGLE;   // use 10bit reading to change polarize setpoint angle
+                        control_po.setpoint = ((float)polPot / float(1023.0)) * float(POL_MAX_ANGLE);   // use 10bit reading to change polarize setpoint angle
                     }
                 #endif
-                // Move azimuth and elevation motors
+                // Move motors
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
                 stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
@@ -415,30 +416,25 @@ void loop() {
 
 // Convert degrees to steps
 long deg2step(float deg, float ratio, uint8_t microsteps) {
-    long steps = (float(ratio) * SPR * microsteps * deg) / float(360.0);
+    long steps = (ratio * SPR * float(microsteps) * deg) / float(360.0);
     return steps;
 }
 
 // Convert steps to degrees
 float step2deg(long step, float ratio, uint8_t microsteps) {
-    float deg = (360.0 * float(step)) / (float(SPR) * ratio * microsteps);
+    float deg = (360.0 * float(step)) / (SPR * ratio * float(microsteps));
     return deg;
 }
 
 // SAVED //////////////////////////////////////////////////////////// SAVED //
-
- int rawpolpot[POL_POT_SAMPLES - 1]; // holder for rolling average... not needed with 10nF capacitor.
 // Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
     for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
         polpotavg += rawpolpot[i];                          // add to average
-        if(i < POL_POT_SAMPLES - 2) {
-            rawpolpot[i] = rawpolpot[i + 1];                // increment indexes over for next run (rolling array)
-        }
+        rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
     }
     rawpolpot[POL_POT_SAMPLES - 1] = analogRead(polPotPin); // last reading stored
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / POL_POT_SAMPLES);                   // return average
 }
-

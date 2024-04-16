@@ -33,7 +33,7 @@
         #define POL_POT_HYSTERESIS  1   // Increase to eliminate polarize axis shaking while poti is not moved
     #endif
     #ifndef POL_POT_SAMPLES
-        #define POL_POT_SAMPLES   4       // Number of averaged polpot samples used for smoothing
+        #define POL_POT_SAMPLES   4     // Number of averaged polpot samples used for smoothing
     #endif
 #endif
 
