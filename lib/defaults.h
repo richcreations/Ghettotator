@@ -11,7 +11,7 @@
 #ifdef NANO_CNC_V_4
     #include <../boards/nanoCNCv4.h>
     #if defined(NANO_CNC_V_4) && ((AZI_MICROSTEP > 1) || (ELE_MICROSTEP > 1) || (POL_MICROSTEP > 1))
-        #warning The nano CNC V4 shield requires hacking the traces for microsteps > 1 to work!!!
+        #warning The nano CNC V4 shield requires hardware hacks for microsteps > 1 to work!!!
     #endif
 #endif
 #ifdef ANET_A8_ATMEGA1280_PRINTER_BOARD

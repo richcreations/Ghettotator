@@ -3,6 +3,10 @@
 // https://content.instructables.com/FLX/AQMK/JFIIPA0Q/FLXAQMKJFIIPA0Q.png
 // https://content.instructables.com/FBX/XL1D/KRJ7OATR/FBXXL1DKRJ7OATR.png
 // https://www.amazon.com/NOYITO-Engraving-Machine-Expansion-Compatible/dp/B07BGVST9D
+//
+// Note: The Nano CNC V4 sheild was made by folks who don't understand circuit design.
+// All all of the driver MSx jumpers are connected to ground instead of Vcc. 
+// Therefore hardware hacks are required if microsteps > 1 is used.
 
 #define aziStepPin      5   // X step
 #define aziDirPin       2   // X dir
