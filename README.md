@@ -28,7 +28,7 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
 ### Configure, compile, and upload firmware:
 *A basic understanding of how to install and use VSCode with PlatformIO is assumed in this text.*
 
-Download and decompress the Wire Wiggler repository in your project folder, and open the project in PlatformIO. Edit the `config.h` file to suit your hardware (comment/uncomment and edit any relevant lines). Uncomment the section that matches your microcontroller in `platformio.ini`. Finally, in the PIO tree select the upload option that matches your board to compile and upload Wire Wiggler firmware to your board. If completed succesfully, your board is now ready for use.
+Download and decompress the Wire Wiggler repository in your project folder, and open the project in PlatformIO. Edit the `config.h` file to suit your hardware (comment/uncomment and edit any relevant lines). Uncomment the section that matches your microcontroller in `platformio.ini`. Finally, compile and upload Wire Wiggler firmware to your board by selecting the upload option that matches your board in the PIO "Project Tasks" tree. If completed succesfully, your board is now ready for use.
 
 ### Install Hamlib and Gpredict Software:
 Hamlib contains the `rotctld` driver that is used for communication between the rotator control software of your choice (ie Gpredict) and your board's usb or serial port. Details on downloading, installing, and extensively operating GPredict or other control software are beyond the scope of this project. However the process is typically fairly easy to follow.
