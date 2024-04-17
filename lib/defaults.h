@@ -51,7 +51,7 @@
 #endif
 
 #ifndef BAUDRATE
-    #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
+    #define BAUDRATE           57600 // Set the Baudrate of easycomm 3 protocol (57600)
 #endif
 #ifndef AZI_RATIO
     #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio
@@ -102,7 +102,7 @@
 #endif
 
 #ifndef POL_RATIO
-    #define POL_RATIO          4.5   // Polarization mechanical gear ratio
+    #define POL_RATIO          3.0   // Polarization mechanical gear ratio
 #endif
 #ifndef POL_MICROSTEP
 #   define POL_MICROSTEP       1     // Polarization stepper driver microstepping

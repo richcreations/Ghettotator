@@ -40,7 +40,7 @@ Details on downloading, installing, and generally operating GPredict or other co
 Plug your hardware into your computer, and find the port used by your board using device manager in Windows, or `dmesg | grep tty` in a Linux terminal. This port may be for example `COM3` in windows, or `/dev/ttyUSB3` in Linux. Use your favorite text editor to make a shell script with the following line to launch rotctld, replacing the port name with the one your found earlier:
 
 ```
-rotctld -m 202 -r /dev/ttyUSB0 -s 9600 -T 127.0.0.1 -t 4533 -C timeout=500 -C retry=0 -vvvvvvvv
+rotctld -m 202 -r /dev/ttyUSB0 -s 57600 -T 127.0.0.1 -t 4533 -C timeout=500 -C retry=0 -vvvvvvvv
 ```
 Make the script executable so you can use convenient shortcuts to start rotctld before using your rotator software. You can also just use that line in a terminal to start rotctld manually.
 

@@ -38,7 +38,7 @@
 
 // The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)
 
-// #define BAUDRATE           9600  // Set the Baudrate of easycomm 3 protocol (9600)
+// #define BAUDRATE           57600 // Set the Baudrate of easycomm 3 protocol (9600)
 
 // #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio (19:1 planetary * 72:20 belt drive = 68.4:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
@@ -56,7 +56,7 @@
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
 
-// #define POL_RATIO          4.5   // Polarization mechanical gear ratio (72:16 belt drive = 4.5:1)
+// #define POL_RATIO          3.0   // Polarization mechanical gear ratio (72:16 belt drive = 4.5:1)
 // #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           90.0  // Antenna deg/s
 // #define POL_ACC_MAX        120.0 // Antenna deg/s^2
