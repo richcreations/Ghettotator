@@ -38,7 +38,7 @@
 
 // The following lines can be uncommented and values changed to overide default settings (default settings shown for reference)
 
-// #define BAUDRATE           57600 // Set the Baudrate of easycomm 3 protocol (9600)
+// #define BAUDRATE           57600 // Set the Baudrate of easycomm 3 protocol (57600)
 
 // #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio (19:1 planetary * 72:20 belt drive = 68.4:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
