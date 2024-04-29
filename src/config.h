@@ -19,7 +19,7 @@
 // Uncomment to enable antenna polarity rotator feature (manual control with poti from 0V to Vcc)
 #define POLARIZER
 //#define POL_POT_HYSTERESIS  1     // Increase to eliminate polarize axis shaking while poti is not moved
-//#define POL_POT_SAMPLES   4       // Number of averaged polpot samples used for smoothing
+//#define POL_POT_SAMPLES   4       // Size of array -1 to store rolling average samples
 
 // Uncomment to enable 5883 compass feedback feature
 //#define COMPASS

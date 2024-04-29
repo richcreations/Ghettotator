@@ -430,11 +430,13 @@ float step2deg(long step, float ratio, uint8_t microsteps) {
 // Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
-    for(byte i = 0; i < POL_POT_SAMPLES - 1; i++) {         // this runs POL_POT_SAMPLES-1 loops
+    for(byte i = 0; i < POL_POT_SAMPLES; i++) {             // this runs POL_POT_SAMPLES-1 loops
         polpotavg += rawpolpot[i];                          // add to average
-        rawpolpot[i] = rawpolpot[i + 1];                    // increment indexes over for next run (rolling array)
+        if(i < POL_POT_SAMPLES - 1) {
+            rawpolpot[i] = rawpolpot[i + 1];                // increment indexes over for next run (rolling array)
+        }
     }
     rawpolpot[POL_POT_SAMPLES - 1] = analogRead(polPotPin); // last reading stored
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
-    return (polpotavg / POL_POT_SAMPLES);                   // return average
+    return (polpotavg / (POL_POT_SAMPLES + 1));             // return average
 }
