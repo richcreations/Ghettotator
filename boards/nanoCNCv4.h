@@ -24,6 +24,6 @@
 
 // "L" LED on the nano board (shield has no LED's)
 #define ledPinBuiltin   13  // Onboard led pin (also broken out to D13 pins, but after the resistor :()
-#define ledPinExternal  12  // External led pin (pin labeled D12)
+#define ledPinExternal  A0  // External led pin (pin labeled "ABORT")
 
 #define polPotPin       A6  // Polarize manual control potentiometer  wiper (A6 connector)
