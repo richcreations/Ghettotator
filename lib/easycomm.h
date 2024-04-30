@@ -28,17 +28,18 @@ public:
         char incomingByte;
         char *Data = buffer;
         char *rawData;
-        static uint16_t BufferCnt = 0;
+        static uint16_t BufferIndex = 0;
         char data[100];
         String str1, str2, str3, str4, str5, str6;
 
-        // Read from serial
+        // Block if serial buffer has data
         while (Serial.available() > 0) {
+            // read oldest byte
             incomingByte = Serial.read();
 
-            // Read new data, '\n' means new pacakage
+            // Buffer var has a complete packet to process
             if (incomingByte == '\n' || incomingByte == '\r') {
-                buffer[BufferCnt] = 0;
+                buffer[BufferIndex] = 0;
                 if (buffer[0] == 'A' && buffer[1] == 'Z') {
                     if (buffer[2] == ' ' && buffer[3] == 'E' &&
                         buffer[4] == 'L') {
@@ -343,20 +344,21 @@ public:
                 } else if (buffer[0] == 'R' && buffer[1] == 'S'
                         && buffer[2] == 'T') {
                     // Custom command to test the watchdog timer routine
-                    while(1)
-                        ;
+                    while(1);
                 } else if (buffer[0] == 'R' && buffer[1] == 'B') {
                     // Custom command to reboot the uC
                     wdt_enable(WDTO_2S);
                     while(1);
                 }
                 // Reset the buffer an clean the serial buffer
-                BufferCnt = 0;
+                BufferIndex = 0;
+                // Block while sending serial data
                 Serial.flush();
-            } else {
-                // Fill the buffer with incoming data
-                buffer[BufferCnt] = incomingByte;
-                BufferCnt++;
+            }
+            // Store oldest serial byte in buffer var
+            else {
+                buffer[BufferIndex] = incomingByte;
+                BufferIndex++;
             }
         }
     }

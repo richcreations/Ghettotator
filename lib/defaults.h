@@ -145,6 +145,10 @@
     #define SAMPLE_TIME        0.1   // Control loop in sec
 #endif
 
+// Check if step rates are too high (>4000) ????
+//if(AZI_VMAX * AZI_RATIO * SPR * AZI_MICROSTEP / 360 > 4000) {}
+ //   #error AZI_VMAX & AZI_RATIO are too large. Accelstepper lib becomes unstable at step rates >4000hz.
+
 #ifdef TEENSY_UNO_CNC_SHIELD_V_3     // remove watchdog for Teensy boards
     #ifdef WATCHDOG
         #undef WATCHDOG

@@ -172,6 +172,7 @@ void loop() {
         } 
         // Homing completed... start rotator routine
         else {
+            // Rotate without polarizer
             #ifndef POLARIZER
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -183,48 +184,15 @@ void loop() {
                 if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
                     rotator.rotator_status = idle;
                 }
-                #ifndef DEBUG
-                    #ifdef ledUseBuiltin
-                        // LED heartbeat: slow blink when loop is running
-                        if(millis() - ledTime > ledPeriod)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinBuiltin,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinBuiltin,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
-                        }
-                    #endif
-                    #ifdef ledUseExternal
-                        // LED heartbeat: slow blink when loop is running
-                        if(millis() - ledTime > ledPeriod)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinExternal,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinExternal,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
-                        }
-                    #endif
-                #endif
             #else
-                #ifdef POLARIZER
-                    // polPot = analogRead(polPotPin); // read poti
-                     polPot = readPolPot();
-                    // Poti has moved enough to respond to
-                    if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
-                        lastPolPot = polPot;
-                        control_po.setpoint = ((float)polPot / float(1023.0)) * float(POL_MAX_ANGLE);   // use 10bit reading to change polarize setpoint angle
-                    }
-                #endif
+            // Rotate w/ polarizer
+                // polPot = analogRead(polPotPin); // read poti
+                polPot = readPolPot();
+                // Poti has moved enough to respond to
+                if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
+                    lastPolPot = polPot;
+                    control_po.setpoint = ((float)polPot / float(1023.0)) * float(POL_MAX_ANGLE);   // use 10bit reading to change polarize setpoint angle
+                }
                 // Move motors
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
@@ -238,7 +206,8 @@ void loop() {
                     rotator.rotator_status = idle;
                 }
             #endif
-            // LED heartbeat: slow blink when loop is running
+
+            // LED heartbeat: slow blink while rotator routine is running
             #ifndef DEBUG
                 #ifdef ledUseBuiltin
                     if(millis() - ledTime > ledPeriod)   {
@@ -521,7 +490,7 @@ void loop() {
             // Azi is closed
             if(switch_aziMin.get_state())   {
                 isHome_az = true;
-                stepper_az.moveTo(-seek_aziMin);
+                stepper_az.moveTo(-seek_aziMin);    // Back off switch
                 while(isHome_az == true) {
                     if (switch_aziMin.get_state() == false && isHome_az) {
                         // Switch opened, set flag and stop motor
