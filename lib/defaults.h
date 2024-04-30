@@ -64,7 +64,7 @@
     #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 #endif
 #ifndef AZI_VMAX
-    #define AZI_VMAX           20.0  // Antenna deg/s
+    #define AZI_VMAX           10.0  // Antenna deg/s
 #endif
 #ifndef AZI_ACC_MAX
     #define AZI_ACC_MAX        20.0  // Antenna deg/s^2
@@ -88,7 +88,7 @@
     #define ELE_MICROSTEP      1     // Elevation stepper driver microstepping
 #endif
 #ifndef ELE_VMAX
-    #define ELE_VMAX           20.0  // Antenna deg/s
+    #define ELE_VMAX           5.0   // Antenna deg/s
 #endif
 #ifndef ELE_ACC_MAX
     #define ELE_ACC_MAX        20.0  // Antenna deg/s^2
@@ -115,7 +115,7 @@
     #define POL_VMAX           90.0 // Antenna deg/s
 #endif
 #ifndef POL_ACC_MAX
-    #define POL_ACC_MAX        20.0  // Antenna deg/s^2
+    #define POL_ACC_MAX        80.0  // Antenna deg/s^2
 #endif
 #ifndef POL_MIN_ANGLE
     #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle

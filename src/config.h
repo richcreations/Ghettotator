@@ -46,7 +46,7 @@
 
 // #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio (19:1 planetary * 72:20 belt drive = 68.4:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
-// #define AZI_VMAX           20.0  // Antenna deg/s
+// #define AZI_VMAX           10.0  // Antenna deg/s
 // #define AZI_ACC_MAX        20.0  // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
@@ -54,7 +54,7 @@
 
 // #define ELE_RATIO          68.4  // Elevation mechanical gear ratio
 // #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
-// #define ELE_VMAX           20.0  // Antenna deg/s
+// #define ELE_VMAX           5.0   // Antenna deg/s
 // #define ELE_ACC_MAX        20.0  // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
@@ -63,7 +63,7 @@
 // #define POL_RATIO          3.6   // Polarization mechanical gear ratio (72:20 belt drive = 3.6:1)
 // #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           90.0  // Antenna deg/s
-// #define POL_ACC_MAX        20.0  // Antenna deg/s^2
+// #define POL_ACC_MAX        80.0  // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
 // #define POL_PARK_ANGLE     0.0   // Antenna polarizer parking position
