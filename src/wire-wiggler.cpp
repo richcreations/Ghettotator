@@ -272,130 +272,105 @@ void loop() {
 
 #ifndef POLARIZER
 // Homing function without polarizer feature enabled
-    enum _rotator_error homing(long seek_aziMin, long seek_eleMin) {    
-        // Declare and init axis home flags
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin) {
+        // Declare and init flags
         bool isHome_az = false;
         bool isHome_el = false;
+        bool switches_closed = false;
+        unsigned long time = 0;
 
-        // Back off any switches that are already closed
-        if(switch_aziMin.get_state() || switch_eleMin.get_state() || switch_polMin.get_state()) {
-            // Azi is closed
-            if(switch_aziMin.get_state())   {
-                isHome_az = true;
-                stepper_az.moveTo(-seek_aziMin);
-                while(isHome_az == true) {
-                    if (switch_aziMin.get_state() == false && isHome_az) {
-                        // Switch opened, set flag and stop motor
-                        stepper_az.stop();
-                        isHome_az = false;
-                    }
-                    // Move motors
-                    stepper_az.run();
-                        
-                    #ifdef WATCHDOG
-                        wdt.watchdog_reset();
-                    #endif
-                    // Traveled beyond step limit... mechanical failure. Exit loop with error
-                    if (stepper_az.distanceToGo() == 0 && isHome_az) {
-                        return homing_error;
-                    }
-                    
-                    #ifndef DEBUG
-                        #ifdef ledUseBuiltin
-                            // LED heartbeat: fast blink while homing
-                            if(millis() - ledTime > ledPeriod/6)   {
-                                if(ledState)    {
-                                    digitalWrite(ledPinBuiltin,LOW);
-                                    ledState = 0;
-                                    ledTime = millis();
-                                }
-                                else{
-                                    digitalWrite(ledPinBuiltin,HIGH);
-                                    ledState = 1;
-                                    ledTime = millis();
-                                }
-                            }
-                        #endif
-                        #ifdef ledUseExternal
-                            // LED heartbeat: fast blink while homing
-                            if(millis() - ledTime > ledPeriod/6)   {
-                                if(ledState)    {
-                                    digitalWrite(ledPinExternal,LOW);
-                                    ledState = 0;
-                                    ledTime = millis();
-                                }
-                                else{
-                                    digitalWrite(ledPinExternal,HIGH);
-                                    ledState = 1;
-                                    ledTime = millis();
-                                }
-                            }
-                        #endif
-                    #endif
-                }
+        // If azi endstop is closed, prep for back off
+        if(switch_aziMin.get_state())   {
+            isHome_az = true;
+            switches_closed = true;
+            stepper_az.moveTo(-seek_aziMin);
+        }
+        // If ele endstop is closed, prep for back off
+        if(switch_eleMin.get_state())   {
+            isHome_el = true;
+            switches_closed = true;
+            stepper_el.moveTo(-seek_eleMin);
+        }
+        // Back off any closed switches
+        while(isHome_az || isHome_el || isHome_po)  {
+            if (switch_aziMin.get_state() == false && isHome_az) {
+                // Switch opened, set flag and stop motor
+                stepper_az.stop();
+                isHome_az = false;
             }
-            // Ele is closed
-            if(switch_eleMin.get_state())   {
-                isHome_el = true;
-                stepper_el.moveTo(-seek_eleMin);
-                while(isHome_el == true) {
-                    if (switch_eleMin.get_state() == false && isHome_el) {
-                        // Switch opened, set flag and stop motor
-                        stepper_el.stop();
-                        isHome_el = false;
+            if (switch_eleMin.get_state() == false && isHome_el) {
+                // Switch opened, set flag and stop motor
+                stepper_el.stop();
+                isHome_el = false;
+            }
+
+            // Move motors
+            stepper_az.run();
+            stepper_el.run();
+
+            // Traveled beyond step limit... mechanical failure. Exit loop with error
+            if ((stepper_az.distanceToGo() == 0 && isHome_az) ||
+                (stepper_el.distanceToGo() == 0 && isHome_el)) {
+                return homing_error;
+            }
+                                
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+
+            #ifndef DEBUG
+                #ifdef ledUseBuiltin
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinBuiltin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
                     }
-                    // Move motors
-                    stepper_el.run();
-                    #ifdef WATCHDOG
-                        wdt.watchdog_reset();
-                    #endif
-                    // Traveled beyond step limit... mechanical failure. Exit loop with error
-                    if (stepper_el.distanceToGo() == 0 && isHome_el) {
-                        return homing_error;
+                #endif
+                #ifdef ledUseExternal
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
                     }
-                    
-                    #ifndef DEBUG
-                        #ifdef ledUseBuiltin
-                            // LED heartbeat: fast blink while homing
-                            if(millis() - ledTime > ledPeriod/6)   {
-                                if(ledState)    {
-                                    digitalWrite(ledPinBuiltin,LOW);
-                                    ledState = 0;
-                                    ledTime = millis();
-                                }
-                                else{
-                                    digitalWrite(ledPinBuiltin,HIGH);
-                                    ledState = 1;
-                                    ledTime = millis();
-                                }
-                            }
-                        #endif
-                        #ifdef ledUseExternal
-                            // LED heartbeat: fast blink while homing
-                            if(millis() - ledTime > ledPeriod/6)   {
-                                if(ledState)    {
-                                    digitalWrite(ledPinExternal,LOW);
-                                    ledState = 0;
-                                    ledTime = millis();
-                                }
-                                else{
-                                    digitalWrite(ledPinExternal,HIGH);
-                                    ledState = 1;
-                                    ledTime = millis();
-                                }
-                            }
-                        #endif
-                    #endif
-                }
-            } //end back off ele
-        }//end endstop check
+                #endif
+            #endif
+        }
+
+        if(switches_closed)  {
+            // Delay to allow switch back off moves to complete
+            time = millis();
+            while (millis() - time < HOME_DELAY) {
+                #ifdef WATCHDOG
+                    wdt.watchdog_reset();
+                #endif
+                stepper_az.run();
+                stepper_el.run();
+            }
+            switches_closed = false;
+        }
 
         // Endstop switches all open, move motors to "seek" position
         stepper_az.moveTo(seek_aziMin);
         stepper_el.moveTo(seek_eleMin);
 
         // Homing loop
-        while (isHome_az == false || isHome_el == false || isHome_po == false) {
+        while (isHome_az == false || isHome_el == false) {
             if (switch_aziMin.get_state() == true && !isHome_az) {
                 // Found azimuth home, set flag and return to trigger position
                 stepper_az.moveTo(stepper_az.currentPosition());
@@ -406,7 +381,7 @@ void loop() {
                 stepper_el.moveTo(stepper_el.currentPosition());
                 isHome_el = true;
             }
-            // Travelled beyond step limit... mechanical failure. Exit loop with error
+            // Traveled beyond step limit... mechanical failure. Exit loop with error
             if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
                 (stepper_el.distanceToGo() == 0 && !isHome_el)) {
                 return homing_error;
@@ -453,7 +428,7 @@ void loop() {
             #endif
         }
         // Delay to allow homing movement to complete
-        unsigned long time = millis();
+        time = millis();
         while (millis() - time < HOME_DELAY) {
             #ifdef WATCHDOG
                 wdt.watchdog_reset();
@@ -467,30 +442,33 @@ void loop() {
         control_az.setpoint = 0.0;
         control_el.setpoint = 0.0;
         return no_error;
-    }
+    }// homing without pol
 #else 
 // Homing with Polarizer enabled
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin) {
-        // Declare and init axis home flags
+        // Declare and init flags
         bool isHome_az = false;
         bool isHome_el = false;
         bool isHome_po = false;
+        bool switches_closed = false;
+        unsigned long time = 0;
 
-
-/////redo switch checks
         // If azi endstop is closed, prep for back off
         if(switch_aziMin.get_state())   {
             isHome_az = true;
+            switches_closed = true;
             stepper_az.moveTo(-seek_aziMin);
         }
         // If ele endstop is closed, prep for back off
         if(switch_eleMin.get_state())   {
             isHome_el = true;
+            switches_closed = true;
             stepper_el.moveTo(-seek_eleMin);
         }
         // If pol endstop is closed, prep for back off
         if(switch_polMin.get_state())   {
             isHome_po = true;
+            switches_closed = true;
             stepper_po.moveTo(-seek_polMin);
         }
         // Back off any closed switches
@@ -561,15 +539,18 @@ void loop() {
             #endif
         }
 
-        // Delay to allow switch back off moves to complete
-        unsigned long time = millis();
-        while (millis() - time < HOME_DELAY) {
-            #ifdef WATCHDOG
-                wdt.watchdog_reset();
-            #endif
-            stepper_az.run();
-            stepper_el.run();
-            stepper_po.run();
+        if(switches_closed)  {
+            // Delay to allow switch back off moves to complete
+            time = millis();
+            while (millis() - time < HOME_DELAY) {
+                #ifdef WATCHDOG
+                    wdt.watchdog_reset();
+                #endif
+                stepper_az.run();
+                stepper_el.run();
+                stepper_po.run();
+            }
+            switches_closed = false;
         }
 
         // Endstop switches all open, move motors to "seek" position
@@ -643,7 +624,7 @@ void loop() {
             #endif
         }
         // Delay to allow homing movement to complete
-        unsigned long time = millis();
+        time = millis();
         while (millis() - time < HOME_DELAY) {
             #ifdef WATCHDOG
                 wdt.watchdog_reset();
