@@ -28,6 +28,10 @@
     #include <../boards/unoCncV3.h>
 #endif
 
+#if defined(ledUseExternal) && defined(ledUseBuiltin)
+    #error Both "ledUseExternal" and "ledPinBuiltin" are enabled, but only one heartbeat LED output is allowed.
+#endif
+
 #ifdef POLARIZER
     #ifndef POL_POT_HYSTERESIS
         #define POL_POT_HYSTERESIS  1   // Increase to eliminate polarize axis shaking while poti is not moved
@@ -63,7 +67,7 @@
     #define AZI_VMAX           20.0  // Antenna deg/s
 #endif
 #ifndef AZI_ACC_MAX
-    #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
+    #define AZI_ACC_MAX        20.0  // Antenna deg/s^2
 #endif
 #ifndef AZI_MIN_ANGLE
     #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
@@ -87,7 +91,7 @@
     #define ELE_VMAX           20.0  // Antenna deg/s
 #endif
 #ifndef ELE_ACC_MAX
-    #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
+    #define ELE_ACC_MAX        20.0  // Antenna deg/s^2
 #endif
 #ifndef ELE_MIN_ANGLE
     #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
@@ -111,7 +115,7 @@
     #define POL_VMAX           90.0 // Antenna deg/s
 #endif
 #ifndef POL_ACC_MAX
-    #define POL_ACC_MAX        120.0 // Antenna deg/s^2
+    #define POL_ACC_MAX        20.0  // Antenna deg/s^2
 #endif
 #ifndef POL_MIN_ANGLE
     #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle

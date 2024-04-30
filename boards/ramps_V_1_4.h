@@ -24,7 +24,7 @@
 #define polMinStopPin   18  // Z- endstop
 #define polMaxStopPin   19  // Z+ endstop
 
-#define ledExists           // Onboard led, uncomment to enable
-#define ledPin          13  // Onboard led
+#define ledPinBuiltin   13  // Onboard led
+#define ledPinExternal  4   // Servo pin D4
 
 #define polPotPin       A3  // Polarize manual control potentiometer wiper

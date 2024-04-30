@@ -55,7 +55,7 @@ long aziMaxStepAcc = 0;
     int lastPolPot = 0;
     int rawpolpot[POL_POT_SAMPLES]; // holder for rolling average... not needed with 10nF capacitor.
 #endif
-#ifdef ledExists
+#if defined(ledUseBuiltin) || defined(ledUseExternal)
     bool ledState = 0;  //logic
     uint32_t ledPeriod = 1000; // msec period for default heartbeat flashing
     uint32_t ledTime = 0; // time holder
@@ -70,8 +70,11 @@ void setup() {
         switch_polMin.init();
         //pinMode(polPotPin, INPUT); // init poti pin, no pullup
     #endif
-    #ifdef ledExists
-        pinMode(ledPin, OUTPUT); // init led pin
+    #ifdef ledUseBuiltin
+        pinMode(ledPinBuiltin, OUTPUT);  // init led pin
+    #endif
+    #ifdef ledUseExternal
+        pinMode(ledPinExternal, OUTPUT); // init led pin
     #endif
 
     // Serial Communication
@@ -118,8 +121,11 @@ void setup() {
 void loop() {
     // Debug LED on... move this where ever to help with debugging
     #ifdef DEBUG
-        #ifdef ledExists
-            digitalWrite(ledPin,HIGH); //turn on led for debugging
+        #ifdef ledUseBuiltin
+            digitalWrite(ledPinBuiltin,HIGH); //turn on led for debugging
+        #endif
+        #ifdef ledUseExternal
+            digitalWrite(ledPinExternal,HIGH); //turn on led for debugging
         #endif
     #endif
     // Update WDT
@@ -178,16 +184,31 @@ void loop() {
                     rotator.rotator_status = idle;
                 }
                 #ifndef DEBUG
-                    #ifdef ledExists
+                    #ifdef ledUseBuiltin
                         // LED heartbeat: slow blink when loop is running
                         if(millis() - ledTime > ledPeriod)   {
                             if(ledState)    {
-                                digitalWrite(ledPin,LOW);
+                                digitalWrite(ledPinBuiltin,LOW);
                                 ledState = 0;
                                 ledTime = millis();
                             }
                             else{
-                                digitalWrite(ledPin,HIGH);
+                                digitalWrite(ledPinBuiltin,HIGH);
+                                ledState = 1;
+                                ledTime = millis();
+                            }
+                        }
+                    #endif
+                    #ifdef ledUseExternal
+                        // LED heartbeat: slow blink when loop is running
+                        if(millis() - ledTime > ledPeriod)   {
+                            if(ledState)    {
+                                digitalWrite(ledPinExternal,LOW);
+                                ledState = 0;
+                                ledTime = millis();
+                            }
+                            else{
+                                digitalWrite(ledPinExternal,HIGH);
                                 ledState = 1;
                                 ledTime = millis();
                             }
@@ -219,15 +240,29 @@ void loop() {
             #endif
             // LED heartbeat: slow blink when loop is running
             #ifndef DEBUG
-                #ifdef ledExists
+                #ifdef ledUseBuiltin
                     if(millis() - ledTime > ledPeriod)   {
                         if(ledState)    {
-                            digitalWrite(ledPin,LOW);
+                            digitalWrite(ledPinBuiltin,LOW);
                             ledState = 0;
                             ledTime = millis();
                         }
                         else{
-                            digitalWrite(ledPin,HIGH);
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
+                #endif
+                #ifdef ledUseExternal
+                    if(millis() - ledTime > ledPeriod)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
                             ledState = 1;
                             ledTime = millis();
                         }
@@ -252,10 +287,17 @@ void loop() {
             rotator.rotator_status = idle;
         }
         #ifndef DEBUG
-            #ifdef ledExists
+            #ifdef ledUseBuiltin
                 // LED heartbeat: remain on if an error occured
                 if(!ledState)    {
-                    digitalWrite(ledPin,HIGH);
+                    digitalWrite(ledPinBuiltin,HIGH);
+                    ledState = 1;
+                }
+            #endif
+            #ifdef ledUseExternal
+                // LED heartbeat: remain on if an error occured
+                if(!ledState)    {
+                    digitalWrite(ledPinExternal,HIGH);
                     ledState = 1;
                 }
             #endif
@@ -300,16 +342,31 @@ void loop() {
             #endif
             
             #ifndef DEBUG
-                #ifdef ledExists
+                #ifdef ledUseBuiltin
                 // LED heartbeat: fast blink while homing
                     if(millis() - ledTime > ledPeriod/6)   {
                         if(ledState)    {
-                            digitalWrite(ledPin,LOW);
+                            digitalWrite(ledPinBuiltin,LOW);
                             ledState = 0;
                             ledTime = millis();
                         }
                         else{
-                            digitalWrite(ledPin,HIGH);
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
+                #endif
+                #ifdef ledUseExternal
+                // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
                             ledState = 1;
                             ledTime = millis();
                         }
@@ -376,16 +433,31 @@ void loop() {
             #endif
             
             #ifndef DEBUG
-                #ifdef ledExists
+                #ifdef ledUseBuiltin
                     // LED heartbeat: fast blink while homing
                     if(millis() - ledTime > ledPeriod/6)   {
                         if(ledState)    {
-                            digitalWrite(ledPin,LOW);
+                            digitalWrite(ledPinBuiltin,LOW);
                             ledState = 0;
                             ledTime = millis();
                         }
                         else{
-                            digitalWrite(ledPin,HIGH);
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
+                #endif
+                #ifdef ledUseExternal
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
                             ledState = 1;
                             ledTime = millis();
                         }

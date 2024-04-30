@@ -14,6 +14,10 @@
 //#define TEENSY_UNO_CNC_SHIELD_V_3
 //#define ANET_A8_ATMEGA1280_PRINTER_BOARD
 
+// Define heartbeat LED... choose only one option
+// #define ledUseBuiltin            // Uncomment to enable heartbeat on built in LED
+#define ledUseExternal              // comment to disable heartbeat on external LED
+
 //#include <../boards/nameofcustomboard.h> // edit and uncomment for a custom board file.
 
 // Uncomment to enable antenna polarity rotator feature (manual control with poti from 0V to Vcc)
@@ -43,7 +47,7 @@
 // #define AZI_RATIO          68.4  // Azimuth mechanical gear ratio (19:1 planetary * 72:20 belt drive = 68.4:1)
 // #define AZI_MICROSTEP      1     // Azimuth stepper driver microstepping
 // #define AZI_VMAX           20.0  // Antenna deg/s
-// #define AZI_ACC_MAX        120.0 // Antenna deg/s^2
+// #define AZI_ACC_MAX        20.0  // Antenna deg/s^2
 // #define AZI_MIN_ANGLE      0.0   // Minimum antenna azimuth angle
 // #define AZI_MAX_ANGLE      360.0 // Maximum antenna azimuth angle
 // #define AZI_PARK_ANGLE     90.0  // Antenna azimuth parking position
@@ -51,7 +55,7 @@
 // #define ELE_RATIO          68.4  // Elevation mechanical gear ratio
 // #define ELE_MICROSTEP      1     // Elevation stepper driver microsteppinh
 // #define ELE_VMAX           20.0  // Antenna deg/s
-// #define ELE_ACC_MAX        120.0 // Antenna deg/s^2
+// #define ELE_ACC_MAX        20.0  // Antenna deg/s^2
 // #define ELE_MIN_ANGLE      0.0   // Minimum antenna elevation angle
 // #define ELE_MAX_ANGLE      180.0 // Maximum antenna elevation angle
 // #define ELE_PARK_ANGLE     -5.0  // Antenna elevation parking position
@@ -59,7 +63,7 @@
 // #define POL_RATIO          3.6   // Polarization mechanical gear ratio (72:20 belt drive = 3.6:1)
 // #define POL_MICROSTEP      1     // Polarization stepper driver microstepping
 // #define POL_VMAX           90.0  // Antenna deg/s
-// #define POL_ACC_MAX        120.0 // Antenna deg/s^2
+// #define POL_ACC_MAX        20.0  // Antenna deg/s^2
 // #define POL_MIN_ANGLE      0.0   // Minimum antenna polarization angle
 // #define POL_MAX_ANGLE      180.0 // Maximum antenna polarization angle
 // #define POL_PARK_ANGLE     0.0   // Antenna polarizer parking position

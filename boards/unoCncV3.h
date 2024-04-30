@@ -18,7 +18,7 @@
 #define polMinStopPin   11  // Z endstop
 
 // sheild has no built in led...
-//#define ledExists         // Onboard led, uncomment to enable
-#define ledPin          0   // Onboard led pin
+#define ledPinBuiltin   13  // Onboard led (onboard LED will be obscured by the shield)
+#define ledPinExternal  13  // External led (reference UNO connects MCU pin properly to D13 output, so it can be used for either or)
 
 #define polPotPin       A0  // Polarize manual control potentiometer  wiper (GRBL interface pin3)

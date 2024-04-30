@@ -23,7 +23,7 @@
 #define polMinStopPin   11  // Z endstop
 
 // "L" LED on the nano board (shield has no LED's)
-#define ledExists           // Onboard led, uncomment to enable
-#define ledPin          13  // Onboard led pin
+#define ledPinBuiltin   13  // Onboard led pin (also broken out to D13 pins, but after the resistor :()
+#define ledPinExternal  12  // External led pin (pin labeled D12)
 
 #define polPotPin       A6  // Polarize manual control potentiometer  wiper (A6 connector)
