@@ -396,90 +396,87 @@ void loop() {
             } //end back off ele
         }//end endstop check
 
-        // Endstop switches all open
-        else{
-            // Move motors to "seek" position
-            stepper_az.moveTo(seek_aziMin);
-            stepper_el.moveTo(seek_eleMin);
-    
-            // Homing loop
-            while (isHome_az == false || isHome_el == false || isHome_po == false) {
-                if (switch_aziMin.get_state() == true && !isHome_az) {
-                    // Found azimuth home, set flag and return to trigger position
-                    stepper_az.moveTo(stepper_az.currentPosition());
-                    isHome_az = true;
-                }
-                if (switch_eleMin.get_state() == true && !isHome_el) {
-                    // Found elevation home, set flag and return to trigger position
-                    stepper_el.moveTo(stepper_el.currentPosition());
-                    isHome_el = true;
-                }
-                // Travelled beyond step limit... mechanical failure. Exit loop with error
-                if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
-                    (stepper_el.distanceToGo() == 0 && !isHome_el)) {
-                    return homing_error;
-                }
-                // Move motors
-                stepper_az.run();
-                stepper_el.run();
-                    
-                #ifdef WATCHDOG
-                    wdt.watchdog_reset();
-                #endif
+        // Endstop switches all open, move motors to "seek" position
+        stepper_az.moveTo(seek_aziMin);
+        stepper_el.moveTo(seek_eleMin);
+
+        // Homing loop
+        while (isHome_az == false || isHome_el == false || isHome_po == false) {
+            if (switch_aziMin.get_state() == true && !isHome_az) {
+                // Found azimuth home, set flag and return to trigger position
+                stepper_az.moveTo(stepper_az.currentPosition());
+                isHome_az = true;
+            }
+            if (switch_eleMin.get_state() == true && !isHome_el) {
+                // Found elevation home, set flag and return to trigger position
+                stepper_el.moveTo(stepper_el.currentPosition());
+                isHome_el = true;
+            }
+            // Travelled beyond step limit... mechanical failure. Exit loop with error
+            if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
+                (stepper_el.distanceToGo() == 0 && !isHome_el)) {
+                return homing_error;
+            }
+            // Move motors
+            stepper_az.run();
+            stepper_el.run();
                 
-                #ifndef DEBUG
-                    #ifdef ledUseBuiltin
-                        // LED heartbeat: fast blink while homing
-                        if(millis() - ledTime > ledPeriod/6)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinBuiltin,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinBuiltin,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            
+            #ifndef DEBUG
+                #ifdef ledUseBuiltin
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinBuiltin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
                         }
-                    #endif
-                    #ifdef ledUseExternal
-                        // LED heartbeat: fast blink while homing
-                        if(millis() - ledTime > ledPeriod/6)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinExternal,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinExternal,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
+                        else{
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
                         }
-                    #endif
+                    }
                 #endif
-            }
-            // Delay to allow homing movement to complete
-            unsigned long time = millis();
-            while (millis() - time < HOME_DELAY) {
-                #ifdef WATCHDOG
-                    wdt.watchdog_reset();
+                #ifdef ledUseExternal
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
                 #endif
-                stepper_az.run();
-                stepper_el.run();
-            }
-            // Save home positions and rezero setpoints
-            stepper_az.setCurrentPosition(0.0);
-            stepper_el.setCurrentPosition(0.0);
-            control_az.setpoint = 0.0;
-            control_el.setpoint = 0.0;
-            return no_error;
+            #endif
         }
+        // Delay to allow homing movement to complete
+        unsigned long time = millis();
+        while (millis() - time < HOME_DELAY) {
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            stepper_az.run();
+            stepper_el.run();
+        }
+        // Save home positions and rezero setpoints
+        stepper_az.setCurrentPosition(0.0);
+        stepper_el.setCurrentPosition(0.0);
+        control_az.setpoint = 0.0;
+        control_el.setpoint = 0.0;
+        return no_error;
     }
 #else 
 // Homing with Polarizer enabled
-    enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin) {    
+    enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin) {
         // Declare and init axis home flags
         bool isHome_az = false;
         bool isHome_el = false;
@@ -653,97 +650,94 @@ void loop() {
             }// end back off pol
         }//end endstop check
 
-        // Endstop switches all open
-        else{
-            // Move motors to "seek" position
-            stepper_az.moveTo(seek_aziMin);
-            stepper_el.moveTo(seek_eleMin);
-            stepper_po.moveTo(seek_polMin);
-    
-            // Homing loop
-            while (isHome_az == false || isHome_el == false || isHome_po == false) {
-                if (switch_aziMin.get_state() == true && !isHome_az) {
-                    // Found azimuth home, set flag and return to trigger position
-                    stepper_az.moveTo(stepper_az.currentPosition());
-                    isHome_az = true;
-                }
-                if (switch_eleMin.get_state() == true && !isHome_el) {
-                    // Found elevation home, set flag and return to trigger position
-                    stepper_el.moveTo(stepper_el.currentPosition());
-                    isHome_el = true;
-                }
-                if (switch_polMin.get_state() == true && !isHome_po) {
-                    // Found elevation home, set flag and return to trigger position
-                    stepper_po.moveTo(stepper_po.currentPosition());
-                    isHome_po = true;
-                }
-                // Traveled beyond step limit... mechanical failure. Exit loop with error
-                if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
-                    (stepper_el.distanceToGo() == 0 && !isHome_el) ||
-                    (stepper_po.distanceToGo() == 0 && !isHome_po)) {
-                    return homing_error;
-                }
-                // Move motors
-                stepper_az.run();
-                stepper_el.run();
-                stepper_po.run();
-                    
-                #ifdef WATCHDOG
-                    wdt.watchdog_reset();
-                #endif
+        // Endstop switches all open, move motors to "seek" position
+        stepper_az.moveTo(seek_aziMin);
+        stepper_el.moveTo(seek_eleMin);
+        stepper_po.moveTo(seek_polMin);
+
+        // Homing loop
+        while (isHome_az == false || isHome_el == false || isHome_po == false) {
+            if (switch_aziMin.get_state() == true && !isHome_az) {
+                // Found azimuth home, set flag and return to trigger position
+                stepper_az.moveTo(stepper_az.currentPosition());
+                isHome_az = true;
+            }
+            if (switch_eleMin.get_state() == true && !isHome_el) {
+                // Found elevation home, set flag and return to trigger position
+                stepper_el.moveTo(stepper_el.currentPosition());
+                isHome_el = true;
+            }
+            if (switch_polMin.get_state() == true && !isHome_po) {
+                // Found elevation home, set flag and return to trigger position
+                stepper_po.moveTo(stepper_po.currentPosition());
+                isHome_po = true;
+            }
+            // Traveled beyond step limit... mechanical failure. Exit loop with error
+            if ((stepper_az.distanceToGo() == 0 && !isHome_az) ||
+                (stepper_el.distanceToGo() == 0 && !isHome_el) ||
+                (stepper_po.distanceToGo() == 0 && !isHome_po)) {
+                return homing_error;
+            }
+            // Move motors
+            stepper_az.run();
+            stepper_el.run();
+            stepper_po.run();
                 
-                #ifndef DEBUG
-                    #ifdef ledUseBuiltin
-                        // LED heartbeat: fast blink while homing
-                        if(millis() - ledTime > ledPeriod/6)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinBuiltin,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinBuiltin,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            
+            #ifndef DEBUG
+                #ifdef ledUseBuiltin
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinBuiltin,LOW);
+                            ledState = 0;
+                            ledTime = millis();
                         }
-                    #endif
-                    #ifdef ledUseExternal
-                        // LED heartbeat: fast blink while homing
-                        if(millis() - ledTime > ledPeriod/6)   {
-                            if(ledState)    {
-                                digitalWrite(ledPinExternal,LOW);
-                                ledState = 0;
-                                ledTime = millis();
-                            }
-                            else{
-                                digitalWrite(ledPinExternal,HIGH);
-                                ledState = 1;
-                                ledTime = millis();
-                            }
+                        else{
+                            digitalWrite(ledPinBuiltin,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
                         }
-                    #endif
+                    }
                 #endif
-            }
-            // Delay to allow homing movement to complete
-            unsigned long time = millis();
-            while (millis() - time < HOME_DELAY) {
-                #ifdef WATCHDOG
-                    wdt.watchdog_reset();
+                #ifdef ledUseExternal
+                    // LED heartbeat: fast blink while homing
+                    if(millis() - ledTime > ledPeriod/6)   {
+                        if(ledState)    {
+                            digitalWrite(ledPinExternal,LOW);
+                            ledState = 0;
+                            ledTime = millis();
+                        }
+                        else{
+                            digitalWrite(ledPinExternal,HIGH);
+                            ledState = 1;
+                            ledTime = millis();
+                        }
+                    }
                 #endif
-                stepper_az.run();
-                stepper_el.run();
-                stepper_po.run();
-            }
-            // Save home positions and rezero setpoints
-            stepper_az.setCurrentPosition(0.0);
-            stepper_el.setCurrentPosition(0.0);
-            stepper_po.setCurrentPosition(0.0);
-            control_az.setpoint = 0.0;
-            control_el.setpoint = 0.0;
-            control_po.setpoint = 0.0;
-            return no_error;
+            #endif
         }
+        // Delay to allow homing movement to complete
+        unsigned long time = millis();
+        while (millis() - time < HOME_DELAY) {
+            #ifdef WATCHDOG
+                wdt.watchdog_reset();
+            #endif
+            stepper_az.run();
+            stepper_el.run();
+            stepper_po.run();
+        }
+        // Save home positions and rezero setpoints
+        stepper_az.setCurrentPosition(0.0);
+        stepper_el.setCurrentPosition(0.0);
+        stepper_po.setCurrentPosition(0.0);
+        control_az.setpoint = 0.0;
+        control_el.setpoint = 0.0;
+        control_po.setpoint = 0.0;
+        return no_error;
     }
 #endif // homing with pol
 
