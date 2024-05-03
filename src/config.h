@@ -71,6 +71,6 @@
 // #define SPR                200   // Motor steps per revolution (200.0 for standard 1.8degree motors)
 // #define MIN_PULSE_WIDTH    20    // uSec (for AccelStepper)
 // #define DEFAULT_HOME_STATE LOW   // Low for N.O. switches
-// #define HOME_DELAY         2000  // millis to keep moving after hitting endstop (time to settle before resetting zeros)
+// #define HOME_DELAY         1000  // millis to keep moving after hitting endstop (time to settle before resetting zeros)
 
 
