@@ -15,6 +15,8 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
     * Parking feature
     * Softserial debugging
 
+![refDesBuild3.png](/images/refDesBuild3.png)
+
 ## Currently Compatible Hardware
 * Arduino UNO w/ UNO CNC Shield v3
 * Arduino Nano w/ Nano CNC V4 Shield
@@ -26,6 +28,9 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
 * Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode)
 
 ## Instructions
+### Build the mechanics
+Wire Wiggler firmware could be used with a broad assortment of mechanical designs. To test this project, an open source prototype "reference design" was created. Info on this design can be found here: [Link to Wire Wiggler Reference Design](/models/referenceDesign.md)
+
 ### Configure, compile, and upload firmware:
 *A basic understanding of how to install and use VSCode with PlatformIO is assumed in this text.*
 
@@ -110,6 +115,9 @@ The easycomm lib is used by the rotator control to interface with computer softw
     * Elevation park position = 8
 
 * RB, custom command to reboot controller
+
+## Wire Wiggler Gallery
+See some existing builds and design renderings using this project in the gallery: [Link to Wire Wiggler Gallery](/models/gallery.md)
 
 ## Troubleshooting
 Understanding how to stepper motors work in general can help users fix many problems than can arise while operating Wire Wiggler. While it is out of scope to discuss stepper concepts here, there are some very common issues that may result from inadequate motor torque,aka "skipped steps". First and foremost the mechanics should be as well balanced and friction free as possible in order to minimize required torque to move and hold the antenna position. Increasing motor voltage, motor current, and/or gear ratio, together with reducing acceleration, microstepping, and max speed can all help to reduce skipped steps.
