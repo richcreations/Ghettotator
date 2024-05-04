@@ -4,12 +4,13 @@ Wire Wiggler is a satellite antenna rotator control firmware intended for use wi
 Read about the original satnogs stepper rotator project here: [SatNOGS Rotator Controller Based on Arduino UNO and CNC V3 Shield](https://gitlab.com/Quartapound/satnogs-rotator-firmware/).
 
 ## Features
-* Interfaces with Hamlib rotctld for easy control with rotator apps like Gpredict
-* Homes all axis at boot up
+* Works with satellite tracking apps with a rotator feature, like Gpredict
+* Compatible with common stepper motors & NC controllers (aka 3d printer electronics)
 * Optional 3rd axis for antenna polarization control
+* Auto homes all axis at boot up
 * Watchdog timer shuts down all drivers when triggered (not supported by all hardware)
 * ...currently under development
-
+    * Automatic polarization for ISS
     * IMU feedback for moving vehicles
     * Parking feature
     * Softserial debugging
