@@ -2,13 +2,13 @@
 ## Prototype Build
 Some photos taken while testing the prototype:
 
-![refDesBuild1.png](/images/refDesBuild1.png)
-
 ![refDesBuild2.png](/images/refDesBuild2.png)
 
 ![refDesBuild3.png](/images/refDesBuild3.png)
 
 Photos taken during the prototype build process:
+
+![refDesBuild1.png](/images/refDesBuild1.png)
 
 ![refDesCNC1.png](/images/refDesCNC1.png)
 
