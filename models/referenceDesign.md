@@ -1,7 +1,9 @@
-#Wire Wiggler Reference Hardware Design
+# Wire Wiggler Reference Hardware Design
+    This basic reference design is provided as is to those who wish to use it for a Wire Wiggler build. The parts for the reference design BOM should be readily available from assorted vendors. In addition to the BOM list, there are parts that must be 3d printed (author is considering offering printed parts for sale), as well as an 8" cube box that should be structurally adequate to prevent warping/bending with the loads involved. Gcode for cnc cutting the box out of 1/2" plywood are inlcuded as an option for those who may wish to build their own box; however almost any DIY box made of 1/2" ply with holes drilled in the correct spots will also work.
 
-##BOM
+    Note the reference design makes use of affordable and readily available 3/4" EMT tubing for the shafts. However all parts except the printed 72T pulley are meant for 1" tubing. Therefore 1" tubing can also be used (author will upload model for 72T 1" pulleys soon). If 3/4 EMT is used, there are some shims to print that will keep the EMT adequately concentric on the bearings, clamps, etc.
 
+## BOM
 |	NOTE | QTY | DESCRIPTION | COST |  VENDOR  URL  |  VENDOR  QTY  |  VENDOR  PRICE	|
 |  :---:    |        ---: |        :--- |        ---: |        :---    |        ---: |        ---:       	|
 |   * | 1 |      Arduino  Nano  ATmega328p    | $7.99 |        [Amazon](https://www.amazon.com/OSOYOO-Arduino-Compatible-ATmega328p-Interface/dp/B0BCNCD1QT/)   | 1 | $7.99	|
@@ -30,17 +32,46 @@
 |   * | 8 |      #8  Stainless  Steel  Washer   | $0.56 |        [Amazon](https://www.amazon.com/Stainless-Flat-Washer-100-Pack/dp/B07KCYNXJL/)   | 100 | $6.99	|
 |   * | 10 |      #10  Stainless  Steel  Phillips  Self  Tapping  Screw      | $0.90 |        [Amazon](https://www.amazon.com/Stainless-Steel-Phillips-Screws-Tapping/dp/B08V18RM6K/)      | 100 | $8.98	|
 |   * | 1 |      Gland  Nut  [PG11]    | $0.40 |        [Amazon](https://www.amazon.com/Waterproof-Adjustable-Connectors-Plastic-Protectors/dp/B085NVDC3K/)      | 20 | $7.99	|
+|   *   |   5   |   Foot of 3/4" EMT Conduit    |   $5.00   |   [Home Depot](https://www.homedepot.com/p/3-4-in-x-10-ft-Electrical-Metallic-Tubing-EMT-Conduit-0550110000/202068040)    |   10  |   $9.98   |
 |   ** | 1 |      Pulley  20T  GT2  6mm  Wide  6mm  Shaft   | $1.40 |        [Amazon](https://www.amazon.com/gp/product/B077GNZK3J/)      | 5 | $6.99	|
 |   ** | 1 |      10k  Linear  Potentiometer    | $7.88 |        [Amazon](https://www.amazon.com/dp/B0B3126K2M/ref=sspa_dk_detail_1?psc=1&pd_rd_i=B0B3126K2M/)      | 2 | $15.75	|
 |   ** | 2 |      Pillow  Block  'Vertical'  1"  UPC205   | $15.75 |        [Amazon](https://www.amazon.com/gp/product/B07MWGF35D/)      | 2 | $15.75	|
 |   ** | 1 |      Nema17  2A  Stepper  Motor      | $13.99 |        [Amazon](https://www.amazon.com/STEPPERONLINE-Stepper-Bipolar-Connector-compatible/dp/B00PNEQKC0/)   | 1 | $13.99	|
 |   *** | 1 |      2.4/5GHz  Wifi  Antenna  w/  Male  RP-SMA  to  UFL  Cable   | $4.50 |        [Amazon](https://www.amazon.com/Bingfu-Bulkhead-Wireless-Extender-Repeater/dp/B00VE1XH4A/)   | 2 | $8.99	|
 |   *** | 1 |      UFL  SMD  connector   | $4.30 |        [Amazon](https://www.amazon.com/RedYutou-Solder-Socket-Coaxial-Connector/dp/B0B9YRK8KQ/)   | 2 | $8.59	|
-
-
 ```
 Notes:
 *   Required (most '3@' items are 2@ when polarizer is not used)
 **  Polarizer option requirements
 *** External wifi antenna option
+```
+
+## 3D Printed Parts
+|   Note    |   QTY |   DESCRIPTION (LINK)    |
+|   :---:   |   :---:   |   :---    |
+|   *   |   2   |   [Antenna Adapter (3/4" square)](/models/antAdapter.stl) |
+|   *   |   2   |   [Azimuth & Elevation Endstop Cams](/models/aziEleEndstopCam.stl)    |
+|   *   |   1   |   [Azimuth Endstop Switch Mount](/models/aziEndstopMountPrint.stl)   |
+|   *   |   1   |   [Azimuth Motor Mount](/models/aziMountPrint.stl)   |
+|   *   |   1   |   [Elevation Endstop Switch Mount](/models/eleEndstopMountPrint.stl)   |
+|   *   |   1   |   [Elveation Motor Mount](/models/eleMountPrint.stl)   |
+|   *   |   1   |   [Nano CNC v4 Mount](/models/nanoCNCv4Base.stl)   |
+|   *   |   1   |   [Pi Zero Mount](/models/piZeroMount.stl)   |
+|   *   |   2   |   [Azimuth and Elevation Endstop Cam Shim for Conduit](/models/shimEndstopCam.stl)   |
+|   *   |   6   |   [Shim for 1" Pillow Blocks with 3/4" EMT](/models/shimPillowBlock.stl)   |
+|   **   |   1   |   [Control Box Bottom](/models/controlBoxBottom.stl)   |
+|   **   |   1   |   [Control Box Top](/models/controlBoxTop.stl)   |
+|   **   |   1   |   [Polarizer Endstop Cam](/models/polEndstopCam.stl)   |
+|   **   |   1   |   [Polarizer Mount Bottom](/models/polMountBottom.stl)   |
+|   **   |   1   |   [Polarizer Mount Top](/models/polMountTop.stl)   |
+|   ***   |   2-3   |   [72T Pulley for 3/4" Conduit](/models/pulley1inch72T.stl)   |
+|   ***   |   2-3   |   [Shim for 1" clamps with 3/4" EMT](/models/shimPulleyClamp.stl)   |
+|   ****   |   NA   |   [Pulley Clamp Drill Guide](/models/drillGuidePulleyClamp.stl)   |
+|   ****   |   NA   |   [Elevator Endstop Mount Shim](/models/shimEleEndstopMount.stl)   |
+```
+Notes:
+*       Required
+**      Polarizer option requirements
+***     Quantity varies depending on use of polarizer option
+****    Optional items... drill guide helps drilling the clamps. Elevator endstop shim is typically not needed unless box is constructed out of spec (pillow blocks too far fram front face of box).
 ```
