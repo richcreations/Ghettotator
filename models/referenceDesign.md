@@ -75,3 +75,9 @@ Notes:
 ***     Quantity varies depending on use of polarizer option
 ****    Optional items... drill guide helps drilling the clamps. Elevator endstop shim is typically not needed unless box is constructed out of spec (pillow blocks too far fram front face of box).
 ```
+
+##  Assembly
+...work in progress
+
+## Gallery
+[Link to Wire Wiggler Gallery](/models/gallery.md)
