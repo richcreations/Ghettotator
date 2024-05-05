@@ -81,7 +81,7 @@ Notes:
 ****    Optional items... drill guide helps drilling the clamps. Elevator endstop shim is typically not needed unless box is constructed out of spec (pillow blocks too far fram front face of box).
 ```
 ## Box
-The prototype was constructed using glue and 15/32" thick plywood, which was cut on a home brew MPCNC Primo J. The following STL's can be used to reproduce the exact same Box if you have access to some means of creating the box with whatever NC machines you may have access to. The box interior size is roughly 8"x8"x9" for those inspired to roll their own.
+The prototype was constructed using glue and 15/32" thick plywood, which was cut on a home brew MPCNC Primo J. The following STL's can be used to reproduce the exact same box if you have access to some means of creating one with whatever NC machines you may have access to. The interior size is roughly 8"x8"x9", for those inspired to roll their own to fit the above list of printed parts.
 
 [Box Top](/models/top.stl)
 
