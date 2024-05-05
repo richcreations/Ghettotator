@@ -49,6 +49,8 @@ Notes:
 *** External wifi antenna option
 ```
 
+An assortment of M3 nuts and bolts are also required, lol.
+
 ## 3D Printed Parts
 Parts for the prototype were printed in PETG with 0.3mm thick layers, and otherwise basic settings. ASA is preferrable for longterm outdoor exposure (not recommended anyways). No supports are required for any of the models.
 
@@ -97,6 +99,11 @@ The prototype was constructed using glue and 15/32" thick plywood, which was cut
 
 ##  Assembly
 ...work in progress
+
+Bolt pillow blocks to the box and insert pipe through with all of the shims and parts in order (refer to gallery images). Don't forget to add the belts! Assemble roughly according to the images in the gallery. Precision doesn't need to be super high, but do try and keep the pipes perpendicular to the box walls, and 
+
+### Box
+The prototype box part edges are marked with letters to indicate fitment and recommended gluing order. The letters all go inside the box. Work quickly gluing all touching faces and edges with waterproof glue , and clamp with several clamps.
 
 ## Gallery
 [Link to Wire Wiggler Gallery](/models/gallery.md)
