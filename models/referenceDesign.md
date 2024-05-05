@@ -1,8 +1,10 @@
 # Wire Wiggler Reference Hardware Design
 
-This basic reference design is provided as is to those who wish to use it for a Wire Wiggler build. The parts for the reference design BOM should be readily available from assorted vendors. In addition to the BOM list, there are parts that must be 3d printed (author is considering offering printed parts for sale), as well as an 8" cube box that should be structurally adequate to prevent warping/bending with the loads involved. Gcode for cnc cutting the box out of 1/2" plywood are inlcuded as an option for those who may wish to build their own box; however almost any DIY box made of 1/2" ply with holes drilled in the correct spots will also work.
+This basic reference design is provided as is to those who wish to use it for a Wire Wiggler build. This prototype design should generally be limited to portable or otherwise non-permanent installs, where it is generally stored indoors and not exposed to harsh weather. The parts in BOM were chosen for common available from online vendors. There is a list of STL files that must be 3d printed to build the prototype, as well as STL files that can be used to construct the  8" cube box. 
 
 Note the reference design makes use of affordable and readily available 3/4" EMT tubing for the shafts. However all parts except the printed 72T pulley are meant for 1" tubing. Therefore 1" tubing can also be used (author will upload model for 72T 1" pulleys soon). If 3/4 EMT is used, there are some shims to print that will keep the EMT adequately concentric on the bearings, clamps, etc.
+
+Last but not least, there are many ways to construct a stepper motor antenna rotator for Wire Wiggler firmware. Any of the bits and pieces may be improvised as you see fit; hopefully with many parts you may already have on hand to keep the budget down (~$270 plus filament and time). Prices are from vendors that had parts available at the time of writing this page. 
 
 ## BOM
 |	NOTE | QTY | DESCRIPTION | COST |  VENDOR  URL  |  VENDOR  QTY  |  VENDOR  PRICE	|
@@ -48,6 +50,8 @@ Notes:
 ```
 
 ## 3D Printed Parts
+Parts for the prototype were printed in PETG with 0.3mm thick layers, and otherwise basic settings. ASA is preferrable for longterm outdoor exposure (not recommended anyways). No supports are required for any of the models.
+
 |   Note    |   QTY |   DESCRIPTION (LINK)    |
 |   :---:   |   :---:   |   :---    |
 |   *   |   2   |   [Antenna Adapter (3/4" square)](/models/antAdapter.stl) |
@@ -76,6 +80,20 @@ Notes:
 ***     Quantity varies depending on use of polarizer option
 ****    Optional items... drill guide helps drilling the clamps. Elevator endstop shim is typically not needed unless box is constructed out of spec (pillow blocks too far fram front face of box).
 ```
+## Box
+The prototype was constructed using glue and 15/32" thick plywood, which was cut on a home brew MPCNC Primo J. The following STL's can be used to reproduce the exact same Box if you have access to some means of creating the box with whatever NC machines you may have access to. The box interior size is roughly 8"x8"x9" for those inspired to roll their own.
+
+[Box Top](/models/top.stl)
+
+[Box Bottom](/models/Bottom.stl)
+
+[Box Front](/models/Front.stl)
+
+[Box Back](/models/Back.stl)
+
+[Box Left](/models/Left.stl)
+
+[Box Right](/models/Right.stl)
 
 ##  Assembly
 ...work in progress
