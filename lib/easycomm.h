@@ -56,14 +56,14 @@ public:
                         rawData = strtok_r(Data, " ", &Data);
                         strncpy(data, rawData + 2, 10);
                         if (isNumber(data)) {
-                            control_az.setpoint = atof(data);
+                            control_az.setpoint = constrain(atof(data), AZI_MIN_ANGLE, AZI_MAX_ANGLE);
                         }
                         // Get the absolute position in deg for elevation
                         rawData = strtok_r(Data, " ", &Data);
                         if (rawData[0] == 'E' && rawData[1] == 'L') {
                             strncpy(data, rawData + 2, 10);
                             if (isNumber(data)) {
-                                control_el.setpoint = atof(data);
+                                control_el.setpoint = constrain(atof(data), ELE_MIN_ANGLE, ELE_MAX_ANGLE);
                             }
                         }
                     }
@@ -74,7 +74,7 @@ public:
                         if (rawData[0] == 'E' && rawData[1] == 'L') {
                             strncpy(data, rawData + 2, 10);
                             if (isNumber(data)) {
-                                control_el.setpoint = atof(data);
+                                control_el.setpoint = constrain(atof(data), ELE_MIN_ANGLE, ELE_MAX_ANGLE);
                             }
                         }
                 } else if (buffer[0] == 'V' && buffer[1] == 'U') {
