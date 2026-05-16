@@ -357,8 +357,12 @@ public:
             }
             // Store oldest serial byte in buffer var
             else {
-                buffer[BufferIndex] = incomingByte;
-                BufferIndex++;
+                if (BufferIndex < BUFFER_SIZE - 1) {
+                    buffer[BufferIndex] = incomingByte;
+                    BufferIndex++;
+                } else {
+                    BufferIndex = 0;
+                }
             }
         }
     }
