@@ -59,6 +59,35 @@ long aziMaxStepAcc = 0;
     bool ledState = 0;  //logic
     uint32_t ledPeriod = 1000; // msec period for default heartbeat flashing
     uint32_t ledTime = 0; // time holder
+
+    void ledBlink(uint32_t period) {
+        #ifndef DEBUG
+        if (millis() - ledTime > period) {
+            ledState = !ledState;
+            #ifdef ledUseBuiltin
+                digitalWrite(ledPinBuiltin, ledState);
+            #endif
+            #ifdef ledUseExternal
+                digitalWrite(ledPinExternal, ledState);
+            #endif
+            ledTime = millis();
+        }
+        #endif
+    }
+
+    void ledOn() {
+        #ifndef DEBUG
+        if (!ledState) {
+            #ifdef ledUseBuiltin
+                digitalWrite(ledPinBuiltin, HIGH);
+            #endif
+            #ifdef ledUseExternal
+                digitalWrite(ledPinExternal, HIGH);
+            #endif
+            ledState = 1;
+        }
+        #endif
+    }
 #endif
 
 // SETUP //////////////////////////////////////////////////////////// SETUP //
@@ -202,35 +231,8 @@ void loop() {
             #endif
 
             // LED heartbeat: slow blink while rotator routine is running
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    if(millis() - ledTime > ledPeriod)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    if(millis() - ledTime > ledPeriod)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod);
             #endif
         }
     } 
@@ -249,21 +251,9 @@ void loop() {
             rotator.rotator_error = no_error;
             rotator.rotator_status = idle;
         }
-        #ifndef DEBUG
-            #ifdef ledUseBuiltin
-                // LED heartbeat: remain on if an error occured
-                if(!ledState)    {
-                    digitalWrite(ledPinBuiltin,HIGH);
-                    ledState = 1;
-                }
-            #endif
-            #ifdef ledUseExternal
-                // LED heartbeat: remain on if an error occured
-                if(!ledState)    {
-                    digitalWrite(ledPinExternal,HIGH);
-                    ledState = 1;
-                }
-            #endif
+        // LED heartbeat: remain on if an error occured
+        #if defined(ledUseBuiltin) || defined(ledUseExternal)
+            ledOn();
         #endif
     }
 }
@@ -318,37 +308,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
 
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
 
@@ -394,37 +356,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
             
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
         // Delay to allow homing movement to complete
@@ -505,37 +439,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
 
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
 
@@ -590,37 +496,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
             
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
         // Delay to allow homing movement to complete
