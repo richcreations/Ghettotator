@@ -36,7 +36,7 @@ struct _control{
         bool homing_flag;                             // Homing flag
         bool parking_flag;                            // Parking flag
         int8_t inside_temperature;                    // Inside Temperature
-        double park_az, park_el;                      // Park position for both axis
+        float park_az, park_el;                        // Park position for both axis
         uint8_t fault_az, fault_el;                   // Motor drivers fault flag
         bool switch_eleMin, switch_aziMin;            // End-stop values
     };
