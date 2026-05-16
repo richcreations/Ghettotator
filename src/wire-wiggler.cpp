@@ -161,15 +161,43 @@ void loop() {
     #endif
     // Run easycomm subroutine
     comm.easycomm_proc();
-    // Get position of axis
+    // Get position of axis and calculate speed
+    static uint32_t lastLoopTime = 0;
+    uint32_t now = millis();
+    float dt = (lastLoopTime > 0) ? (now - lastLoopTime) / 1000.0f : 0.0f;
+    lastLoopTime = now;
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
+    if (dt > 0) {
+        control_az.speed = (control_az.input - control_az.input_prv) / dt;
+        control_el.speed = (control_el.input - control_el.input_prv) / dt;
+    }
+    control_az.input_prv = control_az.input;
+    control_el.input_prv = control_el.input;
     // Update endstop state for easycomm reporting
     rotator.switch_aziMin = switch_aziMin.get_state();
     rotator.switch_eleMin = switch_eleMin.get_state();
     #ifdef POLARIZER
         control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
+        if (dt > 0) control_po.speed = (control_po.input - control_po.input_prv) / dt;
+        control_po.input_prv = control_po.input;
         rotator.switch_polMin = switch_polMin.get_state();
+    #endif
+    // Read AVR internal temperature sensor every 5 seconds
+    #ifdef __AVR__
+    {
+        static uint32_t lastTempTime = 0;
+        if (now - lastTempTime > 5000) {
+            lastTempTime = now;
+            uint8_t savedADMUX = ADMUX;
+            ADMUX = (_BV(REFS1) | _BV(REFS0) | 8);
+            delayMicroseconds(300);
+            ADCSRA |= _BV(ADSC);
+            while (ADCSRA & _BV(ADSC));
+            rotator.inside_temperature = (int8_t)((ADC - 324) / 1.22f);
+            ADMUX = savedADMUX;
+        }
+    }
     #endif
     // No error flags
     if (rotator.rotator_status != error) {

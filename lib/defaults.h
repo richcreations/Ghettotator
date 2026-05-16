@@ -141,9 +141,6 @@
 #ifndef HOME_DELAY
     #define HOME_DELAY         1000  // millis to keep moving after hitting all endstops while homing
 #endif
-#ifndef SAMPLE_TIME
-    #define SAMPLE_TIME        0.1   // Control loop in sec
-#endif
 
 // Check if step rates are too high (>4000) ????
 //#if defined(SPR) && (AZI_VMAX * AZI_RATIO * SPR * AZI_MICROSTEP / 360 > 4000)
