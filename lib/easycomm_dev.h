@@ -1,9 +1,9 @@
 /*
-Easycomm antenna rotator library, for interfacing rotator devices with Gpredict etc.
-AFAIK, this is the only noticeable blocking in Wire Wiggler. Blocking is very minor
-and results in slight motor stuttering during larger moves even with baud 57600.
+Experimental non-blocking easycomm variant — NOT currently used.
+To activate, replace the #include of easycomm.h in wire-wiggler.cpp with this file.
 
-Easycomm is compatible with the "satnogs" type device found in most rotator apps.
+Known issue: Serial.read() is called twice per invocation (once to check availability,
+once to read), which silently discards one byte. Must be fixed before use.
 */
 
 #ifndef LIBRARIES_EASYCOMM_H_
@@ -12,6 +12,7 @@ Easycomm is compatible with the "satnogs" type device found in most rotator apps
 #include <Arduino.h>
 #include <WString.h>
 #include <avr/wdt.h>
+#include "defaults.h"
 #include "globals.h"
 
 #define BUFFER_SIZE   256   // Set the size of serial buffer (256)
