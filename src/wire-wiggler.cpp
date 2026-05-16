@@ -292,7 +292,7 @@ void loop() {
             stepper_el.moveTo(-seek_eleMin);
         }
         // Back off any closed switches
-        while(isHome_az || isHome_el || isHome_po)  {
+        while(isHome_az || isHome_el)  {
             if (switch_aziMin.get_state() == false && isHome_az) {
                 // Switch opened, set flag and stop motor
                 stepper_az.stop();
