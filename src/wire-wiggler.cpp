@@ -40,8 +40,6 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin);
 #endif
 
-long deg2step(float deg, float ratio, uint8_t microsteps);
-float step2deg(long step, float ratio, uint8_t microsteps);
 int readPolPot();
 
 long eleMaxStepRate = 0;
@@ -166,8 +164,12 @@ void loop() {
     // Get position of axis
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
+    // Update endstop state for easycomm reporting
+    rotator.switch_aziMin = switch_aziMin.get_state();
+    rotator.switch_eleMin = switch_eleMin.get_state();
     #ifdef POLARIZER
         control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
+        rotator.switch_polMin = switch_polMin.get_state();
     #endif
     // No error flags
     if (rotator.rotator_status != error) {
@@ -521,18 +523,6 @@ void loop() {
         return no_error;
     }
 #endif // homing with pol
-
-// Convert degrees to steps
-long deg2step(float deg, float ratio, uint8_t microsteps) {
-    long steps = (ratio * SPR * float(microsteps) * deg) / float(360.0);
-    return steps;
-}
-
-// Convert steps to degrees
-float step2deg(long step, float ratio, uint8_t microsteps) {
-    float deg = (360.0 * float(step)) / (SPR * ratio * float(microsteps));
-    return deg;
-}
 
 // SAVED //////////////////////////////////////////////////////////// SAVED //
 // Polarizer poti rolling average... not needed with 10nF capacitor.

@@ -161,3 +161,5 @@
         #include <../lib/watchdog.h>
     #endif
 #endif
+
+#include <../lib/rotator_math.h>
