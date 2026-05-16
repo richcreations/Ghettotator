@@ -1,9 +1,6 @@
 /*
 Experimental non-blocking easycomm variant — NOT currently used.
 To activate, replace the #include of easycomm.h in wire-wiggler.cpp with this file.
-
-Known issue: Serial.read() is called twice per invocation (once to check availability,
-once to read), which silently discards one byte. Must be fixed before use.
 */
 
 #ifndef LIBRARIES_EASYCOMM_H_
@@ -33,12 +30,8 @@ public:
         char data[100];
         String str1, str2, str3, str4, str5, str6;
 
-        // Block if serial buffer has data
-        //while (Serial.available() > 0) {
-
         // Don't process if serial buffer is empty
-        if(Serial.read() != -1)   {
-            // read oldest byte... non-blocking easycomm must be called often
+        if(Serial.available() > 0)   {
             incomingByte = Serial.read();
 
             // Buffer var has a complete packet ready to process
