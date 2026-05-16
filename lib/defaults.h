@@ -41,18 +41,6 @@
     #endif
 #endif
 
-// Note: COMPASS and IMU_FEEDBACK features require additional lib_deps in platformio.ini
-// (Wire, Adafruit HMC5883 Unified / Adafruit MPU6050, Adafruit BusIO, Adafruit Unified Sensor)
-#if defined(COMPASS) || defined(IMU_FEEDBACK)
-    #include <Wire.h>
-#endif
-#ifdef COMPASS
-    #include <Adafruit_HMC5883_U.h>
-#endif
-#ifdef IMU_FEEDBACK
-    #include <Adafruit_MPU6050.h>
-    #include <Adafruit_Sensor.h>
-#endif
 
 #ifndef BAUDRATE
     #define BAUDRATE           57600 // Set the Baudrate of easycomm 3 protocol (57600)

@@ -25,11 +25,6 @@
 //#define POL_POT_HYSTERESIS  1     // Increase to eliminate polarize axis shaking while poti is not moved
 //#define POL_POT_SAMPLES   4       // Size of array -1 to store rolling average samples
 
-// Uncomment to enable 5883 compass feedback feature
-//#define COMPASS
-
-// Uncomment to enable mpu6050 IMU feedback feature
-//#define IMU_FEEDBACK
 
 // Uncomment to enable parking feature... not yet implemented!
 //#define PARKING
