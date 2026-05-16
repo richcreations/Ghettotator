@@ -50,6 +50,25 @@ void test_step2deg_half_rotation(void) {
     TEST_ASSERT_FLOAT_WITHIN(0.001f, 180.0f, step2deg(6840, 68.4f, 1));
 }
 
+// --- deg2step_f (float version for speed conversion) ---
+
+void test_deg2step_f_zero(void) {
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, deg2step_f(0.0f, 68.4f, 1));
+}
+
+void test_deg2step_f_matches_deg2step_for_whole_steps(void) {
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, (float)deg2step(360.0f, 68.4f, 1), deg2step_f(360.0f, 68.4f, 1));
+}
+
+void test_deg2step_f_preserves_fractional_steps(void) {
+    // 1 deg/s with ratio 68.4 = 38.0 steps/s exactly
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 38.0f, deg2step_f(1.0f, 68.4f, 1));
+}
+
+void test_deg2step_f_negative_speed(void) {
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, -38.0f, deg2step_f(-1.0f, 68.4f, 1));
+}
+
 // --- round-trip ---
 
 void test_roundtrip_45deg(void) {
@@ -83,6 +102,11 @@ int main(int argc, char **argv) {
     RUN_TEST(test_step2deg_zero);
     RUN_TEST(test_step2deg_full_rotation);
     RUN_TEST(test_step2deg_half_rotation);
+
+    RUN_TEST(test_deg2step_f_zero);
+    RUN_TEST(test_deg2step_f_matches_deg2step_for_whole_steps);
+    RUN_TEST(test_deg2step_f_preserves_fractional_steps);
+    RUN_TEST(test_deg2step_f_negative_speed);
 
     RUN_TEST(test_roundtrip_45deg);
     RUN_TEST(test_roundtrip_elevation_max);

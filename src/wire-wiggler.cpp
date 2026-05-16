@@ -197,40 +197,51 @@ void loop() {
         } 
         // Homing completed... start rotator routine
         else {
-            // Rotate without polarizer
-            #ifndef POLARIZER
-                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
-                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
-                rotator.rotator_status = pointing;
-                // Move azimuth and elevation motors
-                stepper_az.run();
-                stepper_el.run();
-                // Done moving, change to idle mode
-                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
-                    rotator.rotator_status = idle;
-                }
-            #else
-            // Rotate w/ polarizer
-                // polPot = analogRead(polPotPin); // read poti
+            #ifdef POLARIZER
+                // Update polarizer setpoint from pot
                 polPot = readPolPot();
-                // Poti has moved enough to respond to
                 if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                     lastPolPot = polPot;
-                    control_po.setpoint = ((float)polPot / float(1023.0)) * float(POL_MAX_ANGLE);   // use 10bit reading to change polarize setpoint angle
+                    control_po.setpoint = ((float)polPot / 1023.0f) * (float)POL_MAX_ANGLE;
                 }
-                // Move motors
+            #endif
+
+            if (rotator.control_mode == speed) {
+                // Speed control: enforce angle limits then run at commanded speed
+                float az_spd = control_az.setpoint_speed;
+                float el_spd = control_el.setpoint_speed;
+                if ((az_spd > 0 && control_az.input >= AZI_MAX_ANGLE) ||
+                    (az_spd < 0 && control_az.input <= AZI_MIN_ANGLE)) az_spd = 0;
+                if ((el_spd > 0 && control_el.input >= ELE_MAX_ANGLE) ||
+                    (el_spd < 0 && control_el.input <= ELE_MIN_ANGLE)) el_spd = 0;
+                stepper_az.setSpeed(deg2step_f(az_spd, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.setSpeed(deg2step_f(el_spd, ELE_RATIO, ELE_MICROSTEP));
+                stepper_az.runSpeed();
+                stepper_el.runSpeed();
+                rotator.rotator_status = (az_spd == 0.0f && el_spd == 0.0f) ? idle : pointing;
+                #ifdef POLARIZER
+                    stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
+                    stepper_po.run();
+                #endif
+            } else {
+                // Position control
                 stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
                 stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
-                stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
                 rotator.rotator_status = pointing;
                 stepper_az.run();
                 stepper_el.run();
-                stepper_po.run();
-                // Idle rotator
-                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0 && stepper_po.distanceToGo() == 0) {
+                #ifdef POLARIZER
+                    stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
+                    stepper_po.run();
+                #endif
+                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0
+                    #ifdef POLARIZER
+                        && stepper_po.distanceToGo() == 0
+                    #endif
+                ) {
                     rotator.rotator_status = idle;
                 }
-            #endif
+            }
 
             // LED heartbeat: slow blink while rotator routine is running
             #if defined(ledUseBuiltin) || defined(ledUseExternal)
