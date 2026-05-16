@@ -9,6 +9,9 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
 * Optional 3rd axis for antenna polarization control
 * Auto homes all axis at boot up
 * Watchdog timer shuts down all drivers when triggered (not supported by all hardware)
+* Speed control mode (VU/VD/VL/VR commands functional)
+* Angle limits enforced on all commanded positions
+* AVR internal temperature sensor reported via IP0
 * ...currently under development
     * Automatic polarization for ISS
     * IMU feedback for moving vehicles
@@ -59,7 +62,7 @@ Give it a name, for example "Wire Wiggler". Leave the defaults alone (localhost,
 First use the terminal or startup script to launch rotctld. Now open Gpredict, go to the Rotator Controller, click the enable rotator button, select a satellite to track in the drop down menu, and hit track. That's it... the rotator should start following the sat from AOS to LOS. After reaching LOS, the rotator will move to the next predicted AOS location for the satellite.
 
 ## Easycomm Commands
-The easycomm lib is used by the rotator control to interface with computer software, via a UART connection (com port). The default baud rate for Wire Wiggler is 9600. Here is the list of valid terminal commands that easycomm responds to (* currently not all commands are implemented):
+The easycomm lib is used by the rotator control to interface with computer software, via a UART connection (com port). The default baud rate for Wire Wiggler is 57600. Here is the list of valid terminal commands that easycomm responds to (* currently not all commands are implemented):
 
 * AZ, Move azimuth to (degrees 1 decimal place)
 * EL, Move elevation to (degrees 1 decimal place)
