@@ -33,6 +33,15 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
 #ifdef WATCHDOG
     wdt_timer wdt;
 #endif
+#ifdef IMU_DEVICE_ICM20948
+    ICM20948 imuDevice;
+#endif
+#ifdef IMU_DEVICE_MPU6050
+    MPU6050 imuDevice;
+#endif
+#ifdef IMU_FEEDBACK
+    MadgwickFilter madgwick;
+#endif
 
 #ifndef POLARIZER
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin);
@@ -40,9 +49,9 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin);
 #endif
 
-long deg2step(float deg, float ratio, uint8_t microsteps);
-float step2deg(long step, float ratio, uint8_t microsteps);
+#ifdef POLARIZER
 int readPolPot();
+#endif
 
 long eleMaxStepRate = 0;
 long eleMaxStepAcc = 0;
@@ -59,6 +68,35 @@ long aziMaxStepAcc = 0;
     bool ledState = 0;  //logic
     uint32_t ledPeriod = 1000; // msec period for default heartbeat flashing
     uint32_t ledTime = 0; // time holder
+
+    void ledBlink(uint32_t period) {
+        #ifndef DEBUG
+        if (millis() - ledTime > period) {
+            ledState = !ledState;
+            #ifdef ledUseBuiltin
+                digitalWrite(ledPinBuiltin, ledState);
+            #endif
+            #ifdef ledUseExternal
+                digitalWrite(ledPinExternal, ledState);
+            #endif
+            ledTime = millis();
+        }
+        #endif
+    }
+
+    void ledOn() {
+        #ifndef DEBUG
+        if (!ledState) {
+            #ifdef ledUseBuiltin
+                digitalWrite(ledPinBuiltin, HIGH);
+            #endif
+            #ifdef ledUseExternal
+                digitalWrite(ledPinExternal, HIGH);
+            #endif
+            ledState = 1;
+        }
+        #endif
+    }
 #endif
 
 // SETUP //////////////////////////////////////////////////////////// SETUP //
@@ -75,6 +113,17 @@ void setup() {
     #endif
     #ifdef ledUseExternal
         pinMode(ledPinExternal, OUTPUT); // init led pin
+    #endif
+
+    // IMU
+    #ifdef IMU_FEEDBACK
+        Wire.begin();
+        #if defined(IMU_DEVICE_ICM20948) || defined(IMU_DEVICE_MPU6050)
+            if (!imuDevice.begin()) {
+                rotator.rotator_status = error;
+                rotator.rotator_error = sensor_error;
+            }
+        #endif
     #endif
 
     // Serial Communication
@@ -134,11 +183,62 @@ void loop() {
     #endif
     // Run easycomm subroutine
     comm.easycomm_proc();
-    // Get position of axis
+    // Get position of axis and calculate speed
+    static uint32_t lastLoopTime = 0;
+    uint32_t now = millis();
+    float dt = (lastLoopTime > 0) ? (now - lastLoopTime) / 1000.0f : 0.0f;
+    lastLoopTime = now;
     control_az.input = step2deg(stepper_az.currentPosition(), AZI_RATIO, AZI_MICROSTEP);
     control_el.input = step2deg(stepper_el.currentPosition(), ELE_RATIO, ELE_MICROSTEP);
+    if (dt > 0) {
+        control_az.speed = (control_az.input - control_az.input_prv) / dt;
+        control_el.speed = (control_el.input - control_el.input_prv) / dt;
+    }
+    control_az.input_prv = control_az.input;
+    control_el.input_prv = control_el.input;
+    // Update endstop state for easycomm reporting
+    rotator.switch_aziMin = switch_aziMin.get_state();
+    rotator.switch_eleMin = switch_eleMin.get_state();
     #ifdef POLARIZER
         control_po.input = step2deg(stepper_po.currentPosition(), POL_RATIO, POL_MICROSTEP);
+        if (dt > 0) control_po.speed = (control_po.input - control_po.input_prv) / dt;
+        control_po.input_prv = control_po.input;
+        rotator.switch_polMin = switch_polMin.get_state();
+    #endif
+    // Read AVR internal temperature sensor every 5 seconds
+    #ifdef __AVR__
+    {
+        static uint32_t lastTempTime = 0;
+        if (now - lastTempTime > 5000) {
+            lastTempTime = now;
+            uint8_t savedADMUX = ADMUX;
+            ADMUX = (_BV(REFS1) | _BV(REFS0) | 8);
+            delayMicroseconds(300);
+            ADCSRA |= _BV(ADSC);
+            while (ADCSRA & _BV(ADSC));
+            rotator.inside_temperature = (int8_t)((ADC - 324) / 1.22f);
+            ADMUX = savedADMUX;
+        }
+    }
+    #endif
+    // Update IMU and run Madgwick filter
+    #ifdef IMU_FEEDBACK
+    {
+        static uint32_t lastImuTime = 0;
+        if (now - lastImuTime >= (1000UL / IMU_UPDATE_HZ)) {
+            float imu_dt = (now - lastImuTime) / 1000.0f;
+            lastImuTime = now;
+            RawIMU rawImu;
+            RawMag rawMag;
+            bool imuReady = false;
+            #if defined(IMU_DEVICE_ICM20948) || defined(IMU_DEVICE_MPU6050)
+                imuReady = imuDevice.read(rawImu, rawMag);
+            #endif
+            if (imuReady) {
+                madgwick.update(rawImu, rawMag, imu_dt);
+            }
+        }
+    }
     #endif
     // No error flags
     if (rotator.rotator_status != error) {
@@ -166,71 +266,62 @@ void loop() {
         } 
         // Homing completed... start rotator routine
         else {
-            // Rotate without polarizer
-            #ifndef POLARIZER
-                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
-                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
-                rotator.rotator_status = pointing;
-                // Move azimuth and elevation motors
-                stepper_az.run();
-                stepper_el.run();
-                // Done moving, change to idle mode
-                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0) {
-                    rotator.rotator_status = idle;
-                }
-            #else
-            // Rotate w/ polarizer
-                // polPot = analogRead(polPotPin); // read poti
+            #ifdef POLARIZER
+                // Update polarizer setpoint from pot
                 polPot = readPolPot();
-                // Poti has moved enough to respond to
                 if((polPot - lastPolPot > POL_POT_HYSTERESIS) || (lastPolPot - polPot > POL_POT_HYSTERESIS)) {
                     lastPolPot = polPot;
-                    control_po.setpoint = ((float)polPot / float(1023.0)) * float(POL_MAX_ANGLE);   // use 10bit reading to change polarize setpoint angle
-                }
-                // Move motors
-                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
-                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
-                stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
-                rotator.rotator_status = pointing;
-                stepper_az.run();
-                stepper_el.run();
-                stepper_po.run();
-                // Idle rotator
-                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0 && stepper_po.distanceToGo() == 0) {
-                    rotator.rotator_status = idle;
+                    control_po.setpoint = ((float)polPot / 1023.0f) * (float)POL_MAX_ANGLE;
                 }
             #endif
 
+            if (rotator.control_mode == speed) {
+                // Speed control: enforce angle limits then run at commanded speed
+                float az_spd = control_az.setpoint_speed;
+                float el_spd = control_el.setpoint_speed;
+                if ((az_spd > 0 && control_az.input >= AZI_MAX_ANGLE) ||
+                    (az_spd < 0 && control_az.input <= AZI_MIN_ANGLE)) az_spd = 0;
+                if ((el_spd > 0 && control_el.input >= ELE_MAX_ANGLE) ||
+                    (el_spd < 0 && control_el.input <= ELE_MIN_ANGLE)) el_spd = 0;
+                stepper_az.setSpeed(deg2step_f(az_spd, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.setSpeed(deg2step_f(el_spd, ELE_RATIO, ELE_MICROSTEP));
+                stepper_az.runSpeed();
+                stepper_el.runSpeed();
+                rotator.rotator_status = (az_spd == 0.0f && el_spd == 0.0f) ? idle : pointing;
+                #ifdef POLARIZER
+                    stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
+                    stepper_po.run();
+                #endif
+            } else {
+                // Position control — apply IMU correction if enabled
+                float az_target = control_az.setpoint;
+                float el_target = control_el.setpoint;
+                #ifdef IMU_FEEDBACK
+                    madgwick.correctAzEl(az_target, el_target, az_target, el_target);
+                    az_target = constrain(az_target, AZI_MIN_ANGLE, AZI_MAX_ANGLE);
+                    el_target = constrain(el_target, ELE_MIN_ANGLE, ELE_MAX_ANGLE);
+                #endif
+                stepper_az.moveTo(deg2step(az_target, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.moveTo(deg2step(el_target, ELE_RATIO, ELE_MICROSTEP));
+                rotator.rotator_status = pointing;
+                stepper_az.run();
+                stepper_el.run();
+                #ifdef POLARIZER
+                    stepper_po.moveTo(deg2step(control_po.setpoint, POL_RATIO, POL_MICROSTEP));
+                    stepper_po.run();
+                #endif
+                if (stepper_az.distanceToGo() == 0 && stepper_el.distanceToGo() == 0
+                    #ifdef POLARIZER
+                        && stepper_po.distanceToGo() == 0
+                    #endif
+                ) {
+                    rotator.rotator_status = idle;
+                }
+            }
+
             // LED heartbeat: slow blink while rotator routine is running
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    if(millis() - ledTime > ledPeriod)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    if(millis() - ledTime > ledPeriod)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod);
             #endif
         }
     } 
@@ -249,21 +340,9 @@ void loop() {
             rotator.rotator_error = no_error;
             rotator.rotator_status = idle;
         }
-        #ifndef DEBUG
-            #ifdef ledUseBuiltin
-                // LED heartbeat: remain on if an error occured
-                if(!ledState)    {
-                    digitalWrite(ledPinBuiltin,HIGH);
-                    ledState = 1;
-                }
-            #endif
-            #ifdef ledUseExternal
-                // LED heartbeat: remain on if an error occured
-                if(!ledState)    {
-                    digitalWrite(ledPinExternal,HIGH);
-                    ledState = 1;
-                }
-            #endif
+        // LED heartbeat: remain on if an error occured
+        #if defined(ledUseBuiltin) || defined(ledUseExternal)
+            ledOn();
         #endif
     }
 }
@@ -292,7 +371,7 @@ void loop() {
             stepper_el.moveTo(-seek_eleMin);
         }
         // Back off any closed switches
-        while(isHome_az || isHome_el || isHome_po)  {
+        while(isHome_az || isHome_el)  {
             if (switch_aziMin.get_state() == false && isHome_az) {
                 // Switch opened, set flag and stop motor
                 stepper_az.stop();
@@ -318,37 +397,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
 
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
 
@@ -394,37 +445,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
             
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
         // Delay to allow homing movement to complete
@@ -505,37 +528,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
 
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
 
@@ -590,37 +585,9 @@ void loop() {
                 wdt.watchdog_reset();
             #endif
             
-            #ifndef DEBUG
-                #ifdef ledUseBuiltin
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinBuiltin,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinBuiltin,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
-                #ifdef ledUseExternal
-                    // LED heartbeat: fast blink while homing
-                    if(millis() - ledTime > ledPeriod/6)   {
-                        if(ledState)    {
-                            digitalWrite(ledPinExternal,LOW);
-                            ledState = 0;
-                            ledTime = millis();
-                        }
-                        else{
-                            digitalWrite(ledPinExternal,HIGH);
-                            ledState = 1;
-                            ledTime = millis();
-                        }
-                    }
-                #endif
+            // LED heartbeat: fast blink while homing
+            #if defined(ledUseBuiltin) || defined(ledUseExternal)
+                ledBlink(ledPeriod / 6);
             #endif
         }
         // Delay to allow homing movement to complete
@@ -644,19 +611,8 @@ void loop() {
     }
 #endif // homing with pol
 
-// Convert degrees to steps
-long deg2step(float deg, float ratio, uint8_t microsteps) {
-    long steps = (ratio * SPR * float(microsteps) * deg) / float(360.0);
-    return steps;
-}
-
-// Convert steps to degrees
-float step2deg(long step, float ratio, uint8_t microsteps) {
-    float deg = (360.0 * float(step)) / (SPR * ratio * float(microsteps));
-    return deg;
-}
-
 // SAVED //////////////////////////////////////////////////////////// SAVED //
+#ifdef POLARIZER
 // Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
@@ -670,3 +626,4 @@ int readPolPot() {
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / (POL_POT_SAMPLES + 1));             // return average
 }
+#endif // POLARIZER
