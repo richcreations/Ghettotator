@@ -23,7 +23,7 @@ public:
     }
 
     void easycomm_proc() {
-        char buffer[BUFFER_SIZE];
+        static char buffer[BUFFER_SIZE];
         char incomingByte;
         char *Data = buffer;
         char *rawData;

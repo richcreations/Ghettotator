@@ -33,6 +33,15 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
 #ifdef WATCHDOG
     wdt_timer wdt;
 #endif
+#ifdef IMU_DEVICE_ICM20948
+    ICM20948 imuDevice;
+#endif
+#ifdef IMU_DEVICE_MPU6050
+    MPU6050 imuDevice;
+#endif
+#ifdef IMU_FEEDBACK
+    MadgwickFilter madgwick;
+#endif
 
 #ifndef POLARIZER
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin);
@@ -40,7 +49,9 @@ endstop switch_eleMin(eleMinStopPin, DEFAULT_HOME_STATE), switch_aziMin(aziMinSt
     enum _rotator_error homing(long seek_aziMin, long seek_eleMin, long seek_polMin);
 #endif
 
+#ifdef POLARIZER
 int readPolPot();
+#endif
 
 long eleMaxStepRate = 0;
 long eleMaxStepAcc = 0;
@@ -102,6 +113,17 @@ void setup() {
     #endif
     #ifdef ledUseExternal
         pinMode(ledPinExternal, OUTPUT); // init led pin
+    #endif
+
+    // IMU
+    #ifdef IMU_FEEDBACK
+        Wire.begin();
+        #if defined(IMU_DEVICE_ICM20948) || defined(IMU_DEVICE_MPU6050)
+            if (!imuDevice.begin()) {
+                rotator.rotator_status = error;
+                rotator.rotator_error = sensor_error;
+            }
+        #endif
     #endif
 
     // Serial Communication
@@ -199,6 +221,25 @@ void loop() {
         }
     }
     #endif
+    // Update IMU and run Madgwick filter
+    #ifdef IMU_FEEDBACK
+    {
+        static uint32_t lastImuTime = 0;
+        if (now - lastImuTime >= (1000UL / IMU_UPDATE_HZ)) {
+            float imu_dt = (now - lastImuTime) / 1000.0f;
+            lastImuTime = now;
+            RawIMU rawImu;
+            RawMag rawMag;
+            bool imuReady = false;
+            #if defined(IMU_DEVICE_ICM20948) || defined(IMU_DEVICE_MPU6050)
+                imuReady = imuDevice.read(rawImu, rawMag);
+            #endif
+            if (imuReady) {
+                madgwick.update(rawImu, rawMag, imu_dt);
+            }
+        }
+    }
+    #endif
     // No error flags
     if (rotator.rotator_status != error) {
         // Not yet homed
@@ -252,9 +293,16 @@ void loop() {
                     stepper_po.run();
                 #endif
             } else {
-                // Position control
-                stepper_az.moveTo(deg2step(control_az.setpoint, AZI_RATIO, AZI_MICROSTEP));
-                stepper_el.moveTo(deg2step(control_el.setpoint, ELE_RATIO, ELE_MICROSTEP));
+                // Position control — apply IMU correction if enabled
+                float az_target = control_az.setpoint;
+                float el_target = control_el.setpoint;
+                #ifdef IMU_FEEDBACK
+                    madgwick.correctAzEl(az_target, el_target, az_target, el_target);
+                    az_target = constrain(az_target, AZI_MIN_ANGLE, AZI_MAX_ANGLE);
+                    el_target = constrain(el_target, ELE_MIN_ANGLE, ELE_MAX_ANGLE);
+                #endif
+                stepper_az.moveTo(deg2step(az_target, AZI_RATIO, AZI_MICROSTEP));
+                stepper_el.moveTo(deg2step(el_target, ELE_RATIO, ELE_MICROSTEP));
                 rotator.rotator_status = pointing;
                 stepper_az.run();
                 stepper_el.run();
@@ -564,6 +612,7 @@ void loop() {
 #endif // homing with pol
 
 // SAVED //////////////////////////////////////////////////////////// SAVED //
+#ifdef POLARIZER
 // Polarizer poti rolling average... not needed with 10nF capacitor.
 int readPolPot() {
     int polpotavg = 0;
@@ -577,3 +626,4 @@ int readPolPot() {
     polpotavg += rawpolpot[POL_POT_SAMPLES - 1];            // ...and added
     return (polpotavg / (POL_POT_SAMPLES + 1));             // return average
 }
+#endif // POLARIZER
