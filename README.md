@@ -12,23 +12,34 @@ Read about the original satnogs stepper rotator project here: [SatNOGS Rotator C
 * Speed control mode (VU/VD/VL/VR commands functional)
 * Angle limits enforced on all commanded positions
 * AVR internal temperature sensor reported via IP0
+* **[Experimental]** IMU feedback for tracking satellites from a moving vehicle or boat — enable `IMU_FEEDBACK` in `config.h`, mount an IMU with X→bow, Y→starboard, Z→down. Madgwick AHRS filter corrects commanded AZ/EL for platform motion and tilt in real time. Supported devices:
+    * IMU: ICM-20948, MPU-6050
+    * Magnetometer: AK09916, HMC5883L
 * ...currently under development
     * Automatic polarization for ISS
-    * IMU feedback for moving vehicles
     * Parking feature
     * Softserial debugging
 
 ![refDesBuild3.png](/images/refDesBuild3.png)
 
 ## Currently Compatible Hardware
+**Microcontrollers / Shields**
 * Arduino UNO w/ UNO CNC Shield v3
 * Arduino Nano w/ Nano CNC V4 Shield
 * Arduino Mega2560 w/ Ramps v1.4
 * Teensy 3.2 and 4.0 w/ UNO CNC Shield v3
 * Anet A8 3d Printer Motherboard (1280p w/ built-in a4988's)
+
+**Sensors**
 * N.O. endstop switches
 * Linear potentiometers (use 10nF between wiper and gnd)
 * Standard stepper drivers with STEP/DIR/EN pins (eg a4988, drv8825, TMCXXXX in standalone mode)
+
+**[Experimental] IMU & Magnetometer devices (for moving platform tracking)**
+* SparkFun Qwiic ICM-20948 (accel/gyro, I²C addr 0x69 default)
+* InvenSense MPU-6050 (accel/gyro, I²C addr 0x68 default)
+* AKM AK09916 (magnetometer, integrated in ICM-20948, accessed via I²C master)
+* Honeywell HMC5883L (external magnetometer, I²C addr 0x1E, connected to IMU auxiliary bus)
 
 ## Instructions
 ### Build the mechanics
